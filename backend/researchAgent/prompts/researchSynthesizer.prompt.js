@@ -21,6 +21,8 @@ Your job is to take raw web search data and compile it into a structured, deeply
 4. Focus on the DETAILS that casual viewers miss: psychological moments, tactical decisions,
    pre-match form context, obscure laws/rules, and genuine turning points.
 5. Quotes must be verbatim from search results. Never paraphrase a quote as a direct quote.
+6. Under 'sources', extract 3 to 6 verified, high-authority articles with exact URLs from the [SEARCH DATA].
+${includeMedia ? '7. Media is ENABLED. Pair verified article URLs and available image URLs where relevant.' : ''}
 
 [OUTPUT RULES]:
 - Respond ONLY with a valid JSON object matching the schema below.
@@ -86,23 +88,28 @@ Your job is to take raw web search data and compile it into a structured, deeply
  * @param {string} topic - The research topic
  * @param {string[]} preContext - User's specific angles/focus points
  * @param {object[]} searchResults - All raw results from our tools
+ * @param {object[]} availableImages - Curated images from media search (if any)
  * @returns {string}
  */
-export const buildResearchUserMessage = (topic, preContext, searchResults) => {
+export const buildResearchUserMessage = (topic, preContext, searchResults, availableImages = []) => {
   const contextBlock = preContext.length > 0
     ? `[USER'S FOCUS POINTS — prioritize covering these]:\n${preContext.map((p, i) => `${i + 1}. ${p}`).join('\n')}`
     : '[USER FOCUS POINTS]: None specified — use editorial judgment.';
 
   const searchBlock = searchResults.map((r, i) => `
 --- Search Result ${i + 1}: ${r.query} ---
-${r.results.map(s => `Title: ${s.title}\nURL: ${s.url}\nContent: ${s.snippet}`).join('\n\n')}
+${r.results.map(s => `Title: ${s.title}\nURL: ${s.url}\nContent: ${(s.snippet || '').substring(0, 350)}`).join('\n\n')}
   `).join('\n');
+
+  const mediaBlock = availableImages.length > 0
+    ? `\n[AVAILABLE MEDIA ASSETS]:\n${availableImages.map((img, i) => `${i + 1}. Title: ${img.title} | URL: ${img.url}`).join('\n')}\n`
+    : '';
 
   return `
 TOPIC: ${topic}
 
 ${contextBlock}
-
+${mediaBlock}
 [SEARCH DATA]:
 ${searchBlock}
   `.trim();

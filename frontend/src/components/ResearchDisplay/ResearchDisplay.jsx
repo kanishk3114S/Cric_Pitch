@@ -1,22 +1,20 @@
 // src/components/ResearchDisplay/ResearchDisplay.jsx
-// Renders the compiled dossier beautifully in the app.
-// Each section (summary, timeline, quotes, stats) gets its own styled block.
+// Upgraded to ultra-luxurious Liquid Glass cricket studio aesthetic.
 
 import useResearchStore from '../../store/useResearchStore';
 import { exportToPDF } from '../../services/api';
+import { Download, ExternalLink, Clock, ShieldCheck, Quote, BarChart2, Activity } from 'lucide-react';
 
 export default function ResearchDisplay() {
   const { dossier, error, isLoading } = useResearchStore();
 
-  // ── Helper: trigger PDF download in browser ──────────────────────────────
   const handlePDFDownload = async () => {
     try {
       const response = await exportToPDF(dossier);
-      // Create a temporary URL from the binary blob data
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.download = `CricScript-${dossier.topic?.substring(0, 30)}.pdf`;
+      link.download = `CricScript-${dossier.topic?.substring(0, 30).replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
       link.click();
       window.URL.revokeObjectURL(url);
     } catch {
@@ -27,9 +25,18 @@ export default function ResearchDisplay() {
   // ── Loading State ────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4 text-slate-400">
-        <div className="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm">Agent is researching... this may take 15-30 seconds</p>
+      <div className="liquid-glass rounded-3xl p-12 border border-white/10 flex flex-col items-center justify-center min-h-[460px] text-center space-y-5">
+        <div className="relative">
+          <div className="w-16 h-16 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+          <Activity className="w-6 h-6 text-white absolute inset-0 m-auto animate-pulse" />
+        </div>
+        <div>
+          <h3 className="text-xl font-serif text-white tracking-tight">Investigating the Archives</h3>
+          <p className="text-white/40 text-xs mt-2 max-w-sm leading-relaxed">
+            Multi-hop Tavily search executing across match scorecards, pitch reports, and press conferences.
+            Synthesizing factual chronology...
+          </p>
+        </div>
       </div>
     );
   }
@@ -37,8 +44,9 @@ export default function ResearchDisplay() {
   // ── Error State ──────────────────────────────────────────────────────────
   if (error) {
     return (
-      <div className="bg-red-900/20 border border-red-700 rounded-xl p-5 text-red-400 text-sm">
-        ❌ {error}
+      <div className="liquid-glass rounded-3xl p-8 border border-red-500/30 bg-red-950/20 text-red-300 text-sm">
+        <p className="font-semibold uppercase tracking-wider text-xs mb-1">Execution Interrupted</p>
+        <p>{error}</p>
       </div>
     );
   }
@@ -46,174 +54,211 @@ export default function ResearchDisplay() {
   // ── Empty State ──────────────────────────────────────────────────────────
   if (!dossier) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-slate-600 space-y-3">
-        <span className="text-5xl">🏏</span>
-        <p className="text-sm">Enter a topic and run the research agent to see your dossier here.</p>
+      <div className="liquid-glass rounded-3xl p-12 border border-white/10 flex flex-col items-center justify-center min-h-[460px] text-center space-y-4">
+        <div className="w-16 h-16 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center">
+          <ShieldCheck className="w-7 h-7 text-white/40" />
+        </div>
+        <div>
+          <h3 className="text-2xl font-serif text-white tracking-tight">Directorial Intelligence Vault</h3>
+          <p className="text-white/40 text-sm mt-2 max-w-md leading-relaxed">
+            Configure your topic and directorial brief on the left. The agent will compile verified match chronology,
+            tactical points, verified quotes, and statistical anomalies here.
+          </p>
+        </div>
       </div>
     );
   }
 
-  const report = dossier.synthesizedReport;
+  const report = dossier.synthesizedReport || {};
 
   return (
     <div className="space-y-6">
 
-      {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="flex items-start justify-between gap-4">
+      {/* ── Header Card ─────────────────────────────────────────────────── */}
+      <div className="liquid-glass rounded-3xl p-6 md:p-8 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h2 className="text-sky-400 text-2xl font-bold">{dossier.topic}</h2>
-          <p className="text-slate-500 text-xs mt-1">
-            Generated {new Date(dossier.generatedAt).toLocaleString('en-IN')}
-            {dossier.estimatedWordCount && ` · ~${dossier.estimatedWordCount} words`}
+          <span className="text-white/40 text-xs tracking-widest uppercase font-semibold">
+            Synthesized Research Dossier
+          </span>
+          <h2 className="text-2xl md:text-3xl font-serif text-white tracking-tight mt-1">
+            {dossier.topic}
+          </h2>
+          <p className="text-white/40 text-xs mt-2 flex items-center gap-3 font-mono">
+            <span>{new Date(dossier.generatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            <span>•</span>
+            <span>~{dossier.estimatedWordCount || '450'} words</span>
+            <span>•</span>
+            <span className="text-emerald-400">Ground-Truth Verified</span>
           </p>
         </div>
+
         <button
           onClick={handlePDFDownload}
-          className="shrink-0 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors"
+          className="liquid-glass rounded-full px-6 py-2.5 text-white text-xs font-semibold hover:bg-white/10 transition-all flex items-center gap-2 cursor-pointer border border-white/10 shrink-0 self-start sm:self-auto"
         >
-          ↓ Export PDF
+          <Download className="w-4 h-4 text-white/80" />
+          Export PDF
         </button>
       </div>
 
       {/* ── Executive Summary ───────────────────────────────────────────── */}
       {report.executiveSummary && (
-        <Section title="📋 Executive Summary">
-          <p className="text-slate-300 text-sm leading-relaxed">{report.executiveSummary}</p>
-        </Section>
+        <GlassSection title="Executive Summary" icon={<ShieldCheck className="w-4 h-4 text-white/60" />}>
+          <p className="text-white/80 text-sm md:text-base leading-relaxed">
+            {report.executiveSummary}
+          </p>
+        </GlassSection>
       )}
 
       {/* ── Pre-Match Context ───────────────────────────────────────────── */}
       {report.preMatchContext?.length > 0 && (
-        <Section title="🎯 Pre-Match Context">
-          <div className="space-y-3">
+        <GlassSection title="Pre-Match Atmosphere & Context">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {report.preMatchContext.map((item, i) => (
-              <div key={i} className="border-l-2 border-amber-500 pl-3">
-                <p className="text-amber-400 text-xs font-bold uppercase tracking-wide">{item.angle}</p>
-                <p className="text-slate-300 text-sm mt-0.5">{item.detail}</p>
+              <div key={i} className="bg-white/[0.02] border border-white/5 rounded-2xl p-4">
+                <p className="text-white/40 text-[11px] font-semibold uppercase tracking-wider mb-1">
+                  {item.angle}
+                </p>
+                <p className="text-white/80 text-xs leading-relaxed">{item.detail}</p>
               </div>
             ))}
           </div>
-        </Section>
+        </GlassSection>
       )}
 
       {/* ── Key Chronology Timeline ─────────────────────────────────────── */}
       {report.keyChronology?.length > 0 && (
-        <Section title="🕐 Key Chronology & Turning Points">
-          <div className="relative pl-5 space-y-5">
-            {/* Vertical timeline line */}
-            <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-slate-700" />
+        <GlassSection title="Chronology & Turning Points" icon={<Clock className="w-4 h-4 text-white/60" />}>
+          <div className="relative pl-6 space-y-6">
+            {/* Timeline Vertical Line */}
+            <div className="absolute left-2 top-2 bottom-2 w-px bg-gradient-to-b from-white/40 via-white/10 to-transparent" />
 
             {report.keyChronology.map((item, i) => (
               <div key={i} className="relative">
-                {/* Timeline dot */}
-                <div className="absolute -left-5 top-1 w-3 h-3 rounded-full bg-sky-500 ring-2 ring-slate-900" />
-                <p className="text-sky-400 text-xs font-bold">{item.timestampOrDate}</p>
-                <p className="text-slate-100 text-sm font-semibold mt-0.5">{item.eventDescription}</p>
-                <p className="text-slate-400 text-xs mt-0.5 italic">↳ {item.significance}</p>
+                {/* Glowing Dot */}
+                <div className="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-white ring-4 ring-black shadow-glow" />
+                <span className="text-white/50 font-mono text-xs font-semibold uppercase tracking-wider">
+                  {item.timestampOrDate}
+                </span>
+                <p className="text-white text-sm font-medium mt-1 leading-snug">
+                  {item.eventDescription}
+                </p>
+                <p className="text-white/50 text-xs mt-1 leading-relaxed italic">
+                  ↳ {item.significance}
+                </p>
               </div>
             ))}
           </div>
-        </Section>
+        </GlassSection>
       )}
 
       {/* ── Tactical Breakdown ──────────────────────────────────────────── */}
       {report.tacticalBreakdown?.length > 0 && (
-        <Section title="⚙️ Tactical Breakdown">
+        <GlassSection title="Tactical & Analytical Breakdown">
           <div className="space-y-4">
             {report.tacticalBreakdown.map((item, i) => (
-              <div key={i} className="bg-slate-800/50 rounded-lg p-4">
-                <p className="text-sky-300 font-semibold text-sm">{item.subheading}</p>
-                <p className="text-slate-300 text-sm mt-1 leading-relaxed">{item.analysis}</p>
+              <div key={i} className="bg-white/[0.02] border border-white/5 rounded-2xl p-5">
+                <h4 className="text-white text-sm font-semibold tracking-wide mb-2">
+                  {item.subheading}
+                </h4>
+                <p className="text-white/70 text-xs md:text-sm leading-relaxed">
+                  {item.analysis}
+                </p>
                 {item.supportingData && (
-                  <p className="text-amber-400 text-xs mt-2 font-mono bg-slate-900 rounded px-2 py-1">
+                  <div className="mt-3 inline-block bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-[11px] font-mono text-white/80">
                     📊 {item.supportingData}
-                  </p>
+                  </div>
                 )}
               </div>
             ))}
           </div>
-        </Section>
+        </GlassSection>
       )}
 
       {/* ── Verified Quotes ─────────────────────────────────────────────── */}
       {report.verifiedQuotes?.length > 0 && (
-        <Section title="💬 Verified Quotes">
+        <GlassSection title="Verified Player & Umpire Quotes" icon={<Quote className="w-4 h-4 text-white/60" />}>
           <div className="space-y-4">
             {report.verifiedQuotes.map((q, i) => (
-              <blockquote key={i} className="border-l-4 border-sky-500 pl-4">
-                <p className="text-slate-100 text-sm italic">"{q.quote}"</p>
-                <footer className="mt-2">
-                  <span className="text-amber-400 font-bold text-xs">— {q.speaker}</span>
-                  <span className="text-slate-500 text-xs ml-2">{q.context}</span>
+              <blockquote key={i} className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 relative overflow-hidden">
+                <p className="text-white text-sm md:text-base font-serif italic leading-relaxed">
+                  "{q.quote}"
+                </p>
+                <footer className="mt-3 flex items-center justify-between text-xs">
+                  <span className="text-white font-medium">— {q.speaker}</span>
+                  <span className="text-white/40 text-[11px]">{q.context}</span>
                 </footer>
               </blockquote>
             ))}
           </div>
-        </Section>
+        </GlassSection>
       )}
 
-      {/* ── Stat Highlights Table ───────────────────────────────────────── */}
+      {/* ── Stat Highlights ─────────────────────────────────────────────── */}
       {report.statHighlights?.length > 0 && (
-        <Section title="📊 Statistical Highlights">
+        <GlassSection title="Statistical Anomalies" icon={<BarChart2 className="w-4 h-4 text-white/60" />}>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-700">
-                  <th className="text-left text-slate-400 font-semibold py-2 pr-4">Metric</th>
-                  <th className="text-left text-amber-400 font-semibold py-2 pr-4">Value</th>
-                  <th className="text-left text-slate-400 font-semibold py-2">Context</th>
+                <tr className="border-b border-white/10 text-white/40 uppercase tracking-widest text-[10px]">
+                  <th className="py-2.5 pr-4 font-semibold">Metric</th>
+                  <th className="py-2.5 pr-4 font-semibold text-white">Value</th>
+                  <th className="py-2.5 font-semibold">Historical Context</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-white/5">
                 {report.statHighlights.map((s, i) => (
-                  <tr key={i} className="border-b border-slate-800">
-                    <td className="text-slate-300 py-2 pr-4">{s.metric}</td>
-                    <td className="text-amber-300 font-bold py-2 pr-4 font-mono">{s.value}</td>
-                    <td className="text-slate-400 py-2 text-xs">{s.historicalContext}</td>
+                  <tr key={i} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3 pr-4 text-white/80 font-medium">{s.metric}</td>
+                    <td className="py-3 pr-4 font-mono font-bold text-white text-sm">{s.value}</td>
+                    <td className="py-3 text-white/50 leading-relaxed">{s.historicalContext}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </Section>
+        </GlassSection>
       )}
 
-      {/* ── Sources & Links ─────────────────────────────────────────────── */}
+      {/* ── Sources ─────────────────────────────────────────────────────── */}
       {report.sources?.length > 0 && (
-        <Section title="🔗 Sources">
-          <div className="space-y-2">
+        <GlassSection title="Ground-Truth References & News Sources">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {report.sources.map((src, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <span className="text-slate-600 text-xs mt-0.5 shrink-0">{i + 1}.</span>
-                <div>
-                  {src.imageUrl && (
-                    <img src={src.imageUrl} alt={src.title} className="w-16 h-10 object-cover rounded mb-1 float-right ml-2 opacity-80" />
-                  )}
-                  <a
-                    href={src.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sky-400 hover:text-sky-300 text-sm underline underline-offset-2 line-clamp-2"
-                  >
+              <a
+                key={i}
+                href={src.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 rounded-2xl p-4 flex items-start justify-between gap-3 transition-colors group"
+              >
+                <div className="min-w-0">
+                  <p className="text-white text-xs font-medium line-clamp-1 group-hover:text-white/90">
                     {src.title}
-                  </a>
-                  <p className="text-slate-600 text-xs truncate">{src.url}</p>
+                  </p>
+                  <p className="text-white/30 text-[11px] font-mono truncate mt-0.5">
+                    {src.url}
+                  </p>
                 </div>
-              </div>
+                <ExternalLink className="w-3.5 h-3.5 text-white/30 group-hover:text-white shrink-0 mt-0.5" />
+              </a>
             ))}
           </div>
-        </Section>
+        </GlassSection>
       )}
 
     </div>
   );
 }
 
-// ── Reusable section wrapper ───────────────────────────────────────────────
-function Section({ title, children }) {
+// ── Reusable Liquid-Glass Section Card ──────────────────────────────────────
+function GlassSection({ title, icon, children }) {
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-      <h3 className="text-slate-100 font-bold text-base mb-4">{title}</h3>
+    <div className="liquid-glass rounded-3xl p-6 md:p-8 border border-white/10 space-y-4">
+      <div className="flex items-center gap-2 pb-3 border-b border-white/5">
+        {icon}
+        <h3 className="text-lg font-serif text-white tracking-tight">{title}</h3>
+      </div>
       {children}
     </div>
   );

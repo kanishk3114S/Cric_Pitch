@@ -81,9 +81,13 @@ export const runResearchAgent = async ({ topic, preContext, researchLength, incl
 
   // Collect all images across searches (only if includeMedia is on)
   const allImages = includeMedia
-    ? rawResults.flatMap(r => r.images).slice(0, 6) // max 6 images
+    ? rawResults
+        .flatMap(r => r.images || [])
+        .filter(img => img && img.url)
+        // Deduplicate images by URL
+        .filter((img, idx, arr) => arr.findIndex(i => i.url === img.url) === idx)
+        .slice(0, 6)
     : [];
-
 
   // ── STEP 3: SYNTHESIZE WITH LLM ─────────────────────────────────────────
   // Now we feed ALL the raw search results to Gemini and ask it to compile
@@ -92,7 +96,7 @@ export const runResearchAgent = async ({ topic, preContext, researchLength, incl
   console.log('\n🧠 Sending to Gemini for synthesis...');
 
   const systemPrompt = buildResearchSynthesizerPrompt(researchLength, includeMedia);
-  const userMessage = buildResearchUserMessage(topic, preContext, validResults);
+  const userMessage = buildResearchUserMessage(topic, preContext, validResults, allImages);
 
   const dossier = await callGemini(systemPrompt, userMessage);
 
@@ -102,6 +106,7 @@ export const runResearchAgent = async ({ topic, preContext, researchLength, incl
 
   dossier.generatedAt = new Date().toISOString();
   dossier.topic = topic;
+  dossier.includeMedia = Boolean(includeMedia);
 
   if (includeMedia && allImages.length > 0) {
     dossier.collectedImages = allImages;
@@ -122,12 +127,21 @@ export const runResearchAgent = async ({ topic, preContext, researchLength, incl
 const buildSearchPlan = (topic, preContext, includeImages) => {
   const jobs = [];
 
-  // Job 1: General topic overview search
+  // Job 1: General topic overview search (includes images if requested)
   jobs.push({
     tool: 'webSearch',
     query: `${topic} cricket`,
     args: [`${topic} cricket overview match report`, includeImages, 5],
   });
+
+  // Job 1b (optional): Dedicated high-res action photo search when media toggle is ON
+  if (includeImages) {
+    jobs.push({
+      tool: 'webSearch',
+      query: `${topic} match photos action moments`,
+      args: [`${topic} cricket match action moments photography`, true, 4],
+    });
+  }
 
   // Job 2: Stats search via cricinfo/HowStat
   jobs.push({

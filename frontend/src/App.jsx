@@ -1,38 +1,68 @@
-// src/App.jsx
-// Root component. Simple two-column layout:
-//   Left: ResearchForm (input panel)
-//   Right: ResearchDisplay (output panel)
-
-import ResearchForm from './components/ResearchForm/ResearchForm';
-import ResearchDisplay from './components/ResearchDisplay/ResearchDisplay';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import LandingView from './views/LandingView';
+import EngineHubView from './views/EngineHubView';
+import ResearchWorkspaceView from './views/ResearchWorkspaceView';
+import ScriptWorkspaceView from './views/ScriptWorkspaceView';
 
 export default function App() {
+  // Navigation State: 'landing' | 'hub' | 'research' | 'script'
+  const [currentView, setCurrentView] = useState('landing');
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#030712] text-white selection:bg-emerald-500/20 selection:text-emerald-300">
+      <AnimatePresence mode="wait">
+        {currentView === 'landing' && (
+          <motion.div
+            key="landing"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <LandingView onContinue={() => setCurrentView('hub')} />
+          </motion.div>
+        )}
 
-      {/* ── Top Navigation Bar ── */}
-      <header className="border-b border-slate-800 px-8 py-4 flex items-center gap-3">
-        <span className="text-2xl">🏏</span>
-        <div>
-          <h1 className="text-white font-bold text-lg leading-none">CricScript AI</h1>
-          <p className="text-slate-500 text-xs">Agentic Cricket Research & Scriptwriting Studio</p>
-        </div>
-      </header>
+        {currentView === 'hub' && (
+          <motion.div
+            key="hub"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <EngineHubView
+              onBack={() => setCurrentView('landing')}
+              onSelectEngine={(engineKey) => setCurrentView(engineKey)}
+            />
+          </motion.div>
+        )}
 
-      {/* ── Main Layout ── */}
-      <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8">
+        {currentView === 'research' && (
+          <motion.div
+            key="research"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ResearchWorkspaceView onBack={() => setCurrentView('hub')} />
+          </motion.div>
+        )}
 
-        {/* Left panel: always visible input form */}
-        <aside className="lg:sticky lg:top-8 lg:self-start">
-          <ResearchForm />
-        </aside>
-
-        {/* Right panel: research output viewer */}
-        <section>
-          <ResearchDisplay />
-        </section>
-
-      </main>
+        {currentView === 'script' && (
+          <motion.div
+            key="script"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ScriptWorkspaceView onBack={() => setCurrentView('hub')} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
