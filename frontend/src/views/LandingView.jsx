@@ -223,7 +223,7 @@ export default function LandingView({ onContinue }) {
               <img
                 src="/images/cricket/smith-aura.jpg"
                 alt="Steve Smith Ashes Solitary Concentration"
-                className="absolute inset-0 w-full h-full object-cover object-[50%_15%] opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+                className="absolute inset-0 w-full h-full object-cover object-[50%_15%] opacity-60 group-hover:opacity-85 group-hover:scale-105 transition-all duration-500 brightness-135 contrast-110 saturate-95"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
               <div className="relative z-10">

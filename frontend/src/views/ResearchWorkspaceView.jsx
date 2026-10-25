@@ -359,7 +359,7 @@ export default function ResearchWorkspaceView({ onBack }) {
                     <img
                       src={p.image}
                       alt={p.label}
-                      className="w-full h-full object-cover object-[50%_15%] opacity-30 group-hover:opacity-60 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+                      className="w-full h-full object-cover object-[50%_15%] opacity-35 group-hover:opacity-65 group-hover:scale-105 transition-all duration-500 brightness-125 contrast-115 saturate-95"
                     />
                     <div
                       className="absolute inset-0"

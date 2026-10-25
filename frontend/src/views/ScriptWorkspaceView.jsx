@@ -230,7 +230,7 @@ export default function ScriptWorkspaceView({ onBack }) {
                   <img
                     src="/images/cricket/smith-aura.jpg"
                     alt="FLUX.1 Scene 01 Storyboard Frame"
-                    className="w-full h-full object-cover object-[50%_15%] contrast-125 saturate-90 group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover object-[50%_15%] brightness-135 contrast-110 saturate-95 group-hover:scale-105 transition-transform duration-500"
                   />
                   {/* Subtle viewfinder crosshair overlay */}
                   <div className="absolute inset-2 border border-white/20 pointer-events-none flex items-center justify-center">

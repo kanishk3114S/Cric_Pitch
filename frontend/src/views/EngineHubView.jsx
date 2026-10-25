@@ -143,14 +143,14 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
               <img
                 src="/images/cricket/smith-aura.jpg"
                 alt="Steve Smith Aura & Intensity"
-                className="w-full h-full object-cover object-[50%_15%] opacity-35 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700 contrast-125 saturate-95"
+                className="w-full h-full object-cover object-[50%_15%] opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700 brightness-140 contrast-115 saturate-95"
               />
               {/* Matte Gradients: Feathering from left, top, and bottom into #090d16 */}
               <div
                 className="absolute inset-0"
                 style={{
                   background:
-                    'linear-gradient(to right, #090d16 15%, rgba(9,13,22,0.8) 50%, rgba(9,13,22,0.2) 100%)',
+                    'linear-gradient(to right, #090d16 15%, rgba(9,13,22,0.75) 50%, rgba(9,13,22,0.15) 100%)',
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/60" />
