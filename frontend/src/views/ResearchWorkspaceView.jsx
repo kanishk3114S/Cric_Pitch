@@ -98,31 +98,35 @@ function ImageCard({ image, index }) {
   );
 }
 
-// Preset famous cricket turning points for instant 1-click test
+// Preset famous cricket turning points with authentic match imagery
 const PRESETS = [
   {
     label: '2019 WC Final: Stokes Overthrow',
     topic: 'The 2019 World Cup Final: Ben Stokes & The Overthrow Incident',
     points: `Simon Taufel explanation of MCC Law 19.8\nDeflection physics off Stokes bat diving into the crease\nMartin Guptill body language from deep mid-wicket\nBoult bowling under intense final over pressure`,
     length: 500,
+    image: '/images/cricket/stokes-headingley.jpg',
   },
   {
     label: 'MCG 2022: Kohli 82* vs Pak',
     topic: 'Virat Kohli 82* vs Pakistan MCG 2022 T20 World Cup',
     points: `Two consecutive sixes against Haris Rauf in the 19th over\nMohammad Nawaz final over psychological pressure & no-ball\nKohli pre-tournament form and media criticism\n90,000 MCG stadium crowd noise factor`,
     length: 550,
+    image: '/images/cricket/kohli-roar.jpg',
   },
   {
     label: 'Gabba 2021: Rishabh Pant 89*',
     topic: 'India Historic 328 Chase at Gabba 2021: Rishabh Pant',
     points: `Breaching Australia 32-year fortress at Brisbane\nPant audacious strokes against Pat Cummins and Nathan Lyon\nCheteshwar Pujara absorbing body blows from short-pitch bowling\nAjinkya Rahane calm tactical leadership`,
     length: 500,
+    image: '/images/cricket/stadium-modi.jpg',
   },
   {
     label: 'Headingley 2019: Stokes & Leach',
     topic: 'Ben Stokes 135* & Jack Leach Headingley Ashes 2019',
     points: `Jack Leach cleaning his glasses between balls\n76-run last-wicket miraculous partnership\nNathan Lyon missed run-out chance and Australian DRS review\nAtmosphere at Leeds as Stokes reverse-swept Nathan Lyon`,
     length: 500,
+    image: '/images/cricket/stokes-headingley.jpg',
   },
 ];
 
@@ -332,16 +336,36 @@ export default function ResearchWorkspaceView({ onBack }) {
             <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               <Zap className="w-3.5 h-3.5 text-amber-400" /> Instant Match Inspiration
             </div>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-2 gap-2">
               {PRESETS.map((p, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => loadPreset(p)}
-                  className="text-left p-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 border border-white/5 hover:border-emerald-500/30 text-[11px] font-medium text-slate-300 hover:text-white transition-all truncate cursor-pointer"
+                  className="relative overflow-hidden text-left p-2.5 rounded-xl bg-[#090d16] hover:bg-slate-900 border border-white/10 hover:border-emerald-500/40 text-[11px] font-medium text-slate-200 hover:text-white transition-all cursor-pointer group shadow-md"
                   title={p.topic}
                 >
-                  ⚡ {p.label}
+                  {/* Subtle Background Match Slice with Matte Mask */}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <img
+                      src={p.image}
+                      alt={p.label}
+                      className="w-full h-full object-cover object-[50%_15%] opacity-20 group-hover:opacity-45 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-75"
+                    />
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'linear-gradient(to right, rgba(9,13,22,0.92) 20%, rgba(9,13,22,0.65) 100%)',
+                      }}
+                    />
+                  </div>
+                  <div className="relative z-10 flex items-center gap-1.5 truncate">
+                    <span className="text-amber-400 font-bold shrink-0">⚡</span>
+                    <span className="truncate font-semibold text-white/90 group-hover:text-white">
+                      {p.label}
+                    </span>
+                  </div>
                 </button>
               ))}
             </div>
@@ -459,11 +483,11 @@ export default function ResearchWorkspaceView({ onBack }) {
                 </button>
               </div>
 
-              {/* Run Agent Button */}
+              {/* Run Agent Button (Solid Authoritative Cricket Turf Emerald) */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-black font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+                className="w-full py-4 rounded-xl bg-[#10b981] hover:bg-[#059669] disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-black font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
               >
                 {isLoading ? (
                   <>
@@ -493,12 +517,28 @@ export default function ResearchWorkspaceView({ onBack }) {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
-                className="cricket-card rounded-2xl p-8 border border-emerald-500/30 space-y-6 bg-gradient-to-b from-slate-900/90 to-slate-950 relative overflow-hidden"
+                className="relative rounded-2xl p-8 border border-emerald-500/40 space-y-6 bg-[#090d16] overflow-hidden shadow-2xl"
               >
-                {/* Ambient glow sweep */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent animate-pulse" />
+                {/* Background Stadium Image Feathered via Radial Mask */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  <img
+                    src="/images/cricket/stadium-mcg.jpg"
+                    alt="Radar Backdrop"
+                    className="w-full h-full object-cover object-center opacity-15 contrast-125"
+                    style={{
+                      maskImage:
+                        'radial-gradient(ellipse at center, rgba(0,0,0,0.9) 20%, transparent 75%)',
+                      WebkitMaskImage:
+                        'radial-gradient(ellipse at center, rgba(0,0,0,0.9) 20%, transparent 75%)',
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/70" />
+                </div>
 
-                <div className="flex items-center justify-between pb-4 border-b border-white/5">
+                {/* Ambient top structural line */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-500/40" />
+
+                <div className="relative z-10 flex items-center justify-between pb-4 border-b border-white/10">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
                       <Activity className="w-5 h-5 text-emerald-400 animate-spin" />
@@ -518,7 +558,7 @@ export default function ResearchWorkspaceView({ onBack }) {
                 </div>
 
                 {/* Step Pipeline */}
-                <div className="space-y-3">
+                <div className="relative z-10 space-y-3">
                   {agentSteps.map((step, idx) => {
                     const isDone = loadingStep > idx;
                     const isCurrent = loadingStep === idx;
@@ -531,14 +571,14 @@ export default function ResearchWorkspaceView({ onBack }) {
                           isCurrent
                             ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
                             : isDone
-                            ? 'bg-slate-900/40 border-white/5 text-slate-300'
+                            ? 'bg-slate-900/60 border-white/10 text-slate-300'
                             : 'bg-transparent border-transparent text-slate-500'
                         }`}
                       >
                         <div
                           className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
                             isDone
-                              ? 'bg-emerald-500 text-black'
+                              ? 'bg-[#10b981] text-black'
                               : isCurrent
                               ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-400 animate-pulse'
                               : 'bg-slate-800 text-slate-600'
@@ -563,24 +603,40 @@ export default function ResearchWorkspaceView({ onBack }) {
 
           {/* Error State */}
           {error && !isLoading && (
-            <div className="bg-rose-950/40 border border-rose-500/40 rounded-2xl p-6 text-rose-300 text-xs">
+            <div className="bg-rose-950/40 border border-rose-500/40 rounded-2xl p-6 text-rose-300 text-xs shadow-xl">
               <p className="font-bold uppercase tracking-wider text-sm mb-1">Execution Error</p>
               <p>{error}</p>
             </div>
           )}
 
-          {/* Empty State */}
+          {/* Empty State with Atmospheric Stadium Backdrop Feathered via Radial Mask */}
           {!dossier && !isLoading && !error && (
-            <div className="cricket-card rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[400px] space-y-3">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-3xl">
+            <div className="relative rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[440px] space-y-4 border border-white/10 bg-[#090d16] overflow-hidden shadow-2xl">
+              {/* Subtle atmospheric stadium background with radial feathering */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <img
+                  src="/images/cricket/stadium-mcg.jpg"
+                  alt="Stadium Atmosphere"
+                  className="w-full h-full object-cover object-center opacity-20 contrast-125 saturate-75"
+                  style={{
+                    maskImage:
+                      'radial-gradient(ellipse at center, rgba(0,0,0,0.85) 15%, transparent 70%)',
+                    WebkitMaskImage:
+                      'radial-gradient(ellipse at center, rgba(0,0,0,0.85) 15%, transparent 70%)',
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/75" />
+              </div>
+
+              <div className="relative z-10 w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-3xl shadow-lg shadow-emerald-500/10">
                 🏏
               </div>
-              <h3 className="text-2xl font-cricket-title tracking-wide text-white uppercase">
+              <h3 className="relative z-10 text-3xl font-cricket-title tracking-wide text-white uppercase">
                 RESEARCH DOSSIER CANVAS
               </h3>
-              <p className="text-slate-400 text-xs max-w-md leading-relaxed">
+              <p className="relative z-10 text-slate-300 text-xs max-w-md leading-relaxed">
                 Enter your topic and directorial brief on the left (or pick a 1-click preset), then click{' '}
-                <strong className="text-emerald-400">RUN RESEARCH AGENT</strong>.
+                <strong className="text-emerald-400 font-bold">RUN RESEARCH AGENT</strong>.
                 The compiled match chronology, quotes, tactics, and statistics will appear here.
               </p>
             </div>
@@ -596,9 +652,26 @@ export default function ResearchWorkspaceView({ onBack }) {
               className="space-y-6"
             >
               
-              {/* Dossier Header Banner */}
-              <div className="cricket-card rounded-2xl p-6 md:p-8 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 to-slate-950">
-                <div>
+              {/* Dossier Header Banner with Horizontal Stadium Crop */}
+              <div className="relative rounded-2xl p-6 md:p-8 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-[#090d16] overflow-hidden shadow-2xl">
+                {/* Horizontal atmospheric crop with directional matte mask */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  <img
+                    src="/images/cricket/stadium-mcg.jpg"
+                    alt="Stadium Match Lighting"
+                    className="w-full h-full object-cover object-[50%_25%] opacity-25 contrast-125 saturate-75"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'linear-gradient(to right, #090d16 40%, rgba(9,13,22,0.8) 70%, rgba(9,13,22,0.3) 100%)',
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-transparent" />
+                </div>
+
+                <div className="relative z-10">
                   <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400 uppercase tracking-wider font-semibold mb-1">
                     <span className="w-2 h-2 rounded-full bg-emerald-400" />
                     Verified Research Dossier
@@ -623,7 +696,7 @@ export default function ResearchWorkspaceView({ onBack }) {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+                <div className="relative z-10 flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
                   <button
                     onClick={handleCopyMarkdown}
                     className="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
@@ -635,7 +708,7 @@ export default function ResearchWorkspaceView({ onBack }) {
 
                   <button
                     onClick={handleDownloadPDF}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl bg-[#10b981] hover:bg-[#059669] text-black font-extrabold text-xs tracking-wider uppercase transition-all flex items-center gap-2 shadow-xl shadow-emerald-500/20 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
                   >
                     <Download className="w-4 h-4 text-black" />
                     <span>Download PDF</span>

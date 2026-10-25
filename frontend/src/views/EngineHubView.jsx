@@ -3,36 +3,52 @@ import { ArrowLeft, ArrowRight, Search, FileText, CheckCircle2, Zap, Sparkles } 
 
 export default function EngineHubView({ onBack, onSelectEngine }) {
   return (
-    <div className="min-h-screen bg-[#030712] text-white flex flex-col justify-between p-6 md:p-12">
+    <div className="relative min-h-screen bg-[#030712] text-white flex flex-col justify-between p-6 md:p-12 overflow-hidden">
       
+      {/* ── Background: Subdued Stadium Night Backdrop with Vignette ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <img
+          src="/images/cricket/stadium-modi.jpg"
+          alt="Night Stadium Backdrop"
+          className="w-full h-full object-cover object-center opacity-10 contrast-125 saturate-50"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(ellipse at center, transparent 20%, #030712 75%)',
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/80 to-[#030712]/60" />
+      </div>
+
       {/* ── Top Navigation Bar ── */}
-      <div className="max-w-6xl mx-auto w-full flex items-center justify-between pb-8 border-b border-white/5">
+      <div className="relative z-10 max-w-6xl mx-auto w-full flex items-center justify-between pb-8 border-b border-white/10">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer group"
+          className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer group px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           <span>BACK TO HOME</span>
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-white/10">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-            Engine Hub • Stateless Studio
+          <span className="text-xs font-mono text-slate-300 uppercase tracking-wider">
+            Engine Hub • Control Room
           </span>
         </div>
       </div>
 
       {/* ── Center Header ── */}
-      <div className="max-w-5xl mx-auto w-full my-auto py-10">
+      <div className="relative z-10 max-w-5xl mx-auto w-full my-auto py-10">
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-          <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+          <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 rounded-full font-mono">
             Autonomous Creator Pipeline
           </span>
           <h2 className="text-4xl md:text-6xl font-cricket-title tracking-wide text-white uppercase mt-4">
             CHOOSE YOUR PRODUCTION ENGINE
           </h2>
-          <p className="text-slate-400 text-sm md:text-base mt-2">
+          <p className="text-slate-400 text-sm md:text-base mt-2 leading-relaxed">
             Select a specialized module. Research ground facts first, or generate cadence-matched video scripts.
           </p>
         </div>
@@ -44,12 +60,27 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
           <motion.div
             whileHover={{ y: -6 }}
             onClick={() => onSelectEngine('research')}
-            className="cricket-card cricket-card-glow rounded-3xl p-8 md:p-10 border border-emerald-500/30 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all bg-gradient-to-b from-slate-900/90 via-slate-900/60 to-slate-950"
+            className="rounded-3xl p-8 md:p-10 border border-white/10 hover:border-emerald-500/50 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all bg-[#090d16] shadow-2xl shadow-black/80"
           >
-            {/* Emerald ambient glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-emerald-500/15 transition-all" />
+            {/* Embedded Action Match Moment: Kohli Roar with Directional Matte Mask */}
+            <div className="absolute top-0 right-0 w-3/4 h-full pointer-events-none overflow-hidden">
+              <img
+                src="/images/cricket/kohli-roar.jpg"
+                alt="Virat Kohli Match Intensity"
+                className="w-full h-full object-cover object-[55%_12%] opacity-25 group-hover:opacity-45 group-hover:scale-105 transition-all duration-700 contrast-125 saturate-90"
+              />
+              {/* Matte Gradients: Feathering from left, top, and bottom into #090d16 */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to right, #090d16 20%, rgba(9,13,22,0.85) 55%, rgba(9,13,22,0.3) 100%)',
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/60" />
+            </div>
 
-            <div>
+            <div className="relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
                   <Search className="w-7 h-7" />
@@ -59,11 +90,11 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
                 </span>
               </div>
 
-              <h3 className="text-3xl font-cricket-title tracking-wide text-white uppercase">
+              <h3 className="text-3xl font-cricket-title tracking-wide text-white uppercase group-hover:text-emerald-300 transition-colors">
                 CRICKET RESEARCH AGENT
               </h3>
 
-              <p className="text-slate-300 text-sm leading-relaxed mt-3">
+              <p className="text-slate-300 text-sm leading-relaxed mt-3 max-w-sm">
                 Autonomous investigative agent. Runs multi-hop web searches across scorecards, pitch dynamics,
                 and press conferences to compile verified chronologies, tactical nuances, and stats.
               </p>
@@ -90,11 +121,11 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
             </div>
 
             {/* Bottom CTA Button */}
-            <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
+            <div className="relative z-10 mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
               <span className="text-emerald-400 text-xs font-bold tracking-wider uppercase group-hover:text-emerald-300">
                 Launch Research Workspace
               </span>
-              <div className="w-10 h-10 rounded-full bg-emerald-500 text-black flex items-center justify-center group-hover:translate-x-1 transition-transform">
+              <div className="w-10 h-10 rounded-full bg-[#10b981] text-black flex items-center justify-center group-hover:translate-x-1.5 transition-transform shadow-lg shadow-emerald-500/20">
                 <ArrowRight className="w-5 h-5 font-bold" />
               </div>
             </div>
@@ -105,12 +136,27 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
           <motion.div
             whileHover={{ y: -6 }}
             onClick={() => onSelectEngine('script')}
-            className="cricket-card cricket-card-glow rounded-3xl p-8 md:p-10 border border-amber-500/20 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all bg-gradient-to-b from-slate-900/90 via-slate-900/60 to-slate-950"
+            className="rounded-3xl p-8 md:p-10 border border-white/10 hover:border-amber-500/50 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all bg-[#090d16] shadow-2xl shadow-black/80"
           >
-            {/* Amber ambient glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-amber-500/15 transition-all" />
+            {/* Embedded Action Match Moment: Steve Smith Aura with Directional Matte Mask */}
+            <div className="absolute top-0 right-0 w-3/4 h-full pointer-events-none overflow-hidden">
+              <img
+                src="/images/cricket/smith-aura.jpg"
+                alt="Steve Smith Aura & Intensity"
+                className="w-full h-full object-cover object-[50%_15%] opacity-25 group-hover:opacity-45 group-hover:scale-105 transition-all duration-700 contrast-125 saturate-90"
+              />
+              {/* Matte Gradients: Feathering from left, top, and bottom into #090d16 */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to right, #090d16 20%, rgba(9,13,22,0.85) 55%, rgba(9,13,22,0.3) 100%)',
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/60" />
+            </div>
 
-            <div>
+            <div className="relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
                   <FileText className="w-7 h-7" />
@@ -120,11 +166,11 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
                 </span>
               </div>
 
-              <h3 className="text-3xl font-cricket-title tracking-wide text-white uppercase">
+              <h3 className="text-3xl font-cricket-title tracking-wide text-white uppercase group-hover:text-amber-300 transition-colors">
                 CADENCE-RAG SCRIPTWRITER
               </h3>
 
-              <p className="text-slate-300 text-sm leading-relaxed mt-3">
+              <p className="text-slate-300 text-sm leading-relaxed mt-3 max-w-sm">
                 Transfers the acoustic cadence, dramatic pauses, and sentence rhythm of your past reference scripts.
                 Generates scene-by-scene voiceover copy with FLUX.1 cinematic camera cues.
               </p>
@@ -151,11 +197,11 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
             </div>
 
             {/* Bottom CTA Button */}
-            <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
+            <div className="relative z-10 mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
               <span className="text-amber-400 text-xs font-bold tracking-wider uppercase group-hover:text-amber-300">
                 Open Script Studio
               </span>
-              <div className="w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center group-hover:translate-x-1 transition-transform">
+              <div className="w-10 h-10 rounded-full bg-[#f59e0b] text-black flex items-center justify-center group-hover:translate-x-1.5 transition-transform shadow-lg shadow-amber-500/20">
                 <ArrowRight className="w-5 h-5 font-bold" />
               </div>
             </div>

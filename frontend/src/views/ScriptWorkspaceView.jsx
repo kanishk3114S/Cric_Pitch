@@ -166,8 +166,26 @@ export default function ScriptWorkspaceView({ onBack }) {
 
         {/* ── RIGHT: STORYBOARD & SCRIPT TELEPROMPTER PREVIEW ── */}
         <section className="space-y-6">
-          <div className="cricket-card rounded-2xl p-8 border border-white/10 space-y-5">
-            <div className="flex items-center justify-between pb-4 border-b border-white/5">
+          <div className="relative rounded-2xl p-8 border border-white/10 space-y-5 bg-[#090d16] overflow-hidden shadow-2xl">
+            
+            {/* Dramatic Stadium / Intense Match Backdrop with Directional Matte Mask */}
+            <div className="absolute top-0 right-0 w-2/3 h-80 pointer-events-none overflow-hidden">
+              <img
+                src="/images/cricket/stadium-modi.jpg"
+                alt="Broadcast Lighting"
+                className="w-full h-full object-cover object-[50%_20%] opacity-20 contrast-125 saturate-75"
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to right, #090d16 15%, rgba(9,13,22,0.85) 60%, rgba(9,13,22,0.3) 100%)',
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-transparent" />
+            </div>
+
+            <div className="relative z-10 flex items-center justify-between pb-4 border-b border-white/10">
               <div>
                 <span className="text-amber-400 text-[11px] font-mono uppercase tracking-wider font-semibold">
                   Teleprompter & FLUX.1 Storyboard Canvas
@@ -182,20 +200,20 @@ export default function ScriptWorkspaceView({ onBack }) {
             </div>
 
             {/* Teleprompter Sample Demonstration */}
-            <div className="bg-slate-900/90 rounded-2xl p-6 border border-white/5 space-y-4">
+            <div className="relative z-10 bg-slate-950/80 rounded-2xl p-6 border border-white/10 space-y-4 shadow-xl">
               <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
                 <span>SCENE 01 • COLD OPEN HOOK</span>
                 <span className="text-amber-400">Pacing: 130 WPM • Whisper Delivery</span>
               </div>
 
               {/* Voiceover line with highlighted [pause] tag */}
-              <div className="font-mono text-sm sm:text-base leading-relaxed text-slate-200 bg-black/40 p-4 rounded-xl border border-white/5">
+              <div className="font-mono text-sm sm:text-base leading-relaxed text-slate-200 bg-black/60 p-5 rounded-xl border border-white/5">
                 <p>Lord's Cricket Ground.</p>
                 <p>July 14, 2019.</p>
                 <p>Twenty-four thousand people inside the stadium...</p>
                 <p>and not a single person breathing.</p>
-                <p className="my-2">
-                  <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded text-xs font-bold">
+                <p className="my-2.5">
+                  <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded text-xs font-bold">
                     [pause — hold silence for 1.8s]
                   </span>
                 </p>
@@ -205,7 +223,7 @@ export default function ScriptWorkspaceView({ onBack }) {
                 <p>It was psychological war.</p>
               </div>
 
-              <div className="bg-slate-950/60 p-4 rounded-xl border border-white/5 flex items-start gap-4 text-xs">
+              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/5 flex items-start gap-4 text-xs">
                 <Film className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-slate-200">Visual Cue & FLUX.1 Prompt:</p>
@@ -216,7 +234,7 @@ export default function ScriptWorkspaceView({ onBack }) {
               </div>
             </div>
 
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-xs text-amber-200 leading-relaxed">
+            <div className="relative z-10 bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-xs text-amber-200 leading-relaxed">
               💡 <strong>Architecture Note:</strong> In Engine 2, the style chunker segments your past reference scripts, generates 768-dim embeddings via Ollama or Gemini, and indexes them in Pinecone. The cloud LLM then separates the <em>"What"</em> (facts from Engine 1 or your own PDF) from the <em>"How"</em> (your sentence rhythms and pause tags).
             </div>
 
