@@ -1,4 +1,4 @@
-import { Globe, Sparkles, Activity } from 'lucide-react';
+import { Sparkles, Activity } from 'lucide-react';
 
 export default function Navbar({ onLaunchStudio }) {
   return (

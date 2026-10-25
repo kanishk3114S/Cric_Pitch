@@ -1,6 +1,5 @@
 import ResearchForm from './ResearchForm/ResearchForm';
 import ResearchDisplay from './ResearchDisplay/ResearchDisplay';
-import { motion } from 'framer-motion';
 
 export default function ResearchStudioSection({ searchTopic }) {
   return (

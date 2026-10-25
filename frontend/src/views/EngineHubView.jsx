@@ -132,18 +132,16 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
           </motion.div>
 
 
-          {/* ── CONTAINER 2: SCRIPT ENGINE ── */}
-          <motion.div
-            whileHover={{ y: -6 }}
-            onClick={() => onSelectEngine('script')}
-            className="rounded-3xl p-8 md:p-10 border border-white/10 hover:border-amber-500/50 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all bg-[#090d16] shadow-2xl shadow-black/80"
+          {/* ── CONTAINER 2: SCRIPT ENGINE (COMING SOON IN MILESTONE 3) ── */}
+          <div
+            className="rounded-3xl p-8 md:p-10 border border-white/10 flex flex-col justify-between relative overflow-hidden bg-[#090d16] shadow-2xl shadow-black/80 group"
           >
             {/* Embedded Action Match Moment: Steve Smith Aura with Directional Matte Mask */}
             <div className="absolute top-0 right-0 w-3/4 h-full pointer-events-none overflow-hidden">
               <img
                 src="/images/cricket/smith-aura.jpg"
                 alt="Steve Smith Aura & Intensity"
-                className="w-full h-full object-cover object-[50%_15%] opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700 brightness-140 contrast-115 saturate-95"
+                className="w-full h-full object-cover object-[50%_15%] opacity-40 group-hover:opacity-60 transition-all duration-700 brightness-140 contrast-115 saturate-95"
               />
               {/* Matte Gradients: Feathering from left, top, and bottom into #090d16 */}
               <div
@@ -162,11 +160,11 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
                   <FileText className="w-7 h-7" />
                 </div>
                 <span className="px-3 py-1 rounded-full text-[11px] font-bold font-mono tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30 uppercase">
-                  Engine 02 • Cadence Studio
+                  Engine 02 • Coming Soon
                 </span>
               </div>
 
-              <h3 className="text-3xl font-cricket-title tracking-wide text-white uppercase group-hover:text-amber-300 transition-colors">
+              <h3 className="text-3xl font-cricket-title tracking-wide text-white uppercase">
                 CADENCE-RAG SCRIPTWRITER
               </h3>
 
@@ -176,36 +174,37 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
               </p>
 
               {/* Bullet Points */}
-              <div className="mt-6 space-y-2.5 text-xs text-slate-300">
+              <div className="mt-6 space-y-2.5 text-xs text-slate-400">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-amber-400/80 shrink-0" />
                   <span>Pinecone Serverless cadence style vault</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-amber-400/80 shrink-0" />
                   <span>Enforces dramatic [pause] & breath markers</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-amber-400/80 shrink-0" />
                   <span>Accepts Engine 1 dossier OR user's own PDF</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-amber-400/80 shrink-0" />
                   <span>FLUX.1 image prompts + Cloudinary storyboards</span>
                 </div>
               </div>
             </div>
 
-            {/* Bottom CTA Button */}
+            {/* Bottom Status (Locked / Building in Milestone 3 - Clicking opens nothing) */}
             <div className="relative z-10 mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-              <span className="text-amber-400 text-xs font-bold tracking-wider uppercase group-hover:text-amber-300">
-                Open Script Studio
+              <span className="text-slate-400 text-xs font-mono uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-400/60" />
+                Under Development • Milestone 3
               </span>
-              <div className="w-10 h-10 rounded-full bg-[#f59e0b] text-black flex items-center justify-center group-hover:translate-x-1.5 transition-transform shadow-lg shadow-amber-500/20">
-                <ArrowRight className="w-5 h-5 font-bold" />
-              </div>
+              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-mono uppercase font-semibold">
+                Building Later
+              </span>
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </div>
