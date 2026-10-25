@@ -223,12 +223,33 @@ export default function ScriptWorkspaceView({ onBack }) {
                 <p>It was psychological war.</p>
               </div>
 
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/5 flex items-start gap-4 text-xs">
-                <Film className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-bold text-slate-200">Visual Cue & FLUX.1 Prompt:</p>
-                  <p className="text-slate-400 mt-0.5">
-                    "Cinematic 35mm low-angle shot of Lord's pavilion under heavy London overcast sky, crowd blurred in shallow depth of field, focus on bowler's bowling crease."
+              {/* Storyboard Visual Frame & Production Cue */}
+              <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-4 bg-slate-900/90 p-4 rounded-xl border border-white/10 items-center">
+                {/* Visual Frame Render (Steve Smith Solitary Aura under 35mm lighting) */}
+                <div className="relative aspect-video rounded-lg overflow-hidden border border-white/20 bg-black group">
+                  <img
+                    src="/images/cricket/smith-aura.jpg"
+                    alt="FLUX.1 Scene 01 Storyboard Frame"
+                    className="w-full h-full object-cover object-[50%_15%] contrast-125 saturate-90 group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {/* Subtle viewfinder crosshair overlay */}
+                  <div className="absolute inset-2 border border-white/20 pointer-events-none flex items-center justify-center">
+                    <span className="w-2 h-2 rounded-full border border-white/40" />
+                  </div>
+                  <div className="absolute bottom-1.5 left-2 bg-black/80 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold text-amber-400">
+                    FLUX.1 • FRAME 01
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex items-center gap-2">
+                    <Film className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">
+                      Director Visual Cue & Shot Specification
+                    </span>
+                  </div>
+                  <p className="text-slate-300 leading-relaxed font-mono text-[11px] bg-black/40 p-2.5 rounded-lg border border-white/5">
+                    "35mm anamorphic low-angle shot of batsman standing solitary on the crease, looking skyward under heavy floodlights, pitch dust suspended in shallow depth of field, 24fps documentary grade."
                   </p>
                 </div>
               </div>

@@ -101,9 +101,9 @@ function ImageCard({ image, index }) {
 // Preset famous cricket turning points with authentic match imagery
 const PRESETS = [
   {
-    label: '2019 WC Final: Stokes Overthrow',
-    topic: 'The 2019 World Cup Final: Ben Stokes & The Overthrow Incident',
-    points: `Simon Taufel explanation of MCC Law 19.8\nDeflection physics off Stokes bat diving into the crease\nMartin Guptill body language from deep mid-wicket\nBoult bowling under intense final over pressure`,
+    label: 'Headingley 2019: Stokes 135*',
+    topic: 'Ben Stokes 135* & Jack Leach Headingley Ashes 2019',
+    points: `Jack Leach cleaning his glasses between balls\n76-run last-wicket miraculous partnership\nNathan Lyon missed run-out chance and Australian DRS review\nAtmosphere at Leeds as Stokes reverse-swept Nathan Lyon`,
     length: 500,
     image: '/images/cricket/stokes-headingley.jpg',
   },
@@ -115,18 +115,25 @@ const PRESETS = [
     image: '/images/cricket/kohli-roar.jpg',
   },
   {
-    label: 'Gabba 2021: Rishabh Pant 89*',
-    topic: 'India Historic 328 Chase at Gabba 2021: Rishabh Pant',
-    points: `Breaching Australia 32-year fortress at Brisbane\nPant audacious strokes against Pat Cummins and Nathan Lyon\nCheteshwar Pujara absorbing body blows from short-pitch bowling\nAjinkya Rahane calm tactical leadership`,
+    label: 'Motera 2011: Yuvraj WC QF',
+    topic: 'Yuvraj Singh 57* vs Australia 2011 World Cup Quarter Final Motera',
+    points: `Ending Australia 12-year unbeaten World Cup streak\nYuvraj emotional celebration on knees screaming with joy\nPartnership with Suresh Raina in tense 261 chase\nBrett Lee bowling fast spells under extreme heat`,
     length: 500,
-    image: '/images/cricket/stadium-modi.jpg',
+    image: '/images/cricket/yuvraj-six.jpg',
   },
   {
-    label: 'Headingley 2019: Stokes & Leach',
-    topic: 'Ben Stokes 135* & Jack Leach Headingley Ashes 2019',
-    points: `Jack Leach cleaning his glasses between balls\n76-run last-wicket miraculous partnership\nNathan Lyon missed run-out chance and Australian DRS review\nAtmosphere at Leeds as Stokes reverse-swept Nathan Lyon`,
+    label: 'Sharjah 1998: Sachin Desert Storm',
+    topic: 'Sachin Tendulkar 143 vs Australia Sharjah Desert Storm 1998',
+    points: `Sandstorm interruption altering target and qualification run-rate\nSachin brutal assault on Shane Warne around the wicket\nTony Greig iconic television commentary enthusiasm\nQualifying India for the Coca-Cola Cup final single-handedly`,
     length: 500,
-    image: '/images/cricket/stokes-headingley.jpg',
+    image: '/images/cricket/sachin-legend.jpg',
+  },
+  {
+    label: 'Edgbaston 2019: Smith Twin Tons',
+    topic: 'Steve Smith 144 & 142 Edgbaston Ashes 2019 Redemption',
+    points: `Hostile English crowd sand-paper jeers and boos\nRescuing Australia from 122/8 in first innings\nUnorthodox batting leaves and leaving outside off-stump\nExhausting Stuart Broad and James Anderson in swinging conditions`,
+    length: 500,
+    image: '/images/cricket/smith-aura.jpg',
   },
 ];
 
@@ -342,7 +349,9 @@ export default function ResearchWorkspaceView({ onBack }) {
                   key={i}
                   type="button"
                   onClick={() => loadPreset(p)}
-                  className="relative overflow-hidden text-left p-2.5 rounded-xl bg-[#090d16] hover:bg-slate-900 border border-white/10 hover:border-emerald-500/40 text-[11px] font-medium text-slate-200 hover:text-white transition-all cursor-pointer group shadow-md"
+                  className={`relative overflow-hidden text-left p-2.5 rounded-xl bg-[#090d16] hover:bg-slate-900 border border-white/10 hover:border-emerald-500/40 text-[11px] font-medium text-slate-200 hover:text-white transition-all cursor-pointer group shadow-md ${
+                    i === PRESETS.length - 1 ? 'col-span-2' : ''
+                  }`}
                   title={p.topic}
                 >
                   {/* Subtle Background Match Slice with Matte Mask */}
@@ -350,7 +359,7 @@ export default function ResearchWorkspaceView({ onBack }) {
                     <img
                       src={p.image}
                       alt={p.label}
-                      className="w-full h-full object-cover object-[50%_15%] opacity-20 group-hover:opacity-45 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-75"
+                      className="w-full h-full object-cover object-[50%_15%] opacity-30 group-hover:opacity-60 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
                     />
                     <div
                       className="absolute inset-0"
@@ -609,15 +618,15 @@ export default function ResearchWorkspaceView({ onBack }) {
             </div>
           )}
 
-          {/* Empty State with Atmospheric Stadium Backdrop Feathered via Radial Mask */}
+          {/* Empty State: Curated Legendary Case Studies Launchpad */}
           {!dossier && !isLoading && !error && (
-            <div className="relative rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[440px] space-y-4 border border-white/10 bg-[#090d16] overflow-hidden shadow-2xl">
+            <div className="relative rounded-2xl p-6 md:p-8 border border-white/10 bg-[#090d16] overflow-hidden shadow-2xl space-y-6">
               {/* Subtle atmospheric stadium background with radial feathering */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
                   src="/images/cricket/stadium-mcg.jpg"
                   alt="Stadium Atmosphere"
-                  className="w-full h-full object-cover object-center opacity-20 contrast-125 saturate-75"
+                  className="w-full h-full object-cover object-center opacity-15 contrast-125 saturate-75"
                   style={{
                     maskImage:
                       'radial-gradient(ellipse at center, rgba(0,0,0,0.85) 15%, transparent 70%)',
@@ -625,20 +634,155 @@ export default function ResearchWorkspaceView({ onBack }) {
                       'radial-gradient(ellipse at center, rgba(0,0,0,0.85) 15%, transparent 70%)',
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/75" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/80" />
               </div>
 
-              <div className="relative z-10 w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-3xl shadow-lg shadow-emerald-500/10">
-                🏏
+              {/* Canvas Header */}
+              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-white/10">
+                <div>
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400 uppercase tracking-wider font-semibold mb-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    Autonomous Research Canvas Ready
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-cricket-title tracking-wide text-white uppercase">
+                    FEATURED ARCHIVES FOR INVESTIGATION
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">
+                    Click any legendary match card below to populate the brief, or type your own topic on the left.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[11px] font-mono text-slate-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
+                    Multi-Hop Vector Search
+                  </span>
+                </div>
               </div>
-              <h3 className="relative z-10 text-3xl font-cricket-title tracking-wide text-white uppercase">
-                RESEARCH DOSSIER CANVAS
-              </h3>
-              <p className="relative z-10 text-slate-300 text-xs max-w-md leading-relaxed">
-                Enter your topic and directorial brief on the left (or pick a 1-click preset), then click{' '}
-                <strong className="text-emerald-400 font-bold">RUN RESEARCH AGENT</strong>.
-                The compiled match chronology, quotes, tactics, and statistics will appear here.
-              </p>
+
+              {/* 3 Prominent Match Cards: Sachin, Stokes, Yuvraj */}
+              <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                {/* Card 1: Sachin Tendulkar No. 10 */}
+                <div
+                  onClick={() => loadPreset(PRESETS[3])}
+                  className="group relative h-80 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#030712] p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-xl"
+                >
+                  <img
+                    src="/images/cricket/sachin-legend.jpg"
+                    alt="Sachin Tendulkar Desert Storm"
+                    className="absolute inset-0 w-full h-full object-cover object-center opacity-45 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+                  
+                  <div className="relative z-10 flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                      Sharjah 1998
+                    </span>
+                    <span className="text-xs text-white/60 group-hover:text-emerald-400 transition-colors">
+                      ⚡ 1-Click
+                    </span>
+                  </div>
+
+                  <div className="relative z-10">
+                    <h4 className="text-2xl font-cricket-title tracking-wide text-white uppercase group-hover:text-emerald-300 transition-colors">
+                      Sachin 143 Desert Storm
+                    </h4>
+                    <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-snug">
+                      Assault on Shane Warne altered run-rate qualification against Australia.
+                    </p>
+                    <button
+                      type="button"
+                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-[#10b981] hover:text-black border border-white/15 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <span>Load Investigation</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Card 2: Ben Stokes 135* Headingley */}
+                <div
+                  onClick={() => loadPreset(PRESETS[0])}
+                  className="group relative h-80 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#030712] p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-xl"
+                >
+                  <img
+                    src="/images/cricket/stokes-headingley.jpg"
+                    alt="Ben Stokes Headingley Miracle"
+                    className="absolute inset-0 w-full h-full object-cover object-top opacity-45 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+                  
+                  <div className="relative z-10 flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                      Headingley 2019
+                    </span>
+                    <span className="text-xs text-white/60 group-hover:text-emerald-400 transition-colors">
+                      ⚡ 1-Click
+                    </span>
+                  </div>
+
+                  <div className="relative z-10">
+                    <h4 className="text-2xl font-cricket-title tracking-wide text-white uppercase group-hover:text-emerald-300 transition-colors">
+                      Stokes 135* Ashes Miracle
+                    </h4>
+                    <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-snug">
+                      76-run last-wicket miraculous stand with Jack Leach cleaning glasses.
+                    </p>
+                    <button
+                      type="button"
+                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-[#10b981] hover:text-black border border-white/15 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <span>Load Investigation</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Card 3: Yuvraj Singh 2011 QF Roar */}
+                <div
+                  onClick={() => loadPreset(PRESETS[2])}
+                  className="group relative h-80 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#030712] p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-xl"
+                >
+                  <img
+                    src="/images/cricket/yuvraj-six.jpg"
+                    alt="Yuvraj Singh World Cup Quarter Final Roar"
+                    className="absolute inset-0 w-full h-full object-cover object-[50%_35%] opacity-45 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+                  
+                  <div className="relative z-10 flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                      Motera 2011 QF
+                    </span>
+                    <span className="text-xs text-white/60 group-hover:text-emerald-400 transition-colors">
+                      ⚡ 1-Click
+                    </span>
+                  </div>
+
+                  <div className="relative z-10">
+                    <h4 className="text-2xl font-cricket-title tracking-wide text-white uppercase group-hover:text-emerald-300 transition-colors">
+                      Yuvraj 57* Australia QF
+                    </h4>
+                    <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-snug">
+                      Ending Australia 12-year unbeaten World Cup streak in a tense 261 chase.
+                    </p>
+                    <button
+                      type="button"
+                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-[#10b981] hover:text-black border border-white/15 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <span>Load Investigation</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Helpful footer hint */}
+              <div className="relative z-10 flex items-center justify-between pt-3 text-xs text-slate-400 font-mono">
+                <span>Or enter any custom cricketer, test match, or series brief on the left.</span>
+                <span className="text-emerald-400">Strict Fact Grounding 🛡️</span>
+              </div>
             </div>
           )}
 

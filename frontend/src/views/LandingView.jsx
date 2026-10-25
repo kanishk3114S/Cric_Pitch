@@ -124,12 +124,130 @@ export default function LandingView({ onContinue }) {
           </button>
         </motion.div>
 
+        {/* ── CINEMATIC ARCHIVE SHOWCASE: 4 LEGENDARY MATCH MOMENTS ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="mt-14 w-full max-w-5xl"
+        >
+          <div className="flex items-center justify-between mb-4 px-1">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-slate-400 font-bold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              ARCHIVED TURNING POINTS READY FOR DEEP INVESTIGATION
+            </span>
+            <span className="text-[11px] font-mono text-emerald-400 hidden sm:inline">
+              4 HISTORIC FEATS LOADED
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+            
+            {/* Moment 1: Ben Stokes Headingley Roar */}
+            <div
+              onClick={onContinue}
+              className="group relative h-64 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#090d16] p-4 flex flex-col justify-end text-left cursor-pointer transition-all duration-300 shadow-xl"
+            >
+              <img
+                src="/images/cricket/stokes-headingley.jpg"
+                alt="Ben Stokes Headingley Miracle"
+                className="absolute inset-0 w-full h-full object-cover object-top opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+              <div className="relative z-10">
+                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                  Headingley 2019
+                </span>
+                <h4 className="text-xl font-cricket-title tracking-wide text-white uppercase mt-1 leading-tight group-hover:text-emerald-300 transition-colors">
+                  Ben Stokes 135*
+                </h4>
+                <p className="text-[10px] text-slate-300 font-medium truncate mt-0.5">
+                  76-run last-wicket miraculous stand
+                </p>
+              </div>
+            </div>
+
+            {/* Moment 2: Sachin Tendulkar No. 10 */}
+            <div
+              onClick={onContinue}
+              className="group relative h-64 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#090d16] p-4 flex flex-col justify-end text-left cursor-pointer transition-all duration-300 shadow-xl"
+            >
+              <img
+                src="/images/cricket/sachin-legend.jpg"
+                alt="Sachin Tendulkar No. 10 Salute"
+                className="absolute inset-0 w-full h-full object-cover object-center opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+              <div className="relative z-10">
+                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                  Legend Archive
+                </span>
+                <h4 className="text-xl font-cricket-title tracking-wide text-white uppercase mt-1 leading-tight group-hover:text-emerald-300 transition-colors">
+                  Sachin Tendulkar
+                </h4>
+                <p className="text-[10px] text-slate-300 font-medium truncate mt-0.5">
+                  The iconic No. 10 roar to the crowd
+                </p>
+              </div>
+            </div>
+
+            {/* Moment 3: Yuvraj Singh Kneeling Roar */}
+            <div
+              onClick={onContinue}
+              className="group relative h-64 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#090d16] p-4 flex flex-col justify-end text-left cursor-pointer transition-all duration-300 shadow-xl"
+            >
+              <img
+                src="/images/cricket/yuvraj-six.jpg"
+                alt="Yuvraj Singh World Cup Roar"
+                className="absolute inset-0 w-full h-full object-cover object-[50%_35%] opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+              <div className="relative z-10">
+                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                  Motera 2011 QF
+                </span>
+                <h4 className="text-xl font-cricket-title tracking-wide text-white uppercase mt-1 leading-tight group-hover:text-emerald-300 transition-colors">
+                  Yuvraj Singh Roar
+                </h4>
+                <p className="text-[10px] text-slate-300 font-medium truncate mt-0.5">
+                  Dethroning Australia in the World Cup
+                </p>
+              </div>
+            </div>
+
+            {/* Moment 4: Steve Smith Aura */}
+            <div
+              onClick={onContinue}
+              className="group relative h-64 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#090d16] p-4 flex flex-col justify-end text-left cursor-pointer transition-all duration-300 shadow-xl"
+            >
+              <img
+                src="/images/cricket/smith-aura.jpg"
+                alt="Steve Smith Ashes Solitary Concentration"
+                className="absolute inset-0 w-full h-full object-cover object-[50%_15%] opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+              <div className="relative z-10">
+                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                  Edgbaston 2019
+                </span>
+                <h4 className="text-xl font-cricket-title tracking-wide text-white uppercase mt-1 leading-tight group-hover:text-emerald-300 transition-colors">
+                  Steve Smith Aura
+                </h4>
+                <p className="text-[10px] text-slate-300 font-medium truncate mt-0.5">
+                  Twin centuries of solitary defiance
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </motion.div>
+
         {/* Feature Pills */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-4xl"
+          transition={{ duration: 0.7, delay: 0.5 }}
+          className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-4xl"
         >
           <div className="cricket-card rounded-xl p-3.5 text-left border border-white/10 bg-slate-900/90">
             <div className="text-emerald-400 text-sm font-bold flex items-center gap-1.5 mb-1">
