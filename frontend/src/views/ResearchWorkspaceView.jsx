@@ -4,6 +4,7 @@ import useResearchStore from '../store/useResearchStore';
 import { generateResearch, exportToPDF } from '../services/api';
 import {
   ArrowLeft,
+  ArrowRight,
   Download,
   RotateCcw,
   Sparkles,
@@ -20,7 +21,6 @@ import {
   Check,
   Zap,
   Camera,
-  Globe,
   Link2,
 } from 'lucide-react';
 
@@ -159,29 +159,22 @@ export default function ResearchWorkspaceView({ onBack }) {
 
   // Live Agent Progress Ticker
   useEffect(() => {
-    let timer = null;
-    let stepTimer = null;
+    if (!isLoading) return;
 
-    if (isLoading) {
-      setElapsedSeconds(0);
-      setLoadingStep(0);
+    const timer = setInterval(() => {
+      setElapsedSeconds((s) => s + 1);
+    }, 1000);
 
-      timer = setInterval(() => {
-        setElapsedSeconds((s) => s + 1);
-      }, 1000);
+    const stepTimer1 = setTimeout(() => setLoadingStep(1), 2500);
+    const stepTimer2 = setTimeout(() => setLoadingStep(2), 7000);
+    const stepTimer3 = setTimeout(() => setLoadingStep(3), 13000);
 
-      // Transition through agent steps
-      stepTimer = setTimeout(() => setLoadingStep(1), 2500);
-      const stepTimer2 = setTimeout(() => setLoadingStep(2), 7000);
-      const stepTimer3 = setTimeout(() => setLoadingStep(3), 13000);
-
-      return () => {
-        clearInterval(timer);
-        clearTimeout(stepTimer);
-        clearTimeout(stepTimer2);
-        clearTimeout(stepTimer3);
-      };
-    }
+    return () => {
+      clearInterval(timer);
+      clearTimeout(stepTimer1);
+      clearTimeout(stepTimer2);
+      clearTimeout(stepTimer3);
+    };
   }, [isLoading]);
 
   const loadPreset = (preset) => {
@@ -205,6 +198,8 @@ export default function ResearchWorkspaceView({ onBack }) {
     // We wipe it here so the empty-state / loading panel shows right away.
     setDossier(null);
     setError(null);
+    setElapsedSeconds(0);
+    setLoadingStep(0);
     setLoading(true);
 
     try {

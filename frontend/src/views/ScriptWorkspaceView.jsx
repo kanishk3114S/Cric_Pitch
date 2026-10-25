@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import useResearchStore from '../store/useResearchStore';
-import { ArrowLeft, FileText, Upload, Sparkles, Sliders, Film, Volume2, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Sparkles, Sliders, Film } from 'lucide-react';
 
 export default function ScriptWorkspaceView({ onBack }) {
   const { dossier } = useResearchStore();
@@ -9,7 +9,6 @@ export default function ScriptWorkspaceView({ onBack }) {
   const [customBrief, setCustomBrief] = useState('');
   const [videoFormat, setVideoFormat] = useState('youtube_documentary');
   const [duration, setDuration] = useState(8);
-  const [scriptType, setScriptType] = useState('dramatic_storytelling');
   const [pauseIntensity, setPauseIntensity] = useState('heavy_dramatic');
 
   return (

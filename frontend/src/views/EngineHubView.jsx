@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Search, FileText, CheckCircle2, Zap, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Search, FileText, CheckCircle2 } from 'lucide-react';
 
 export default function EngineHubView({ onBack, onSelectEngine }) {
   return (
