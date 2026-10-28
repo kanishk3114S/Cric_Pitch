@@ -66,7 +66,7 @@ In **CricScript AI v2.0**, we eliminate the unnecessary baggage of traditional m
                                                                                    │    (Sole Persistent Database)    │
                                                                                    ├──────────────────────────────────┤
                                                                                    │ - Index: `cricscript-style-vault`│
-                                                                                   │ - Dim: 768 (`nomic-embed-text`)  │
+                                                                                   │ - Dim: 768 (`gemini-embedding-2`) │
                                                                                    │ - Metric: Cosine                 │
                                                                                    │ - Stores author's 100-120 past   │
                                                                                    │   cricket scripts broken into    │
@@ -109,7 +109,7 @@ sequenceDiagram
     autonumber
     actor Creator as Creator / Client UI
     participant Express as Express.js Router (/api/v1/scripts)
-    participant Ollama as Local Ollama (nomic-embed-text)
+    participant Embedding as Google Gemini (gemini-embedding-2)
     participant Pinecone as Pinecone Serverless
     participant CloudLLM as Cloud LLM (Gemini 2.5 / Groq)
     participant HF as Hugging Face FLUX.1-schnell
@@ -119,8 +119,8 @@ sequenceDiagram
     Creator->>Express: POST /api/v1/scripts/generate { researchDossier, videoSettings, userInstructions }
     
     par Query Pinecone Style Vault
-        Express->>Ollama: Embed Intent via nomic-embed-text (768-dim)
-        Ollama-->>Express: Query Vector
+        Express->>Embedding: Embed Query Intent via gemini-embedding-2 (768-dim)
+        Embedding-->>Express: 768-dim Query Vector
         Express->>Pinecone: Query top-K Hook chunks (filter: { sectionType: 'cold_open_hook' })
         Pinecone-->>Express: Hook Style Chunks (Pacing & Pause Exemplars)
     and Query Breakdown Style
@@ -161,12 +161,12 @@ sequenceDiagram
 | **Backend Runtime** | Node.js | v22.x LTS | High-throughput asynchronous I/O with native `fetch` and ES Modules. |
 | **Web Server Framework**| Express.js | 4.21+ | Lightweight, unopinionated REST API. No database ORM or auth overhead. Fully verifiable via Postman. |
 | **Vector DB (Sole DB)**| Pinecone Serverless | `@pinecone-database/pinecone` 3.x | Zero local RAM footprint, serverless AWS `us-east-1` deployment. Dedicated strictly to indexing the 100–120 reference scripts. |
-| **Local Embeddings** | Ollama (`nomic-embed-text`) | Ollama 0.3+ | 768 dimensions, 8192 token context. Runs locally on CPU/iGPU in ~15ms per chunk with 0 token costs. |
+| **Embedding Model** | Google Gemini (`gemini-embedding-2`) | `@google/genai` 1.0+ | 768 dimensions (configured via `outputDimensionality: 768`). Native cloud execution using existing `GEMINI_API_KEY`. Zero local RAM/GPU footprint, state-of-the-art semantic text representation. |
 | **Cloud LLM** | Google Gemini 2.5 Flash / Groq Llama-3.3-70B | Cloud REST APIs | High context capacity (1M+ tokens) for deep dossiers, ultra-fast generation (250+ tok/s on Groq), zero local GPU strain. |
 | **Web Research API** | Tavily Search API / Serper.dev | REST v1 | Clean, LLM-optimized search results. Returns scraped markdown summaries and verified factual tables instead of raw HTML. |
 | **Image Generation** | Hugging Face Inference API (`FLUX.1-schnell`) | REST API | SOTA cinematic framing and photo-realism for cricket storyboards without running local Stable Diffusion. |
 | **Media Hosting** | Cloudinary | Cloudinary v2 SDK | Ephemeral buffer upload to CDN, automatic WebP compression, and reliable image preview URLs. |
-| **Document Parsing** | Mammoth.js & Multer | Mammoth 1.8+, Multer 1.4+ | Multer in-memory upload parsing; Mammoth parses `.docx` scripts preserving double line breaks (`\n\n`) and punctuation. |
+| **Document Parsing & Ingestion** | Google Drive API, `pdf-parse`, Mammoth.js | Node.js ecosystem | Automated Google Docs PDF export & local file extraction, preserving double line breaks (`\n\n`), punctuation, and dramatic `[pause]` markers. |
 | **PDF Generation** | PDFKit | PDFKit 0.15+ | Programmatic, server-side streaming PDF generator for analytical research dossiers and 2-column storyboard scripts. |
 
 ---
@@ -275,43 +275,124 @@ interface GeneratedScriptProject {
 ### 3.3 Pinecone Serverless Vector Metadata Schema (Sole Database)
 
 - **Index Name:** `cricscript-style-vault`
-- **Dimension:** `768` (Matching local Ollama `nomic-embed-text`)
+- **Dimension:** `768` (Matching Google Gemini `gemini-embedding-2` configured with `outputDimensionality: 768`)
 - **Metric:** `cosine`
 - **Cloud Provider / Region:** AWS `us-east-1` (Serverless free tier)
 
+Each record in Pinecone represents a narrative cadence chunk enriched with both structural and stylistic metadata:
+
 ```json
 {
-  "id": "style_chunk_headingley_003",
-  "values": [0.0124, -0.0489, 0.0911, "... 768 float dimensions"],
+  "id": "SCR-001-SECTION-02-CHUNK-03",
+  "values": [0.0124, -0.0489, 0.0911, "... 768 float dimensions from gemini-embedding-2"],
   "metadata": {
-    "scriptTitle": "Headingley 2019: Stokes and Leach",
-    "scriptCategory": "documentary",
-    "sectionType": "cold_open_hook",
+    "scriptId": "SCR-001",
+    "title": "Headingley 2019: Stokes and Leach",
+    "sectionType": "turning_point",
+    "tone": "tense",
+    "pace": "fast",
+    "narrativeFunction": "raise the stakes",
+    "chunkIndex": 3,
     "avgWordsPerLine": 6.8,
     "pauseStyle": "heavy_dramatic",
     "pauseMarkerFrequency": 0.15,
     "chunkTokenLength": 192,
-    "verbatimTextChunk": "Seventy-three runs needed.\nOne wicket in hand.\n[pause]\nJack Leach cleans his glasses.\nBen Stokes doesn't blink.\nNot once.\n[pause]\nThis wasn't just cricket anymore."
+    "text": "Seventy-three runs needed.\nOne wicket in hand.\n[pause]\nJack Leach cleans his glasses.\nBen Stokes doesn't blink.\nNot once.\n[pause]\nThis wasn't just cricket anymore.",
+    "sourceUrl": "https://docs.google.com/document/d/..."
   }
 }
 ```
 
 ---
 
-## 4. Deep Dive: The Cadence-Preserving Style Chunker
+## 4. Deep Dive: Cadence-RAG Ingestion & Vector Retrieval Pipeline
 
-### 4.1 Ingesting 100–120 Cricket Scripts without MongoDB
-The creator's historical 100–120 scripts are processed through `styleChunker.service.js` directly into Pinecone:
-1. **Document Intake:** Multer parses uploaded `.docx` or `.txt` scripts in memory.
-2. **Text Normalization:** Mammoth extracts raw text, strictly safeguarding line breaks (`\n`) and pause punctuation (`...`, `—`, `[pause]`).
-3. **Narrative Section Classification:**
-   - `cold_open_hook`: First 15–20% of the script; high hook tension, short sentences.
+### 4.1 The Source Script Library Architecture
+The reference script corpus (initially 5 benchmark scripts, scaling to 100 Google Docs) acts as an authoritative library of sports documentary narrative patterns. The data pipeline is structured locally as:
+
+```
+backend/data/
+├── raw-scripts/           # Source files (.txt, .docx, or exported .pdf from Google Drive)
+├── extracted-text/        # Normalized plain text preserving \n\n, pauses, and headings
+├── processed-chunks/      # Segmented JSON chunks with narrative classifications
+└── manifest.json          # Master inventory mapping scriptId, title, topic, and sourceUrl
+```
+
+### 4.2 Ingestion & Preprocessing Steps (Google Docs → Pinecone)
+
+#### Step 1: Script Inventory & Organization
+All source scripts in Google Drive are inventoried in `manifest.json`:
+```json
+[
+  {
+    "scriptId": "SCR-001",
+    "title": "Headingley 2019 Miracle",
+    "topic": "Ashes Rivalry",
+    "sourceUrl": "https://docs.google.com/document/d/..."
+  }
+]
+```
+
+#### Step 2: Extraction & Text Normalization
+- Scripts are exported/loaded into `backend/data/raw-scripts/`.
+- Text is cleaned to remove artifactual headers/footers while strictly safeguarding **paragraph breaks (`\n\n`)**, **staccato punctuation (`...`, `—`)**, and **narrator cues (`[pause]`)**.
+- Direct text extraction bypasses multi-page PDF embedding constraints, guaranteeing pristine input quality.
+
+#### Step 3: Hybrid Chunking Strategy
+Instead of mechanical fixed-character chunking (which breaks dramatic setups from emotional payoffs), the chunker executes a hybrid approach:
+1. **Script-Level Summary Profiles:** High-level narrative arc, baseline pacing, and tone profile for the full script.
+2. **Section-Level Narrative Chunks:** Segments aligned with narrative boundaries (target: 400–800 tokens, 80–120 token overlap) classified into:
+   - `cold_open_hook`: Aggressive opening, high tension, immediate audience grab.
    - `context_setup`: Background exposition, match stakes, historical rivalry.
-   - `tactical_breakdown`: Analytical sections detailing pitch conditions, field placements, ball reverse-swing.
-   - `climax_outro`: Final 15–20% of the script; philosophical resolution, emotional sign-off.
-4. **Cadence Metrics Extraction:** Computes `avgWordsPerLine` and `pauseMarkerFrequency`.
-5. **Local Vectorization:** Sends chunk text to local Ollama (`http://localhost:11434/api/embeddings`) for `nomic-embed-text` 768-dim vector generation.
-6. **Pinecone Batch Upsert:** Upserts vectors with complete metadata into Pinecone Serverless.
+   - `tactical_breakdown`: Analytical field settings, pitch deterioration, bowling tactics.
+   - `turning_point`: Momentum shift, unexpected breakdown, sudden counter-attack.
+   - `climax_outro`: Final crescendo, philosophical resolution, emotional sign-off.
+3. **Cadence Feature Extraction:** Automated calculation of `avgWordsPerLine` and `pauseMarkerFrequency` (ratio of `[pause]` markers to total sentences).
+
+#### Step 4: Vector Generation with Gemini Embedding 2
+Embeddings are computed natively using Google's `gemini-embedding-2` model via `@google/genai`:
+```javascript
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+export async function embedDocument(title, text) {
+  const response = await ai.models.embedContent({
+    model: "gemini-embedding-2",
+    contents: `title: ${title} | text: ${text}`,
+    config: {
+      outputDimensionality: 768
+    }
+  });
+
+  const vector = response.embeddings?.[0]?.values;
+  if (!vector?.length) {
+    throw new Error("Embedding generation failed");
+  }
+  return vector;
+}
+```
+
+#### Step 5: Pinecone Batch Upsert & Error Recovery
+- Vectors are bundled with full metadata and upserted in batches of 50–100 records into Pinecone Serverless (`cricscript-style-vault`).
+- Ingestion states are logged to allow safe retries without duplicate vector generation.
+
+---
+
+### 4.3 RAG Retrieval & Prompt Assembly (Separation of Concerns)
+
+A critical architectural principle of CricScript AI is the strict separation between **Factual Grounding** and **Cadence Guidance**:
+
+| Component | Strict Responsibility | Source of Truth |
+| :--- | :--- | :--- |
+| **Engine 01 (Research Agent)** | Live match facts, verified scorecards, chronology, dates, quotes, and stats | Tavily Live Web Search + Gemini Grounding |
+| **Engine 02 (Pinecone RAG)** | Narrative structure, sentence rhythm, dramatic breath pauses `[pause]`, and emotional tension | 100 Script Style Vault |
+| **Gemini LLM Writer** | Synthesizes final teleprompter script combining factual dossier + retrieved style exemplars | Cloud LLM Generation |
+
+When a creator requests a script:
+1. **Query Formulation:** The user's brief, desired section type (e.g., `cold_open_hook`), tone (`tense`), and pace (`fast`) are vectorized via `gemini-embedding-2`.
+2. **Pinecone Similarity Query:** Top-3 to 5 matching chunks are retrieved based on narrative qualities.
+3. **Prompt Synthesis:** Gemini is instructed to use the retrieved chunks for **writing structure and cadence only**, forbidding factual leakage from old scripts, and enforcing factual fidelity from Engine 01's research dossier.
 
 ---
 
@@ -399,7 +480,7 @@ Base URL: `http://localhost:5000/api/v1`
       "pineconeNamespace": "default",
       "status": "ready"
     },
-    "message": "Script corpus successfully parsed, embedded via Ollama, and indexed in Pinecone"
+    "message": "Script corpus successfully parsed, embedded via Gemini Embedding 2, and indexed in Pinecone"
   }
   ```
 
@@ -680,17 +761,22 @@ flowchart TD
 
 ---
 
-### Milestone 3: Cadence Chunker & Pinecone Serverless Ingestion Pipeline
+### Milestone 3: Cadence Chunker & Pinecone Serverless Ingestion Pipeline (RAG Engine 02 Core)
 - **Deliverables:**
-  - Multer memory storage configuration for `.docx` and `.txt` file uploads.
-  - Mammoth `.docx` text extraction utility protecting line breaks (`\n\n`) and pause punctuation.
-  - `styleChunker.service.js` segmenting scripts by narrative function (`cold_open_hook`, `context_setup`, `tactical_breakdown`, `climax_outro`) and computing `avgWordsPerLine` and `pauseMarkerFrequency`.
-  - Local Ollama HTTP client (`http://localhost:11434/api/embeddings`) for 768-dim `nomic-embed-text` vectors.
-  - Pinecone Serverless client (`@pinecone-database/pinecone`) with batch vector upserts and metadata indexing.
-- **Postman Verification Checklist:**
-  - [ ] `POST /api/v1/style-vault/ingest` accepts script uploads, chunks text, embeds via Ollama, and indexes in Pinecone.
-  - [ ] `GET /api/v1/style-vault/stats` confirms vector count in Pinecone.
-  - [ ] `POST /api/v1/style-vault/test-query` retrieves matching acoustic chunks with metadata filters.
+  - **Script Corpus Pipeline (`backend/data/`):**
+    - `raw-scripts/`: Ingestion directory for Google Docs exported as `.txt`, `.docx`, or `.pdf`.
+    - `extracted-text/`: Cleaned text files with preserved line breaks (`\n\n`) and pause markers (`[pause]`).
+    - `processed-chunks/`: Hybrid segmented chunks (400–800 tokens) tagged with `sectionType`, `tone`, `pace`, `narrativeFunction`, and `chunkIndex`.
+    - `manifest.json`: Master script inventory tracking `scriptId`, `title`, `topic`, and `sourceUrl`.
+  - **Text Extraction & Normalization Service:** Ingestion parser protecting staccato dialogue and narrative tension while removing document artifacts.
+  - **Cadence & Narrative Chunker (`styleChunker.service.js`):** Classifies passages into `cold_open_hook`, `context_setup`, `tactical_breakdown`, `turning_point`, and `climax_outro`; calculates `avgWordsPerLine` and `pauseMarkerFrequency`.
+  - **Gemini Embedding Service (`embedding.service.js`):** Vectorizes chunks using Google Gemini's `gemini-embedding-2` model via `@google/genai` with `outputDimensionality: 768`.
+  - **Pinecone Serverless Client (`pinecone.service.js`):** Batch upserts 768-dim vectors into index `cricscript-style-vault` with rich metadata, and executes vector similarity queries with metadata filters.
+- **Verification Checklist:**
+  - [ ] **Step 1 (Sample Validation):** 5 benchmark scripts exported to `raw-scripts/`, text extracted cleanly to `extracted-text/`, and checked for intact paragraph breaks and `[pause]` markers.
+  - [ ] **Step 2 (Chunking & Embedding):** Chunks generated under `processed-chunks/`, successfully embedded via `gemini-embedding-2` (768-dim), and upserted to Pinecone.
+  - [ ] **Step 3 (Retrieval Test):** `POST /api/v1/style-vault/test-query` retrieves top-K matching narrative exemplars by `sectionType` (e.g., retrieving tense openings, not merely word-matched text).
+  - [ ] **Step 4 (Scale Ingestion):** Automated ingestion of the complete 100-script Google Docs corpus.
 
 ---
 

@@ -32,3 +32,16 @@ export const generateResearch = (payload) =>
  */
 export const exportToPDF = (dossier) =>
   api.post('/research/export-pdf', { dossier }, { responseType: 'blob' });
+
+// ── Script Studio API calls ────────────────────────────────────────────────
+
+/**
+ * Calls the Cadence-RAG Script Studio to generate a 3-part Hinglish voiceover script.
+ *
+ * @param {object} payload
+ * @param {string} payload.topic - The documentary topic
+ * @param {string[]} payload.keyPoints - Key narrative beats & angles
+ * @param {object} [payload.researchDossier] - Optional Engine 01 dossier
+ */
+export const generateScript = (payload) =>
+  api.post('/scripts/generate', payload);

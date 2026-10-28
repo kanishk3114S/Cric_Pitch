@@ -3,9 +3,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import LandingView from './views/LandingView';
 import EngineHubView from './views/EngineHubView';
 import ResearchWorkspaceView from './views/ResearchWorkspaceView';
+import ScriptWorkspaceView from './views/ScriptWorkspaceView';
 
 export default function App() {
-  // Navigation State: 'landing' | 'hub' | 'research'
+  // Navigation State: 'landing' | 'hub' | 'research' | 'script'
   const [currentView, setCurrentView] = useState('landing');
 
   return (
@@ -36,6 +37,8 @@ export default function App() {
               onSelectEngine={(engineKey) => {
                 if (engineKey === 'research') {
                   setCurrentView('research');
+                } else if (engineKey === 'script') {
+                  setCurrentView('script');
                 }
               }}
             />
@@ -51,6 +54,18 @@ export default function App() {
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           >
             <ResearchWorkspaceView onBack={() => setCurrentView('hub')} />
+          </motion.div>
+        )}
+
+        {currentView === 'script' && (
+          <motion.div
+            key="script"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ScriptWorkspaceView onBack={() => setCurrentView('hub')} />
           </motion.div>
         )}
       </AnimatePresence>

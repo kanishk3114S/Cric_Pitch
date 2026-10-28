@@ -1,0 +1,42 @@
+[
+  {
+    "scriptId": "SCR-001",
+    "filename": "SCR-001.pdf",
+    "originalTitle": "Headingly 2019 , the 135*",
+    "cleanTitle": "Headingley 2019: The 135* (Stokes Miracle)",
+    "topic": "Ashes Miracle & Last Wicket Chase",
+    "category": "match_miracle"
+  },
+  {
+    "scriptId": "SCR-002",
+    "filename": "SCR-002.pdf",
+    "originalTitle": "Hindi commentary script",
+    "cleanTitle": "Hindi Broadcast Commentary Script",
+    "topic": "High-Energy Broadcast Cadence & Commentary",
+    "category": "commentary_cadence"
+  },
+  {
+    "scriptId": "SCR-003",
+    "filename": "SCR-003.pdf",
+    "originalTitle": "how west indies won the 2016 world cup",
+    "cleanTitle": "How West Indies Won the 2016 T20 World Cup: Remember the Name",
+    "topic": "T20 World Cup Final Climax & Redemption",
+    "category": "tournament_documentary"
+  },
+  {
+    "scriptId": "SCR-004",
+    "filename": "SCR-004.pdf",
+    "originalTitle": "The controversial life of Navjot Singh Siddhu",
+    "cleanTitle": "The Controversial Life of Navjot Singh Sidhu",
+    "topic": "Player Biography, Turmoil & Controversy",
+    "category": "player_biopic"
+  },
+  {
+    "scriptId": "SCR-005",
+    "filename": "SCR-005.pdf",
+    "originalTitle": "The u18 world cup",
+    "cleanTitle": "The Under-19 World Cup: Crucible of Legends",
+    "topic": "Youth Tournament Development & Breakthrough Stars",
+    "category": "tournament_documentary"
+  }
+]

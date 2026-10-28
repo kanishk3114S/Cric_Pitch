@@ -132,9 +132,11 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
           </motion.div>
 
 
-          {/* ── CONTAINER 2: SCRIPT ENGINE (COMING SOON IN MILESTONE 3) ── */}
-          <div
-            className="rounded-3xl p-8 md:p-10 border border-white/10 flex flex-col justify-between relative overflow-hidden bg-[#090d16] shadow-2xl shadow-black/80 group"
+          {/* ── CONTAINER 2: HINGLISH CADENCE-RAG SCRIPT STUDIO (ACTIVE NOW) ── */}
+          <motion.div
+            whileHover={{ y: -6 }}
+            onClick={() => onSelectEngine('script')}
+            className="rounded-3xl p-8 md:p-10 border border-white/10 hover:border-amber-500/50 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all bg-[#090d16] shadow-2xl shadow-black/80"
           >
             {/* Embedded Action Match Moment: Steve Smith Aura with Directional Matte Mask */}
             <div className="absolute top-0 right-0 w-3/4 h-full pointer-events-none overflow-hidden">
@@ -160,51 +162,50 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
                   <FileText className="w-7 h-7" />
                 </div>
                 <span className="px-3 py-1 rounded-full text-[11px] font-bold font-mono tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30 uppercase">
-                  Engine 02 • Coming Soon
+                  Engine 02 • Active Now
                 </span>
               </div>
 
-              <h3 className="text-3xl font-cricket-title tracking-wide text-white uppercase">
+              <h3 className="text-3xl font-cricket-title tracking-wide text-white uppercase group-hover:text-amber-300 transition-colors">
                 CADENCE-RAG SCRIPTWRITER
               </h3>
 
               <p className="text-slate-300 text-sm leading-relaxed mt-3 max-w-sm">
                 Transfers the acoustic cadence, dramatic pauses, and sentence rhythm of your past reference scripts.
-                Generates scene-by-scene voiceover copy with FLUX.1 cinematic camera cues.
+                Generates 3-part Hinglish voiceover copy with dramatic [pause] cues under 1,000 words.
               </p>
 
               {/* Bullet Points */}
-              <div className="mt-6 space-y-2.5 text-xs text-slate-400">
+              <div className="mt-6 space-y-2.5 text-xs text-slate-300">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400/80 shrink-0" />
-                  <span>Pinecone Serverless cadence style vault</span>
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Pinecone Serverless cadence style vault (Live)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400/80 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
                   <span>Enforces dramatic [pause] & breath markers</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400/80 shrink-0" />
-                  <span>Accepts Engine 1 dossier OR user's own PDF</span>
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Structured 3-part layout: Intro, Main, Outro</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400/80 shrink-0" />
-                  <span>FLUX.1 image prompts + Cloudinary storyboards</span>
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Strictly token-budgeted under 1,000 words</span>
                 </div>
               </div>
             </div>
 
-            {/* Bottom Status (Locked / Building in Milestone 3 - Clicking opens nothing) */}
+            {/* Bottom CTA Button */}
             <div className="relative z-10 mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-              <span className="text-slate-400 text-xs font-mono uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-amber-400/60" />
-                Under Development • Milestone 3
+              <span className="text-amber-400 text-xs font-bold tracking-wider uppercase group-hover:text-amber-300">
+                Launch Script Studio
               </span>
-              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-mono uppercase font-semibold">
-                Building Later
-              </span>
+              <div className="w-10 h-10 rounded-full bg-[#f59e0b] text-black flex items-center justify-center group-hover:translate-x-1.5 transition-transform shadow-lg shadow-amber-500/20">
+                <ArrowRight className="w-5 h-5 font-bold" />
+              </div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </div>

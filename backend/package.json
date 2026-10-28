@@ -10,12 +10,13 @@
   },
   "dependencies": {
     "@google/genai": "^1.0.0",
+    "@pinecone-database/pinecone": "^9.1.0",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
+    "pdf-parse": "^2.4.5",
     "pdfkit": "^0.15.1"
-  },
-  "devDependencies": {}
+  }
 }

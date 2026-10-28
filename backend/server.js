@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 
 import researchRoutes from './routes/research.routes.js';
+import scriptRoutes from './routes/script.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -22,6 +23,7 @@ app.get('/api/v1/health', (req, res) => {
 });
 
 app.use('/api/v1/research', researchRoutes);
+app.use('/api/v1/scripts', scriptRoutes);
 
 // ── Global Error Handler (must be last) ────────────────────────────────────
 app.use(errorHandler);
