@@ -14,7 +14,19 @@ const PORT = process.env.PORT || 5000;
 
 // ── Security & Parsing Middleware ──────────────────────────────────────────
 app.use(helmet());                          // Sets safe HTTP headers
-app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      return callback(null, true);
+    }
+    if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 app.use(express.json());                    // Parses incoming JSON bodies
 
 // ── Routes ─────────────────────────────────────────────────────────────────

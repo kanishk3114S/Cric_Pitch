@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useScriptStore from '../store/useScriptStore';
 import useResearchStore from '../store/useResearchStore';
 import { generateScript } from '../services/api';
@@ -17,7 +17,8 @@ import {
   Trash2,
   Import,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Activity
 } from 'lucide-react';
 
 const PRESETS = [
@@ -75,16 +76,41 @@ export default function ScriptWorkspaceView({ onBack }) {
   const [copied, setCopied] = useState(false);
   const [showStyleVault, setShowStyleVault] = useState(false);
 
+  // Live progress ticker
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [progressStep, setProgressStep] = useState(0);
+
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const timer = setInterval(() => {
+      setElapsedSeconds((s) => s + 1);
+    }, 1000);
+
+    const step1 = setTimeout(() => setProgressStep(1), 2500);
+    const step2 = setTimeout(() => setProgressStep(2), 7000);
+    const step3 = setTimeout(() => setProgressStep(3), 13000);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(step1);
+      clearTimeout(step2);
+      clearTimeout(step3);
+    };
+  }, [isLoading]);
+
   // Apply a historical preset
   const handleSelectPreset = (preset) => {
     setTopic(preset.title);
     setPoints(preset.points);
+    setError(null);
   };
 
   // Import from Engine 01 research dossier if available
   const handleImportResearch = () => {
     if (!researchDossier) return;
     setTopic(researchDossier.topic || '');
+    setError(null);
     const importedPoints = [];
     if (researchDossier.synthesizedReport?.keyChronology?.length) {
       researchDossier.synthesizedReport.keyChronology.slice(0, 4).forEach((k) => {
@@ -108,11 +134,21 @@ export default function ScriptWorkspaceView({ onBack }) {
 
   // Generate Script Handler
   const handleGenerate = async (e) => {
-    if (e) e.preventDefault();
-    if (!topic.trim()) return;
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
+    if (!topic || !topic.trim()) {
+      setError('Please enter a match topic or click one of the benchmark presets above.');
+      return;
+    }
+
+    setScript(null);
     setLoading(true);
     setError(null);
+    setElapsedSeconds(0);
+    setProgressStep(0);
 
     try {
       const response = await generateScript({
@@ -128,7 +164,14 @@ export default function ScriptWorkspaceView({ onBack }) {
       }
     } catch (err) {
       console.error('Script generation error:', err);
-      setError(err.response?.data?.message || err.message || 'Script generation failed');
+      setError(
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Script generation failed. Please verify the backend is running on port 5000.'
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -224,6 +267,7 @@ ${script.sections?.outro || ''}
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
+              type="button"
               onClick={onBack}
               className="flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3.5 py-1.5 rounded-full transition-all cursor-pointer"
             >
@@ -268,6 +312,7 @@ ${script.sections?.outro || ''}
               </span>
               {researchDossier && (
                 <button
+                  type="button"
                   onClick={handleImportResearch}
                   className="text-[10px] font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1 underline underline-offset-2 cursor-pointer"
                 >
@@ -281,10 +326,11 @@ ${script.sections?.outro || ''}
               {PRESETS.map((p, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => handleSelectPreset(p)}
                   className={`text-left p-2.5 rounded-xl border text-xs transition-all cursor-pointer ${
                     topic === p.title
-                      ? 'border-amber-500/60 bg-amber-500/10 text-white font-medium'
+                      ? 'border-amber-500/60 bg-amber-500/15 text-white font-semibold'
                       : 'border-white/5 bg-slate-900/60 text-slate-300 hover:border-white/20 hover:text-white'
                   }`}
                 >
@@ -317,7 +363,10 @@ ${script.sections?.outro || ''}
             {error && (
               <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-start gap-2.5">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
-                <p className="leading-relaxed">{error}</p>
+                <div className="flex-1">
+                  <p className="font-semibold text-red-200">Attention Required</p>
+                  <p className="leading-relaxed mt-0.5">{error}</p>
+                </div>
               </div>
             )}
 
@@ -325,15 +374,17 @@ ${script.sections?.outro || ''}
             <div className="space-y-2">
               <label className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-300 flex items-center justify-between">
                 <span>1. DOCUMENTARY MATCH / TOPIC</span>
-                <span className="text-[10px] text-slate-500">REQUIRED</span>
+                <span className="text-[10px] text-amber-400/80 font-bold">* REQUIRED</span>
               </label>
               <input
                 type="text"
                 value={topic}
-                onChange={(e) => setTopic(e.target.value)}
+                onChange={(e) => {
+                  setTopic(e.target.value);
+                  if (error) setError(null);
+                }}
                 placeholder="e.g. Virat Kohli 82* vs Pakistan: The Melbourne Miracle"
                 className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-white/10 focus:border-amber-500 focus:outline-none text-sm text-white placeholder-slate-600 transition-colors"
-                required
               />
             </div>
 
@@ -397,7 +448,7 @@ ${script.sections?.outro || ''}
             <div className="p-3.5 rounded-xl bg-slate-950/60 border border-white/5 space-y-1.5 text-[11px] font-mono text-slate-400">
               <div className="flex items-center justify-between">
                 <span>RAG Retrieval:</span>
-                <span className="text-amber-400 font-semibold">Pinecone Hybrid Docs</span>
+                <span className="text-amber-400 font-semibold">Pinecone Hybrid (19 Chunks)</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Voice Architecture:</span>
@@ -411,14 +462,15 @@ ${script.sections?.outro || ''}
 
             {/* CTA Button */}
             <button
-              type="submit"
-              disabled={isLoading || !topic.trim()}
+              type="button"
+              onClick={handleGenerate}
+              disabled={isLoading}
               className="w-full py-4 rounded-2xl bg-[#f59e0b] hover:bg-[#d97706] disabled:opacity-50 disabled:cursor-not-allowed text-black font-cricket-title text-xl tracking-wider uppercase transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-3 cursor-pointer"
             >
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                  <span>SYNTHESIZING HINGLISH SCRIPT...</span>
+                  <span>SYNTHESIZING HINGLISH SCRIPT ({elapsedSeconds}s)...</span>
                 </>
               ) : (
                 <>
@@ -499,19 +551,46 @@ ${script.sections?.outro || ''}
                 <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 animate-ping" />
                 <div className="absolute inset-2 rounded-full border-2 border-amber-400/40 animate-pulse" />
                 <div className="w-full h-full rounded-full bg-amber-500/10 border border-amber-500/50 flex items-center justify-center text-amber-400">
-                  <Sparkles className="w-8 h-8 animate-bounce" />
+                  <Activity className="w-8 h-8 animate-bounce" />
                 </div>
               </div>
 
               <span className="px-3 py-1 rounded-full text-xs font-mono font-bold tracking-widest bg-amber-500/15 text-amber-300 border border-amber-500/30 uppercase mb-3">
-                RAG INFERENCE IN PROGRESS
+                RAG INFERENCE IN PROGRESS • {elapsedSeconds}S
               </span>
               <h3 className="text-2xl font-cricket-title tracking-wide text-white uppercase max-w-md">
                 PULLING YOUR AUTHENTIC CADENCE FROM PINECONE
               </h3>
-              <p className="text-slate-400 text-xs md:text-sm mt-3 max-w-sm leading-relaxed">
-                Matching narrative tempo across your 19 reference chunks and synthesizing the 3-part script.
-              </p>
+
+              {/* Dynamic Step Tracker */}
+              <div className="mt-8 max-w-sm w-full space-y-3 text-left">
+                <div className={`flex items-center gap-3 text-xs p-2.5 rounded-xl border transition-all ${
+                  progressStep === 0
+                    ? 'border-amber-400/60 bg-amber-500/10 text-amber-200'
+                    : 'border-white/5 bg-slate-950/60 text-slate-400'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${progressStep === 0 ? 'bg-amber-400 animate-pulse' : 'bg-slate-600'}`} />
+                  <span>1. Searching Pinecone index "cricscript-rag"...</span>
+                </div>
+
+                <div className={`flex items-center gap-3 text-xs p-2.5 rounded-xl border transition-all ${
+                  progressStep === 1
+                    ? 'border-amber-400/60 bg-amber-500/10 text-amber-200'
+                    : progressStep > 1 ? 'border-emerald-500/30 bg-emerald-500/5 text-emerald-300' : 'border-white/5 bg-slate-950/60 text-slate-400'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${progressStep === 1 ? 'bg-amber-400 animate-pulse' : progressStep > 1 ? 'bg-emerald-400' : 'bg-slate-600'}`} />
+                  <span>2. Matching Hinglish voiceover rhythm & pause cues...</span>
+                </div>
+
+                <div className={`flex items-center gap-3 text-xs p-2.5 rounded-xl border transition-all ${
+                  progressStep >= 2
+                    ? 'border-amber-400/60 bg-amber-500/10 text-amber-200'
+                    : 'border-white/5 bg-slate-950/60 text-slate-400'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${progressStep >= 2 ? 'bg-amber-400 animate-pulse' : 'bg-slate-600'}`} />
+                  <span>3. Synthesizing 3-part script (Intro, Main, Outro)...</span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -534,6 +613,7 @@ ${script.sections?.outro || ''}
                   {/* Action Buttons */}
                   <div className="flex items-center gap-2">
                     <button
+                      type="button"
                       onClick={handleCopy}
                       className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono font-semibold text-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
@@ -541,6 +621,7 @@ ${script.sections?.outro || ''}
                       <span>{copied ? 'COPIED!' : 'COPY'}</span>
                     </button>
                     <button
+                      type="button"
                       onClick={handleDownload}
                       className="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-xs font-mono font-semibold text-amber-300 flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
@@ -548,6 +629,7 @@ ${script.sections?.outro || ''}
                       <span>DOWNLOAD .MD</span>
                     </button>
                     <button
+                      type="button"
                       onClick={reset}
                       className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
                       title="Clear & Start New Script"
@@ -572,6 +654,7 @@ ${script.sections?.outro || ''}
                 ].map((tab) => (
                   <button
                     key={tab.key}
+                    type="button"
                     onClick={() => setActiveTab(tab.key)}
                     className={`pb-3 px-3 border-b-2 font-bold tracking-wider transition-colors cursor-pointer ${
                       activeTab === tab.key
@@ -643,6 +726,7 @@ ${script.sections?.outro || ''}
               {script.matchedStyleChunks?.length > 0 && (
                 <div className="p-4 border-t border-white/10 bg-slate-950/90 text-xs font-mono">
                   <button
+                    type="button"
                     onClick={() => setShowStyleVault(!showStyleVault)}
                     className="w-full flex items-center justify-between text-slate-400 hover:text-white transition-colors cursor-pointer"
                   >
