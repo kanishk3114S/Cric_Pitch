@@ -36,11 +36,12 @@ app.disable('x-powered-by');
 // ── 1. Security Headers (Helmet) ───────────────────────────────────────────
 app.use(
   helmet({
-    // Content-Security-Policy is set on the Vercel frontend for HTML rendering.
+    // Content-Security-Policy is set on the Vercel frontend or handled by meta tags.
     // Setting false here avoids interfering with JSON API transport while keeping
-    // X-Content-Type-Options: nosniff, X-Frame-Options: DENY, and HSTS enabled.
+    // X-Content-Type-Options: nosniff, X-Frame-Options: SAMEORIGIN, and HSTS enabled.
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
 
@@ -52,8 +53,15 @@ const allowedOrigins = [
   'http://localhost:4173',
   'http://127.0.0.1:4173',
   'http://localhost:3000',
+  'http://localhost:5000',
+  'http://127.0.0.1:5000',
+  'https://*.onrender.com',
+  'https://*.vercel.app',
 ];
 
+if (process.env.RENDER_EXTERNAL_URL) {
+  allowedOrigins.push(process.env.RENDER_EXTERNAL_URL.replace(/\/$/, ''));
+}
 if (process.env.FRONTEND_URL) {
   allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/$/, ''));
 }
@@ -64,37 +72,56 @@ if (process.env.ALLOWED_ORIGINS) {
   });
 }
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. server-to-server health checks, curl)
-      if (!origin) return callback(null, true);
+const corsOptionsDelegate = (req, callback) => {
+  const origin = req.header('Origin');
+  let originAllowed = false;
 
-      // Check against explicit allowed list
-      const isAllowed = allowedOrigins.some((allowed) => {
+  // Requests with no origin (e.g. server-to-server health checks, curl, mobile native) are always permitted
+  if (!origin) {
+    originAllowed = true;
+  } else {
+    // 1. Same-Origin Check: If Origin host matches the request's host header, always allow
+    const host = req.header('host');
+    if (host) {
+      try {
+        const originUrl = new URL(origin);
+        if (originUrl.host === host) {
+          originAllowed = true;
+        }
+      } catch {
+        // Ignore parse error and proceed to whitelist check
+      }
+    }
+
+    // 2. Check against explicit allowed list & wildcard domains (*.onrender.com, *.vercel.app)
+    if (!originAllowed) {
+      originAllowed = allowedOrigins.some((allowed) => {
         if (allowed === origin) return true;
-        // Support Vercel preview deployment wildcard if configured (e.g. *.vercel.app)
         if (allowed.includes('*')) {
           const regex = new RegExp('^' + allowed.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
           return regex.test(origin);
         }
         return false;
       });
+    }
+  }
 
-      if (isAllowed) {
-        return callback(null, true);
-      }
+  if (!originAllowed) {
+    console.warn(`[CORS] Rejected unauthorized origin: "${origin}" for ${req.method} ${req.originalUrl}`);
+  }
 
-      console.warn(`[CORS] Rejected unauthorized origin: "${origin}"`);
-      return callback(new Error('Cross-Origin Request Blocked: Origin not authorized by CricScript API.'), false);
-    },
+  // Return standard CORS options object without throwing an unhandled Error
+  // This allows the browser to enforce origin policy without crashing Express with a 500 error on asset loads
+  callback(null, {
+    origin: originAllowed,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'X-Request-ID', 'Accept', 'Authorization'],
-    // Anonymous stateless architecture: No credentials or cookies required
     credentials: false,
-    maxAge: 86400, // Cache preflight response for 24 hours
-  })
-);
+    maxAge: 86400,
+  });
+};
+
+app.use(cors(corsOptionsDelegate));
 
 // ── 3. Observability & Request ID Tracing ──────────────────────────────────
 app.use(requestLogger);
@@ -173,8 +200,12 @@ if (fs.existsSync(frontendDistPath)) {
     index: 'index.html',
   }));
 
-  // Client-side SPA routing: all non-API GET requests serve index.html
+  // Client-side SPA routing: all non-API and non-asset GET requests serve index.html
   app.get('*', (req, res) => {
+    // Missing assets (files with extensions or under /assets/) should return 404, not index.html
+    if (req.path.startsWith('/assets/') || path.extname(req.path)) {
+      return res.status(404).type('text/plain').send('Asset not found');
+    }
     res.sendFile(path.join(frontendDistPath, 'index.html'));
   });
 } else {
