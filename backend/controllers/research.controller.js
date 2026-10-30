@@ -9,30 +9,22 @@ import { AppError } from '../utils/AppError.js';
 // ── POST /api/v1/research/generate ────────────────────────────────────────
 export const generateResearch = async (req, res, next) => {
   try {
-    const { topic, preContext, researchLength, includeMedia } = req.body;
+    const { topic, preContext, researchLength, includeMedia } = req.sanitized || req.body;
 
-    // Basic validation
-    if (!topic || topic.trim() === '') {
+    if (!topic || typeof topic !== 'string' || topic.trim() === '') {
       throw new AppError('A research topic is required.', 400);
     }
 
     const options = {
       topic: topic.trim(),
-
-      // preContext: user's 4-5 specific angles they want covered
-      // e.g. ["Focus on Kohli's form before the series", "Weather conditions at the venue"]
       preContext: preContext || [],
-
-      // researchLength: 1 to 1000 (controls max word output to save tokens)
-      researchLength: Math.min(Math.max(parseInt(researchLength) || 500, 1), 1000),
-
-      // includeMedia: true/false toggle (fetch news image links or not)
+      researchLength: researchLength || 500,
       includeMedia: includeMedia === true,
     };
 
-    console.log(`🔎 Research started: "${options.topic}"`);
+    console.log(`🔎 Research started [Req: ${req.id || 'direct'}]: "${options.topic}"`);
 
-    // Hand off to the agent — this is where the magic happens
+    // Hand off to the agent
     const dossier = await runResearchAgent(options);
 
     res.status(200).json({
@@ -50,7 +42,7 @@ export const generateResearch = async (req, res, next) => {
 // ── POST /api/v1/research/export-pdf ──────────────────────────────────────
 export const exportResearchPDF = async (req, res, next) => {
   try {
-    const { dossier } = req.body;
+    const { dossier } = req.sanitized || req.body;
 
     if (!dossier) {
       throw new AppError('No dossier data provided for PDF export.', 400);

@@ -37,16 +37,17 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
     styleExemplars
   });
 
-  // Step 3: Call Gemini with ultra-low latency models
+  // Step 3: Call Gemini with ultra-low latency candidate models
   const ai = getAiClient();
-  const candidateModels = ['gemini-3.8-flash', 'gemini-3.1-pro-preview'];
+  const candidateModels = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.1-pro-preview'];
   let result = null;
   let lastError = null;
 
   for (const model of candidateModels) {
     try {
       console.log(`[ScriptAgent] Calling Gemini model: ${model}...`);
-      const response = await ai.models.generateContent({
+      
+      const generatePromise = ai.models.generateContent({
         model,
         contents: userPrompt,
         config: {
@@ -56,6 +57,13 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
           temperature: 0.7 // Balances authentic Hinglish creative flair with JSON discipline
         }
       });
+
+      // 35s per-model failover timeout
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Model ${model} response timed out after 35 seconds`)), 35000)
+      );
+
+      const response = await Promise.race([generatePromise, timeoutPromise]);
 
       let rawText = response.text;
       if (typeof rawText === 'function') {
@@ -102,7 +110,11 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
   }
 
   if (!result) {
-    throw new Error(`Script generation failed across all models: ${lastError?.message || 'Unknown error'}`);
+    const error = new Error(`Script generation failed: ${lastError?.message || 'Unknown model error'}`);
+    if (lastError?.status) error.status = lastError.status;
+    if (lastError?.statusCode) error.statusCode = lastError.statusCode;
+    if (lastError?.code) error.code = lastError.code;
+    throw error;
   }
 
   return result;

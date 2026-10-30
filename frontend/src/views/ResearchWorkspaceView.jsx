@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useResearchStore from '../store/useResearchStore';
 import { generateResearch, exportToPDF } from '../services/api';
 import { ThemeToggle } from '../context/ThemeContext';
+import ErrorAlertPanel from '../components/ErrorAlertPanel';
+import Button from '../components/ui/Button';
 import {
   ArrowLeft,
   ArrowRight,
@@ -149,7 +151,7 @@ const PRESETS = [
   }
 ];
 
-export default function ResearchWorkspaceView({ onBack }) {
+export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
   const { dossier, isLoading, error, setDossier, setLoading, setError, reset } = useResearchStore();
 
   const [topic, setTopic] = useState('');
@@ -183,7 +185,10 @@ export default function ResearchWorkspaceView({ onBack }) {
   }, [isLoading]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+
+    // Prevent duplicate submissions while already running
+    if (isLoading) return;
     if (!topic.trim()) return;
 
     setDossier(null);
@@ -213,12 +218,14 @@ export default function ResearchWorkspaceView({ onBack }) {
       }
     } catch (err) {
       console.error('Research Agent Error:', err);
-      setError(
-        err.response?.data?.error ||
-        err.response?.data?.message ||
-        err.message ||
-        'Research execution could not complete. Please check your connection and try again.'
-      );
+      // Immediately pass structured backend error object
+      setError({
+        message: err.message || 'Research execution could not complete.',
+        errorType: err.errorType || 'SERVER_ERROR',
+        statusCode: err.statusCode || 500,
+        retryable: err.retryable !== false,
+        actionHint: err.actionHint || 'Please check your connection and try again.',
+      });
     } finally {
       setLoading(false);
     }
@@ -300,31 +307,35 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
       <header className="sticky top-0 z-30 bg-theme-header backdrop-blur-md border-b border-theme-subtle px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={ArrowLeft}
               onClick={onBack}
-              className="flex items-center gap-2 text-xs font-semibold text-theme-muted hover:text-theme-primary transition-colors cursor-pointer px-3.5 py-1.5 rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-medium"
+              className="text-xs font-semibold uppercase tracking-wider"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>HUB</span>
-            </button>
+              HUB
+            </Button>
             <div className="h-4 w-px bg-theme-medium" />
             <span className="text-sm font-extrabold tracking-wide text-theme-primary uppercase flex items-center gap-2">
-              <span className="text-emerald-600 dark:text-emerald-400">ENGINE 01</span> / DEEP RESEARCH WORKSPACE
+              <span className="text-emerald-500">ENGINE 01</span> / DEEP RESEARCH WORKSPACE
             </span>
           </div>
 
           <div className="flex items-center gap-3">
             {dossier && (
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={RotateCcw}
                 onClick={handleNewTopic}
-                className="text-xs text-theme-muted hover:text-theme-primary flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-theme-elevated border border-theme-subtle transition-colors cursor-pointer"
+                className="text-xs"
                 title="Start a new research query"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>New Topic</span>
-              </button>
+                New Topic
+              </Button>
             )}
-            <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <div className="flex items-center gap-1.5 text-xs text-emerald-500 font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Agents Active</span>
             </div>
@@ -492,23 +503,17 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
               </div>
 
               {/* Run Agent Button */}
-              <button
+              <Button
                 type="submit"
+                variant="emerald"
+                size="xl"
                 disabled={isLoading}
-                className="w-full py-4 rounded-xl btn-emerald-glow disabled:opacity-50 disabled:cursor-not-allowed font-extrabold text-xs tracking-wider uppercase flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                isLoading={isLoading}
+                icon={!isLoading ? Sparkles : undefined}
+                className="w-full uppercase font-extrabold text-xs tracking-wider shadow-lg shadow-emerald-600/20"
               >
-                {isLoading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Investigating Match Archives ({elapsedSeconds}s)...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 text-white" />
-                    <span>RUN RESEARCH INVESTIGATION 🏏</span>
-                  </>
-                )}
-              </button>
+                {isLoading ? `Investigating Match Archives (${elapsedSeconds}s)...` : 'RUN RESEARCH INVESTIGATION 🏏'}
+              </Button>
 
             </form>
           </div>
@@ -528,11 +533,14 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
                 className="relative rounded-2xl p-8 border border-emerald-500/40 space-y-6 bg-theme-card overflow-hidden shadow-theme-card"
               >
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                  <img
-                    src="/images/cricket/stadium-mcg.jpg"
-                    alt="Radar Backdrop"
-                    className="w-full h-full object-cover object-center opacity-10 dark:opacity-15 contrast-125"
-                  />
+                  <picture className="w-full h-full">
+                    <source srcSet="/images/cricket/stadium-mcg-4k.webp" type="image/webp" />
+                    <img
+                      src="/images/cricket/stadium-mcg-4k.jpg"
+                      alt="4K Stadium Radar Backdrop"
+                      className="w-full h-full object-cover object-center opacity-10 dark:opacity-15 contrast-125"
+                    />
+                  </picture>
                   <div
                     className="absolute inset-0"
                     style={{
@@ -606,23 +614,27 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
             )}
           </AnimatePresence>
 
-          {/* Error State */}
+          {/* Contextual & Actionable Error State */}
           {error && !isLoading && (
-            <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-6 text-rose-600 dark:text-rose-300 text-xs shadow-md">
-              <p className="font-bold uppercase tracking-wider text-sm mb-1">Execution Error</p>
-              <p>{error}</p>
-            </div>
+            <ErrorAlertPanel
+              error={error}
+              onRetry={handleSubmit}
+              onDismiss={() => setError(null)}
+            />
           )}
 
           {/* Empty State: Curated Legendary Case Studies Launchpad */}
           {!dossier && !isLoading && !error && (
             <div className="relative rounded-2xl p-6 md:p-8 border border-theme-subtle bg-theme-card overflow-hidden shadow-theme-card space-y-6">
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <img
-                  src="/images/cricket/stadium-mcg.jpg"
-                  alt="Stadium Atmosphere"
-                  className="w-full h-full object-cover object-center opacity-10 dark:opacity-15 contrast-125 saturate-75"
-                />
+                <picture className="w-full h-full">
+                  <source srcSet="/images/cricket/stadium-mcg-4k.webp" type="image/webp" />
+                  <img
+                    src="/images/cricket/stadium-mcg-4k.jpg"
+                    alt="4K Stadium Atmosphere"
+                    className="w-full h-full object-cover object-center opacity-10 dark:opacity-15 contrast-125 saturate-75"
+                  />
+                </picture>
                 <div
                   className="absolute inset-0"
                   style={{
@@ -793,11 +805,14 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
               {/* Dossier Header Banner with Horizontal Stadium Crop */}
               <div className="relative rounded-2xl p-6 md:p-8 border border-theme-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-theme-card overflow-hidden shadow-theme-card">
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                  <img
-                    src="/images/cricket/stadium-mcg.jpg"
-                    alt="Stadium Match Lighting"
-                    className="w-full h-full object-cover object-[50%_25%] opacity-15 dark:opacity-25 contrast-125 saturate-75"
-                  />
+                  <picture className="w-full h-full">
+                    <source srcSet="/images/cricket/stadium-mcg-4k.webp" type="image/webp" />
+                    <img
+                      src="/images/cricket/stadium-mcg-4k.jpg"
+                      alt="4K Stadium Match Lighting"
+                      className="w-full h-full object-cover object-[50%_25%] opacity-15 dark:opacity-25 contrast-125 saturate-75"
+                    />
+                  </picture>
                   <div
                     className="absolute inset-0"
                     style={{
@@ -832,22 +847,26 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
                 </div>
 
                 <div className="relative z-10 flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
-                  <button
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    icon={copied ? Check : Copy}
                     onClick={handleCopyMarkdown}
-                    className="px-3.5 py-2.5 rounded-xl bg-theme-elevated hover:bg-theme-hover border border-theme-subtle text-theme-secondary hover:text-theme-primary text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="text-xs font-semibold"
                     title="Copy formatted markdown to clipboard"
                   >
-                    {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                    <span>{copied ? 'Copied!' : 'Copy'}</span>
-                  </button>
+                    {copied ? 'Copied!' : 'Copy'}
+                  </Button>
 
-                  <button
+                  <Button
+                    variant="emerald"
+                    size="md"
+                    icon={Download}
                     onClick={handleDownloadPDF}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-black font-extrabold text-xs tracking-wider uppercase transition-all flex items-center gap-2 shadow-xl shadow-emerald-500/20 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+                    className="uppercase font-extrabold text-xs tracking-wider shadow-lg shadow-emerald-500/20"
                   >
-                    <Download className="w-4 h-4 text-black" />
-                    <span>Download PDF</span>
-                  </button>
+                    Download PDF
+                  </Button>
                 </div>
               </div>
 
@@ -1067,6 +1086,30 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
         </section>
 
       </main>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-theme-subtle py-6 px-6 text-center text-xs text-theme-muted mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 font-mono">
+          <span>CRICSCRIPT AI • ENGINE 01 • DEEP RESEARCH AGENT</span>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => onNavigateLegal?.('privacy')}
+              className="hover:text-theme-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
+            >
+              Privacy Policy
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => onNavigateLegal?.('terms')}
+              className="hover:text-theme-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
+            >
+              Terms & Conditions
+            </button>
+          </div>
+        </div>
+      </footer>
 
     </div>
   );

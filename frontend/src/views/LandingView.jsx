@@ -1,26 +1,32 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Flame, Radio, Award } from 'lucide-react';
 import { ThemeToggle } from '../context/ThemeContext';
+import Button from '../components/ui/Button';
 
 const STADIUM_VIDEO =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_074625_a81f018a-956b-43fb-9aee-4d1508e30e6a.mp4';
 
-export default function LandingView({ onContinue }) {
+export default function LandingView({ onContinue, onNavigateLegal }) {
   return (
     <div className="relative min-h-screen bg-theme-app text-theme-primary flex flex-col justify-between overflow-hidden transition-colors">
       
-      {/* ── Background: Ultra-wide Stadium under Floodlights with Slow Camera Pan ── */}
+      {/* ── Background: Ultra-wide Stadium under Floodlights (True 4K 3840x2160) ── */}
       <motion.div
         initial={{ scale: 1 }}
-        animate={{ scale: 1.06 }}
-        transition={{ duration: 22, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+        animate={{ scale: 1.05 }}
+        transition={{ duration: 25, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
         className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden"
       >
-        <img
-          src="/images/cricket/stadium-mcg.jpg"
-          alt="Melbourne Cricket Ground Night Stadium Floodlights"
-          className="w-full h-full object-cover object-center opacity-30 dark:opacity-40 contrast-125 saturate-75"
-        />
+        <picture className="w-full h-full">
+          <source srcSet="/images/cricket/stadium-mcg-4k.webp" type="image/webp" />
+          <img
+            src="/images/cricket/stadium-mcg-4k.jpg"
+            alt="Melbourne Cricket Ground 4K Stadium Floodlights"
+            className="w-full h-full object-cover object-center opacity-30 dark:opacity-40 contrast-125 saturate-75"
+            loading="eager"
+            fetchPriority="high"
+          />
+        </picture>
       </motion.div>
 
       {/* ── Ambient Video Overlay Layer (Subtle Movement) ── */}
@@ -72,12 +78,14 @@ export default function LandingView({ onContinue }) {
 
           <ThemeToggle />
 
-          <button
+          <Button
+            variant="primary"
+            size="sm"
             onClick={onContinue}
-            className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-black text-xs font-bold tracking-wide transition-all cursor-pointer shadow-md shadow-emerald-500/20"
+            className="tracking-wider uppercase font-bold text-[11px]"
           >
             Enter Studio
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -89,9 +97,9 @@ export default function LandingView({ onContinue }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-theme-elevated border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-6 shadow-md"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-theme-elevated border border-[#D91F2B]/30 text-white text-xs font-semibold uppercase tracking-widest mb-6 shadow-md"
         >
-          <Flame className="w-4 h-4 text-emerald-500" />
+          <span className="w-2 h-2 rounded-full bg-[#D91F2B] animate-pulse" />
           <span>Stateless AI Studio • Zero Hallucination Fact-Grounding</span>
         </motion.div>
 
@@ -102,7 +110,7 @@ export default function LandingView({ onContinue }) {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="text-5xl sm:text-7xl md:text-8xl font-cricket-title tracking-wide text-theme-primary uppercase leading-[0.95]"
         >
-          EVERY BALL. <span className="text-emerald-500">EVERY PULSE.</span> <br />
+          EVERY BALL. <span className="text-[#D91F2B]">EVERY PULSE.</span> <br />
           EVERY TURNING POINT.
         </motion.h1>
 
@@ -123,13 +131,15 @@ export default function LandingView({ onContinue }) {
           transition={{ duration: 0.7, delay: 0.3 }}
           className="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
         >
-          <button
+          <Button
+            variant="primary"
+            size="xl"
             onClick={onContinue}
-            className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-black font-extrabold text-base tracking-wider uppercase flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer group"
+            iconRight={ArrowRight}
+            className="w-full sm:w-auto px-10 py-5 text-base tracking-wider uppercase font-bold shadow-xl shadow-[#D91F2B]/30 hover:shadow-[#D91F2B]/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
-            <span>CONTINUE TO STUDIO</span>
-            <ArrowRight className="w-5 h-5 text-black group-hover:translate-x-1.5 transition-transform" />
-          </button>
+            CONTINUE TO STUDIO
+          </Button>
         </motion.div>
 
         {/* ── CINEMATIC ARCHIVE SHOWCASE: 4 LEGENDARY MATCH MOMENTS ── */}
@@ -290,7 +300,26 @@ export default function LandingView({ onContinue }) {
 
       {/* ── Footer ── */}
       <footer className="relative z-10 border-t border-theme-subtle py-6 px-6 text-center text-xs text-theme-muted">
-        <p>CricScript AI • High-Retention Cricket Creator Studio • Instant Creation • Zero Clutter</p>
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p>CricScript AI • High-Retention Cricket Creator Studio • Stateless • Strictly Fact-Grounded</p>
+          <div className="flex items-center gap-4 text-xs font-mono">
+            <button
+              type="button"
+              onClick={() => onNavigateLegal?.('privacy')}
+              className="text-theme-muted hover:text-theme-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
+            >
+              Privacy Policy
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => onNavigateLegal?.('terms')}
+              className="text-theme-muted hover:text-theme-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
+            >
+              Terms & Conditions
+            </button>
+          </div>
+        </div>
       </footer>
 
     </div>

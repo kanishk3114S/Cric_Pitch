@@ -1,119 +1,133 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&family=Bebas+Neue&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
-/* ── Light Mode Root Variables (Clean, Luminous, High-Contrast Luxury) ── */
+/* ── Light Mode Root Variables (Crisp Luxury Architectural Sports Aesthetic) ── */
 :root, [data-theme="light"] {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   color-scheme: light;
 
   /* Surfaces & Backgrounds */
-  --bg-app: #f8fafc;
+  --bg-app: #f4f5f7;
+  --bg-secondary: #e9ecf0;
   --bg-card: #ffffff;
   --bg-surface: #ffffff;
-  --bg-surface-elevated: #f1f5f9;
-  --bg-surface-sunken: #e2e8f0;
+  --bg-surface-elevated: #f0f2f5;
+  --bg-surface-sunken: #e5e8ed;
   --bg-input: #ffffff;
-  --bg-hover: #f1f5f9;
-  --bg-active: #e2e8f0;
-  --bg-badge: rgba(15, 23, 42, 0.06);
-  --bg-overlay: rgba(248, 250, 252, 0.94);
-  --header-bg: rgba(255, 255, 255, 0.88);
+  --bg-hover: #e9ecf0;
+  --bg-active: #dde1e8;
+  --bg-badge: rgba(18, 21, 26, 0.06);
+  --bg-overlay: rgba(244, 245, 247, 0.94);
+  --header-bg: rgba(255, 255, 255, 0.92);
 
-  /* Typography: Rich Deep Ink */
-  --text-primary: #090d16;
-  --text-secondary: #242f40;
-  --text-muted: #57657a;
-  --text-dim: #8896ab;
+  /* Typography */
+  --text-primary: #12151a;
+  --text-secondary: #475060;
+  --text-muted: #6e7887;
+  --text-dim: #96a0af;
   --text-inverse: #ffffff;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(15, 23, 42, 0.09);
-  --border-medium: rgba(15, 23, 42, 0.16);
-  --border-strong: rgba(15, 23, 42, 0.28);
-  --border-focus: #059669;
+  --border-subtle: rgba(18, 21, 26, 0.07);
+  --border-medium: #d8dce3;
+  --border-strong: #bac1cc;
+  --border-focus: #d91f2b;
 
-  /* Accent: Cricket Emerald (Research Agent) */
+  /* Brand Accent: Crimson Red */
+  --accent-primary: #d91f2b;
+  --accent-hover: #f02e3a;
+  --accent-active: #b81520;
+  --accent-subtle: rgba(217, 31, 43, 0.08);
+  --accent-border: rgba(217, 31, 43, 0.24);
+
+  /* Functional Accents */
   --accent-emerald: #059669;
   --accent-emerald-bg: rgba(5, 150, 105, 0.08);
   --accent-emerald-border: rgba(5, 150, 105, 0.22);
   --accent-emerald-text: #047857;
 
-  /* Accent: Pitch Amber (Script Agent) */
   --accent-amber: #d97706;
   --accent-amber-bg: rgba(217, 119, 6, 0.08);
   --accent-amber-border: rgba(217, 119, 6, 0.22);
   --accent-amber-text: #b45309;
 
-  /* Shadows: Crisp multi-layer diffuse luxury */
-  --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 20px 48px -12px rgba(5, 150, 105, 0.05);
-  --popover-shadow: 0 12px 32px -6px rgba(15, 23, 42, 0.14), 0 24px 64px -12px rgba(15, 23, 42, 0.18);
+  /* Shadows */
+  --card-shadow: 0 2px 10px -2px rgba(18, 21, 26, 0.05), 0 12px 30px -4px rgba(18, 21, 26, 0.06), 0 0 0 1px rgba(18, 21, 26, 0.05);
+  --popover-shadow: 0 12px 32px -6px rgba(18, 21, 26, 0.12), 0 24px 64px -12px rgba(18, 21, 26, 0.16);
 
   /* Scrollbars */
-  --scrollbar-track: #f1f5f9;
+  --scrollbar-track: #f4f5f7;
   --scrollbar-thumb: #cbd5e1;
   --scrollbar-thumb-hover: #94a3b8;
 
   /* Image Matte Overlays & Vignettes */
-  --matte-bg: #f8fafc;
-  --matte-gradient: linear-gradient(to right, #f8fafc 20%, rgba(248,250,252,0.92) 55%, rgba(248,250,252,0.2) 100%);
-  --radial-vignette: radial-gradient(ellipse at center, transparent 30%, rgba(248, 250, 252, 0.88) 92%);
+  --matte-bg: #ffffff;
+  --matte-gradient: linear-gradient(to right, #ffffff 20%, rgba(255,255,255,0.92) 55%, rgba(255,255,255,0.2) 100%);
+  --radial-vignette: radial-gradient(ellipse at center, transparent 35%, rgba(244, 245, 247, 0.94) 90%);
 }
 
-/* ── Dark Mode Root Variables (Deep Obsidian, Velvet Black, Neon Emerald & Amber) ── */
+/* ── Dark Mode Root Variables (Cinematic Dark Charcoal, Crimson Red Accent, White Type) ── */
 .dark, [data-theme="dark"] {
   color-scheme: dark;
 
-  /* Surfaces & Backgrounds */
-  --bg-app: #030712;
-  --bg-card: #080d19;
-  --bg-surface: #080d19;
-  --bg-surface-elevated: #0f172a;
-  --bg-surface-sunken: #040711;
-  --bg-input: #040711;
-  --bg-hover: #1e293b;
-  --bg-active: #334155;
-  --bg-badge: rgba(255, 255, 255, 0.08);
-  --bg-overlay: rgba(3, 7, 18, 0.94);
-  --header-bg: rgba(3, 7, 18, 0.88);
+  /* Surfaces & Backgrounds — Exact Reference Inspiration */
+  --bg-app: #08090b;
+  --bg-secondary: #101216;
+  --bg-card: #15191f;
+  --bg-surface: #15191f;
+  --bg-surface-elevated: #1b2028;
+  --bg-surface-sunken: #0c0e12;
+  --bg-input: #0c0e12;
+  --bg-hover: #242a35;
+  --bg-active: #2d3542;
+  --bg-badge: rgba(255, 255, 255, 0.07);
+  --bg-overlay: rgba(8, 9, 11, 0.94);
+  --header-bg: rgba(8, 9, 11, 0.88);
 
   /* Typography */
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-  --text-inverse: #0f172a;
+  --text-primary: #f5f5f5;
+  --text-secondary: #a1a6b0;
+  --text-muted: #737b88;
+  --text-dim: #525866;
+  --text-inverse: #08090b;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.09);
-  --border-medium: rgba(255, 255, 255, 0.18);
-  --border-strong: rgba(255, 255, 255, 0.32);
-  --border-focus: #10b981;
+  --border-subtle: #1e232b;
+  --border-medium: #292f38;
+  --border-strong: #3d4653;
+  --border-focus: #d91f2b;
 
-  /* Accent: Cricket Emerald (Research Agent) */
+  /* Brand Accent: Crimson Red */
+  --accent-primary: #d91f2b;
+  --accent-hover: #f02e3a;
+  --accent-active: #b81520;
+  --accent-subtle: rgba(217, 31, 43, 0.14);
+  --accent-border: rgba(217, 31, 43, 0.32);
+
+  /* Functional Accents */
   --accent-emerald: #10b981;
-  --accent-emerald-bg: rgba(16, 185, 129, 0.15);
-  --accent-emerald-border: rgba(16, 185, 129, 0.32);
+  --accent-emerald-bg: rgba(16, 185, 129, 0.12);
+  --accent-emerald-border: rgba(16, 185, 129, 0.28);
   --accent-emerald-text: #34d399;
 
-  /* Accent: Pitch Amber (Script Agent) */
   --accent-amber: #f59e0b;
-  --accent-amber-bg: rgba(245, 158, 11, 0.15);
-  --accent-amber-border: rgba(245, 158, 11, 0.32);
+  --accent-amber-bg: rgba(245, 158, 11, 0.12);
+  --accent-amber-border: rgba(245, 158, 11, 0.28);
   --accent-amber-text: #fbbf24;
 
-  /* Shadows: Cinematic Dark Glow */
-  --card-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset, 0 25px 60px rgba(0, 0, 0, 0.7);
-  --popover-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 30px 70px -15px rgba(0, 0, 0, 0.85);
+  /* Shadows: Cinematic Soft Edge Definition */
+  --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --popover-shadow: 0 16px 44px -4px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 
   /* Scrollbars */
-  --scrollbar-track: #030712;
-  --scrollbar-thumb: rgba(255, 255, 255, 0.16);
-  --scrollbar-thumb-hover: rgba(16, 185, 129, 0.45);
+  --scrollbar-track: #08090b;
+  --scrollbar-thumb: #292f38;
+  --scrollbar-thumb-hover: #3d4653;
 
-  /* Image Matte Overlays */
-  --matte-bg: #080d19;
-  --matte-gradient: linear-gradient(to right, #080d19 18%, rgba(8,13,25,0.85) 55%, rgba(8,13,25,0.2) 100%);
-  --radial-vignette: radial-gradient(ellipse at center, transparent 25%, #030712 80%);
+  /* Image Matte Overlays & Vignettes */
+  --matte-bg: #15191f;
+  --matte-gradient: linear-gradient(to right, #15191f 20%, rgba(21,25,31,0.88) 55%, rgba(21,25,31,0.2) 100%);
+  --radial-vignette: radial-gradient(ellipse at center, transparent 35%, #08090b 88%);
 }
 
 body {
@@ -122,11 +136,12 @@ body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* ── Utility Classes for Semantic Theme Binding ── */
 .bg-theme-app { background-color: var(--bg-app); }
+.bg-theme-secondary { background-color: var(--bg-secondary); }
 .bg-theme-card { background-color: var(--bg-card); }
 .bg-theme-surface { background-color: var(--bg-surface); }
 .bg-theme-elevated { background-color: var(--bg-surface-elevated); }
@@ -157,31 +172,51 @@ body {
 .font-display {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
-/* ── Ultra-Premium Button & Surface Classes ── */
-.btn-emerald-glow {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+/* ── Crimson Brand Buttons & Interactive Surfaces ── */
+.btn-crimson {
+  background-color: #d91f2b;
   color: #ffffff;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 600;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 10px rgba(217, 31, 43, 0.25);
+}
+.btn-crimson:hover {
+  background-color: #f02e3a;
+  box-shadow: 0 4px 18px rgba(217, 31, 43, 0.4);
+  transform: translateY(-1px);
+}
+.btn-crimson:active {
+  background-color: #b81520;
+  transform: translateY(0);
+}
+
+.btn-emerald-glow {
+  background: #059669;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.25);
+  transition: all 0.15s ease-out;
 }
 .btn-emerald-glow:hover {
+  background: #10b981;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
   transform: translateY(-1px);
-  box-shadow: 0 8px 26px rgba(16, 185, 129, 0.45);
 }
 
 .btn-amber-glow {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: #000000;
-  font-weight: 800;
-  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.32);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #d97706;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.25);
+  transition: all 0.15s ease-out;
 }
 .btn-amber-glow:hover {
+  background: #f59e0b;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
   transform: translateY(-1px);
-  box-shadow: 0 8px 28px rgba(245, 158, 11, 0.45);
 }
 
 /* ── Animated Shimmer for Skeleton Lazy Loading ── */
@@ -204,7 +239,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.12) 50%,
     transparent 100%
   );
   animation: shimmer-sweep 1.8s infinite;
@@ -214,7 +249,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(15, 23, 42, 0.08) 50%,
+    rgba(18, 21, 26, 0.06) 50%,
     transparent 100%
   );
 }
@@ -222,26 +257,13 @@ body {
 /* ── Audio Waveform Visualizer Keyframes ── */
 @keyframes audio-wave {
   0%, 100% { height: 6px; }
-  50% { height: 26px; }
+  50% { height: 24px; }
 }
 .wave-bar-1 { animation: audio-wave 1.1s ease-in-out infinite 0.1s; }
 .wave-bar-2 { animation: audio-wave 1.1s ease-in-out infinite 0.35s; }
 .wave-bar-3 { animation: audio-wave 1.1s ease-in-out infinite 0.2s; }
 .wave-bar-4 { animation: audio-wave 1.1s ease-in-out infinite 0.5s; }
 .wave-bar-5 { animation: audio-wave 1.1s ease-in-out infinite 0.25s; }
-
-/* ── Ambient Glow Background Overlay ── */
-.bg-ambient-grid {
-  background-image: 
-    radial-gradient(ellipse at 50% -10%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 85% 90%, rgba(245, 158, 11, 0.08) 0%, transparent 45%);
-}
-
-[data-theme="light"] .bg-ambient-grid {
-  background-image: 
-    radial-gradient(ellipse at 50% -10%, rgba(5, 150, 105, 0.07) 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 90%, rgba(217, 119, 6, 0.05) 0%, transparent 45%);
-}
 
 /* ── Smooth Custom Scrollbars ── */
 ::-webkit-scrollbar {

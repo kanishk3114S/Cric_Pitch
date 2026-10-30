@@ -1,18 +1,23 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Search, FileText, CheckCircle2 } from 'lucide-react';
 import { ThemeToggle } from '../context/ThemeContext';
+import Button from '../components/ui/Button';
 
-export default function EngineHubView({ onBack, onSelectEngine }) {
+export default function EngineHubView({ onBack, onSelectEngine, onNavigateLegal }) {
   return (
     <div className="relative min-h-screen bg-theme-app text-theme-primary flex flex-col justify-between p-6 md:p-12 overflow-hidden transition-colors">
       
-      {/* ── Background: Subdued Stadium Backdrop with Theme-Adaptive Vignette ── */}
+      {/* ── Background: Subdued 4K Stadium Backdrop (3840x2160) ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <img
-          src="/images/cricket/stadium-modi.jpg"
-          alt="Night Stadium Backdrop"
-          className="w-full h-full object-cover object-center opacity-10 dark:opacity-20 contrast-125 saturate-50"
-        />
+        <picture className="w-full h-full">
+          <source srcSet="/images/cricket/stadium-floodlights-4k.webp" type="image/webp" />
+          <img
+            src="/images/cricket/stadium-floodlights-4k.jpg"
+            alt="4K Cricket Stadium Floodlights Control Room"
+            className="w-full h-full object-cover object-center opacity-15 dark:opacity-25 contrast-125 saturate-60"
+            loading="eager"
+          />
+        </picture>
         <div
           className="absolute inset-0"
           style={{
@@ -29,17 +34,19 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
 
       {/* ── Top Navigation Bar ── */}
       <div className="relative z-10 max-w-6xl mx-auto w-full flex items-center justify-between pb-8 border-b border-theme-subtle">
-        <button
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={onBack}
-          className="flex items-center gap-2 text-xs font-semibold text-theme-muted hover:text-theme-primary transition-colors cursor-pointer group px-3.5 py-1.5 rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-medium"
+          icon={ArrowLeft}
+          className="text-xs font-semibold uppercase tracking-wider"
         >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span>BACK TO HOME</span>
-        </button>
+          BACK TO HOME
+        </Button>
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-theme-elevated border border-theme-subtle">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#D91F2B] animate-pulse" />
             <span className="text-xs font-mono text-theme-secondary uppercase tracking-wider">
               Engine Hub • Control Room
             </span>
@@ -134,11 +141,11 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
 
             {/* Bottom CTA Button */}
             <div className="relative z-10 mt-8 pt-6 border-t border-theme-subtle flex items-center justify-between">
-              <span className="text-emerald-600 dark:text-emerald-400 text-xs font-bold tracking-wider uppercase group-hover:text-emerald-500">
+              <span className="text-emerald-500 dark:text-emerald-400 text-xs font-bold tracking-wider uppercase group-hover:text-emerald-300">
                 Launch Research Workspace
               </span>
-              <div className="w-10 h-10 rounded-full btn-emerald-glow flex items-center justify-center group-hover:translate-x-1.5 transition-transform">
-                <ArrowRight className="w-5 h-5 font-bold" />
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-black group-hover:translate-x-1 transition-all">
+                <ArrowRight className="w-4 h-4 font-bold" />
               </div>
             </div>
           </motion.div>
@@ -213,11 +220,11 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
 
             {/* Bottom CTA Button */}
             <div className="relative z-10 mt-8 pt-6 border-t border-theme-subtle flex items-center justify-between">
-              <span className="text-amber-600 dark:text-amber-400 text-xs font-bold tracking-wider uppercase group-hover:text-amber-500">
+              <span className="text-amber-500 dark:text-amber-400 text-xs font-bold tracking-wider uppercase group-hover:text-amber-300">
                 Launch Script Studio
               </span>
-              <div className="w-10 h-10 rounded-full btn-amber-glow flex items-center justify-center group-hover:translate-x-1.5 transition-transform">
-                <ArrowRight className="w-5 h-5 font-bold" />
+              <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-black group-hover:translate-x-1 transition-all">
+                <ArrowRight className="w-4 h-4 font-bold" />
               </div>
             </div>
           </motion.div>
@@ -226,9 +233,25 @@ export default function EngineHubView({ onBack, onSelectEngine }) {
       </div>
 
       {/* ── Footer ── */}
-      <div className="max-w-6xl mx-auto w-full pt-8 border-t border-theme-subtle flex items-center justify-between text-xs text-theme-muted font-mono">
-        <span>CRICSCRIPT AI • STUDIO WORKSPACE</span>
-        <span>ZERO AUTH • INSTANT EXECUTION</span>
+      <div className="max-w-6xl mx-auto w-full pt-8 border-t border-theme-subtle flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-theme-muted font-mono">
+        <span>CRICSCRIPT AI • STUDIO WORKSPACE • STATELESS</span>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => onNavigateLegal?.('privacy')}
+            className="hover:text-theme-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
+          >
+            Privacy Policy
+          </button>
+          <span>•</span>
+          <button
+            type="button"
+            onClick={() => onNavigateLegal?.('terms')}
+            className="hover:text-theme-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
+          >
+            Terms & Conditions
+          </button>
+        </div>
       </div>
 
     </div>

@@ -1,204 +1,189 @@
-# 🏏 CricPitch (CricScript AI)
+# 🏏 CricScript AI (CricPitch)
+**Cinematic Cricket Documentary Research & Cadence Scriptwriting Studio**
 
-<p align="center">
-  <img src="frontend/public/favicon.svg" alt="CricPitch Logo" width="80" height="80" />
-</p>
-
-<p align="center">
-  <strong>Autonomous Cricket Investigative Research & High-Retention Voiceover Studio</strong>
-</p>
-
-<p align="center">
-  <a href="#-dual-engine-architecture"><img src="https://img.shields.io/badge/Architecture-Dual--Engine%20Creator%20Pipeline-10b981?style=for-the-badge" alt="Architecture" /></a>
-  <a href="#-engine-01-investigative-research-agent"><img src="https://img.shields.io/badge/Engine%2001-Deep%20Archive%20Research-38bdf8?style=for-the-badge" alt="Engine 1" /></a>
-  <a href="#-engine-02-creator-voiceover-studio"><img src="https://img.shields.io/badge/Engine%2002-Hinglish%20Tone%20Cadence-f59e0b?style=for-the-badge" alt="Engine 2" /></a>
-  <a href="#-theme-system"><img src="https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Adaptive-emerald?style=for-the-badge" alt="Theme" /></a>
-  <a href="#-strict-script-privacy--security"><img src="https://img.shields.io/badge/Security-Strict%20Script%20Privacy-red?style=for-the-badge" alt="Security" /></a>
-</p>
+[![CI / Production Quality Gate](https://github.com/your-org/cricscript-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/cricscript-ai/actions/workflows/ci.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?logo=vite)](https://vitejs.dev)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
+[![Architecture](https://img.shields.io/badge/Architecture-Stateless%20Anonymous%20SaaS-D91F2B)](#-architecture-overview)
+[![License](https://img.shields.io/badge/License-Proprietary-slate)](LICENSE)
 
 ---
 
-## 📽️ The Creative Vision
+## 📽️ Product Overview
 
-Creating high-retention cricket documentary videos requires two critical pillars that generic tools fail to deliver:
-1. **Unassailable Ground-Truth Facts:** Exact ball-by-ball chronologies, pitch dynamics, reverse-swing conditions, obscure MCC laws, locker-room quotes, and high-resolution match photography.
-2. **Authentic Narrative Voice:** The creator's signature pacing, staccato tension, dramatic `[pause]` acoustic cues, and conversational Hinglish storytelling that keeps viewers glued to the screen.
+Creating viral, high-retention cricket documentary videos requires two pillars that generic chatbots fail to deliver:
+1. **Unassailable Ground-Truth Facts:** Exact ball-by-ball chronologies, reverse-swing physics, pitch deterioration, DRS controversy nuances, locker-room quotes, and high-resolution match photography.
+2. **Authentic Narrative Cadence:** High-tension pacing, dramatic `[pause]` acoustic cues, and conversational Hinglish storytelling calibrated under 1,000 words to maximize viewer retention.
 
-**CricPitch** solves both problems with an autonomous, dual-engine creator studio:
-- **Engine 01 (Investigative Research Agent):** Digs through official match archives, scorecards, and press conferences under strict zero-hallucination fact grounding, compiling an executive brief with downloadable editorial PDF reports.
-- **Engine 02 (Voiceover Studio & Cadence Engine):** Calibrates to your personal storytelling cadence by referencing your authentic scripts, generating 3-part teleprompter voiceover copy (Intro • Main • Outro) strictly under 1,000 words.
+**CricScript AI** is an autonomous, dual-engine creator studio engineered specifically for sports creators, video essayists, and broadcast analysts.
+
+### Dual-Engine Pipeline:
+- **Engine 01 (Deep Research Agent):** Autonomous investigative agent. Runs multi-hop web searches across scorecards, pitch dynamics, and press conferences to compile verified chronologies, tactical nuances, and stats under strict zero-hallucination fact grounding. Exports instantly to high-contrast executive PDFs.
+- **Engine 02 (Match Scriptwriter):** Transfers the acoustic cadence, dramatic pauses, and sentence rhythm of authentic cricket video essays. Generates 3-part Hinglish voiceover copy (Intro • Main • Outro) with teleprompter cues strictly under 1,000 words.
 
 ---
 
-## 🏛️ Dual-Engine Architecture
+## 🏛️ Architecture Overview
 
-```mermaid
-flowchart TD
-    subgraph UI ["Cinematic Creator Studio (React + Vite + Tailwind)"]
-        Landing["Landing Page<br/>(Light/Dark Adaptive Hero)"]
-        Hub["Engine Hub<br/>(Dual Selection Canvas)"]
-        E1_UI["Engine 01 Console<br/>(Archive Investigation & PDF)"]
-        E2_UI["Engine 02 Studio<br/>(Teleprompter & Cadence Studio)"]
-        Theme["Theme Engine<br/>(Persistent Light & Dark System)"]
-        
-        Landing -->|Launch Studio| Hub
-        Hub -->|Investigate Match| E1_UI
-        Hub -->|Write Voiceover| E2_UI
-    end
+CricScript AI operates as an **anonymous, stateless SaaS application**:
+- **Zero-Identity Architecture:** No user registration, passwords, email capture, JWT tokens, session cookies, or tracking pixels.
+- **Horizontal Scalability:** All requests are stateless; multiple backend container instances can process workloads interchangeably without shared session affinity.
+- **In-Memory Streaming:** Queries and generated scripts are synthesized and streamed directly to client memory. No prompt logs or generated scripts are retained in persistent user databases.
 
-    subgraph Backend ["Stateless Express Production Gateway"]
-        E1_Ctrl["Research Controller"]
-        E2_Ctrl["Script Controller"]
-        PDF_Engine["PDFKit Editorial Exporter"]
-    end
-
-    subgraph Intelligence ["Autonomous AI Co-Creators"]
-        Tavily["Live Archive Intelligence<br/>(Scorecards & Quotes)"]
-        Vectors["Pinecone Document Index<br/>(Creator Cadence Vectors)"]
-        Gemini38["Gemini 3.8 Flash<br/>(Low-Latency Synthesis)"]
-    end
-
-    E1_UI -->|POST /api/v1/research/generate| E1_Ctrl
-    E1_Ctrl --> Tavily
-    E1_Ctrl --> Gemini38
-    E1_Ctrl -->|Verified Dossier| E1_UI
-    E1_UI -->|POST /api/v1/research/export-pdf| PDF_Engine
-
-    E2_UI -->|POST /api/v1/scripts/generate| E2_Ctrl
-    E2_Ctrl --> Vectors
-    E2_Ctrl --> Gemini38
-    E2_Ctrl -->|Hinglish 3-Part Voiceover| E2_UI
+```
+                      [ HTTPS Client Browser ]
+                                 │
+           ┌─────────────────────┴─────────────────────┐
+           ▼                                           ▼
+ [ Vercel Edge CDN ]                         [ Render Web Service ]
+ • React 19 + Vite 8 SPA                     • Node.js 20 + Express 4 API
+ • Static Assets (WebP/AVIF)                 • Multi-hop Research Agent
+ • Security Headers & CSP                    • Cadence-RAG Script Agent
+ • Client Router & Legal Pages               • Zero-Disk PDF Streaming Engine
 ```
 
 ---
 
-## ✨ Production Capabilities
-
-### 🔍 Engine 01 — Deep Archive Investigation
-- **Multi-Hop Search Planning:** Automatically executes targeted queries across official scorecards, commentary archives, and press conferences.
-- **Strict Zero-Hallucination Fact Guarding:** Temperature locked at `0.2`. Every turning point, score, and quote is anchored directly to verified match data.
-- **Visual Match Archives:** Surfaces high-resolution documentary stills and original source links with one-click full-resolution previews.
-- **High-Contrast Editorial PDF Export:** Generates clean, publication-grade print dossiers with hyperlinked footnotes and chronological timeline cards.
-
-### 🎙️ Engine 02 — Personal Voiceover Studio
-- **Creator Script Vault:** Houses your authentic scripts, classified into narrative blocks (Hooks, Turning Points, Tactical Breakdowns, Climax).
-- **Acoustic Breath Markers:** Enforces staccato phrasing and `[pause]` acoustic cues tailored for natural voiceover delivery.
-- **Disciplined 3-Part Teleprompter Architecture:**
-  - **Part 1 (The Hook & Stakes):** Captures the viewer in the first 10 seconds (~180–220 words).
-  - **Part 2 (The Tactical Battle):** Psychological duel, momentum shifts, and ball-by-ball tension (~550–650 words).
-  - **Part 3 (Emotional Payoff & Legacy):** Final roar, historical fallout, and lingering philosophical reflection (~150–200 words).
-- **Strict Length Cap:** Disciplined under 1,000 words for optimal YouTube retention.
-- **Animated Lazy-Loading Visualizer:** Shimmering teleprompter skeletons with real-time acoustic waveform animations while generating.
-
-### 🎨 Semantic Light & Dark Theme System
-- **100% Adaptive UI:** Zero hardcoded colors or locked dark-only utility classes.
-- **Light Mode:** Crisp, luminous pearl surfaces, high-contrast deep ink typography, and radiant emerald highlights.
-- **Dark Mode:** Deep midnight obsidian surfaces, subtle emerald/amber ambient glows, and velvet card elevations.
-- **Persistent Toggle:** Remembers your preference across sessions via `localStorage`.
-
----
-
-## 🔒 Strict Script Privacy & Security
-
-Your writing voice is your intellectual property. CricPitch enforces strict security standards:
-- **Repository Isolation:** All private scripts, raw docs, extracted text, and processed chunks in `backend/data/` are strictly ignored via `.gitignore`.
-- **Zero Drive Modifications:** Cloud imports operate exclusively through read-only exports (`gdrive readonly export`). Antigravity and the backend never modify, delete, or overwrite your cloud files.
-- **Private Integrated Vectors:** Cadence exemplars are indexed in your private Pinecone namespace, with local fallback for 100% uptime.
-
----
-
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
 ### Frontend
-- **Framework:** React 18 + Vite (Production build in ~1.2s)
-- **Styling:** Tailwind CSS with semantic CSS variables and Bebas Neue, Space Grotesk, and Plus Jakarta Sans typography
-- **State Management:** Zustand (in-memory, ephemeral, zero auth clutter)
-- **Animations:** Framer Motion + custom CSS shimmer and audio waveform equalizers
+- **Framework:** React 19.3 + Vite 8.3
+- **Styling:** Tailwind CSS v4 + Semantic Design Tokens (`#08090B` Dark Charcoal Foundation, `#D91F2B` Crimson Accent)
+- **State Management:** Zustand 5.0
+- **Motion & Transitions:** Framer Motion 14.6
 - **Icons:** Lucide React
+- **Asset Formats:** True 4K (3840×2160) WebP/JPEG stadium backdrops, SVG favicons
 
 ### Backend
-- **Runtime:** Node.js (v20+ / v22+) + Express.js
-- **Model Engine:** Google Gemini API via official `@google/genai` SDK (`gemini-3.8-flash`)
-- **Search Tooling:** Tavily Search API with image and description indexing
-- **Vector Retrieval:** Pinecone Vector Database (`@pinecone-database/pinecone`) with integrated inference
-- **Document Extractors:** `mammoth` (DOCX), `adm-zip` (bulk archives), `pdf-parse`
-- **PDF Engine:** PDFKit streaming engine
-- **Security:** Helmet, CORS, and centralized error handling middleware
+- **Runtime:** Node.js 20.x (ES Modules)
+- **Framework:** Express 4.21
+- **Security:** Helmet 8.0, Express Rate Limit 7.5, Strict CORS Origin Filter
+- **PDF Generation:** PDFKit 0.15 (Zero-disk direct response streaming)
+- **AI Synthesis:** Google Gemini 3.8 / 3.1 (`@google/genai` official SDK)
+- **Web Intelligence:** Tavily Advanced Search API
+- **Vector Retrieval:** Pinecone Database SDK 9.1 with resilient local style archive fallback
 
 ---
 
-## 🚀 Quick Start Guide
+## 🔒 Security & Privacy Posture
+
+- **OWASP Top 10 Hardened:** Input boundary enforcement via `middleware/validator.js` with length caps, control character stripping, and recursive prototype pollution checks (`__proto__`, `constructor`, `prototype`).
+- **Tiered Rate Limiting:**
+  - Global API: 120 req / 15 min per IP.
+  - AI Generation: 15 generations / 15 min per IP.
+  - PDF Compilation: 30 downloads / 15 min per IP.
+- **Zero-SSRF Design:** Backend never fetches arbitrary user-provided URLs. External network calls are strictly restricted to official upstream provider SDKs. PDF image references are rendered as client-side text hyperlinks without server-side fetching.
+- **Zero Tracking Cookies:** Confirmed cookie-free operation. Browser storage is used solely for `cricscript-theme` (`"dark"` / `"light"`).
+- **Safe Error Classification:** Upstream AI provider errors (`QUOTA_EXHAUSTED`, `RATE_LIMITED`, `AUTH_FAILURE`, `TIMEOUT`) are normalized into structured user-friendly diagnostics without leaking internal stack traces or server paths.
+
+---
+
+## 📋 Local Development Setup
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) v20+ or v22+
-- A [Google Gemini API Key](https://aistudio.google.com/apikey)
-- A [Tavily Search API Key](https://tavily.com)
-- *(Optional)* A [Pinecone API Key](https://www.pinecone.io/) for cloud vector retrieval (local fallback is included automatically)
+- Node.js 20.x or higher
+- npm 10.x or higher
+- Git
 
----
-
-### Step 1: Clone the Repository
-
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/CricPitch.git
-cd CricPitch
+git clone https://github.com/your-org/cricpitch.git
+cd cricpitch
 ```
 
----
-
-### Step 2: Configure & Start Backend
-
+### 2. Configure Backend Environment
+Create `backend/.env` based on `backend/.env.example`:
 ```bash
-cd backend
-npm install
+cp backend/.env.example backend/.env
 ```
-
-Create `.env` inside `backend/`:
-
+Populate `backend/.env` with your genuine credentials:
 ```env
 PORT=5000
-FRONTEND_URL=http://localhost:5173
+NODE_ENV=development
+
+# Google Gemini API Key (Required)
+# https://aistudio.google.com/apikey
 GEMINI_API_KEY=your_gemini_api_key_here
+
+# Tavily Search API Key (Required for live research)
+# https://tavily.com
 TAVILY_API_KEY=your_tavily_api_key_here
+
+# Pinecone Vector DB (Optional; falls back to local style archive)
 PINECONE_API_KEY=your_pinecone_api_key_here
 PINECONE_INDEX_NAME=cricscript-rag
+
+# Frontend URL for CORS
+FRONTEND_URL=http://localhost:5173
 ```
 
-Launch development server:
+### 3. Install Dependencies
+```bash
+# Install backend dependencies
+npm --prefix backend install
+
+# Install frontend dependencies
+npm --prefix frontend install
+```
+
+### 4. Start Development Servers
+Run backend and frontend in separate terminals:
+```bash
+# Terminal 1: Backend API (runs on http://localhost:5000)
+npm --prefix backend run dev
+
+# Terminal 2: Frontend SPA (runs on http://localhost:5173)
+npm --prefix frontend run dev
+```
+
+---
+
+## 🧪 Testing & Quality Assurance
 
 ```bash
-npm run dev
+# Run backend syntax self-check
+node --check backend/server.js
+
+# Run frontend linter (Oxlint)
+npm --prefix frontend run lint
+
+# Run production frontend build
+npm --prefix frontend run build
+
+# Run dependency security audits
+npm --prefix backend audit --audit-level=high
+npm --prefix frontend audit --audit-level=high
 ```
 
-The backend starts at `http://localhost:5000`.
+---
+
+## 🌐 API Overview
+
+All API endpoints are mounted under `/api/v1`:
+
+| Method | Endpoint | Description | Rate Limit |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/health` | Liveness health check (status, uptime, timestamp) | 120 / 15m |
+| `GET` | `/api/v1/ready` | Readiness check (upstream provider configuration flags) | 120 / 15m |
+| `POST` | `/api/v1/research/generate` | Autonomous multi-hop research investigation | 15 / 15m |
+| `POST` | `/api/v1/research/export-pdf` | Stream synthesized research dossier as executive PDF | 30 / 15m |
+| `POST` | `/api/v1/scripts/generate` | Hinglish cadence-matched 3-part script generation | 15 / 15m |
 
 ---
 
-### Step 3: Configure & Start Frontend
+## 🚀 Production Deployment
 
-Open a new terminal window:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend launches at `http://localhost:5173`.
+Refer to [`DEPLOYMENT.md`](DEPLOYMENT.md) for complete step-by-step instructions:
+- **Frontend:** Deployed to Vercel with SPA route rewrites, immutable asset caching, and Content-Security-Policy headers via [`frontend/vercel.json`](frontend/vercel.json).
+- **Backend:** Deployed to Render as a Web Service via [`render.yaml`](render.yaml) with automatic zero-downtime health checking.
 
 ---
 
-## 📡 API Reference
+## 📄 Privacy & Legal
 
-### 1. Research Engine
-- `POST /api/v1/research/generate` — Autonomous multi-hop match archive investigation.
-- `POST /api/v1/research/export-pdf` — Streams publication-grade editorial PDF report.
-
-### 2. Voiceover Studio & Cadence Engine
-- `POST /api/v1/scripts/generate` — Synthesizes 3-part Hinglish script under 1,000 words with dramatic acoustic `[pause]` cues.
-
----
-
-## 📄 License
-
-MIT License. Crafted for cricket analysts, documentarians, and digital storytellers worldwide.
+- **Privacy Policy:** [`/privacy`](file:///frontend/src/views/PrivacyPolicyView.jsx) — Documents anonymous processing, zero-cookie operation, and DPDP Act 2023 / GDPR alignment.
+- **Terms & Conditions:** [`/terms`](file:///frontend/src/views/TermsView.jsx) — Outlines fair use of public sports statistics, acceptable use, and output ownership.
+- **Security Policy:** [`SECURITY.md`](SECURITY.md) — Threat model, security controls, and responsible disclosure instructions.
+- **Incident Response:** [`INCIDENT_RESPONSE.md`](INCIDENT_RESPONSE.md) — Operational runbook for outages, rate limits, and key rotations.

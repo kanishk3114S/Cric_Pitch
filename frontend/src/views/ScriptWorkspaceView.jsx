@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import useScriptStore from '../store/useScriptStore';
 import useResearchStore from '../store/useResearchStore';
 import { generateScript } from '../services/api';
 import { ThemeToggle } from '../context/ThemeContext';
+import ScriptGenerationStudioPanel from '../components/ScriptGenerationStudioPanel';
+import ErrorAlertPanel from '../components/ErrorAlertPanel';
+import Button from '../components/ui/Button';
 import {
   ArrowLeft,
   Copy,
@@ -16,11 +20,7 @@ import {
   Plus,
   Trash2,
   Import,
-  ChevronRight,
-  AlertCircle,
-  Activity,
-  X,
-  CheckCircle2
+  ChevronRight
 } from 'lucide-react';
 
 const PRESETS = [
@@ -63,7 +63,7 @@ const PRESETS = [
   }
 ];
 
-export default function ScriptWorkspaceView({ onBack }) {
+export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
   const {
     script,
     isLoading,
@@ -86,9 +86,8 @@ export default function ScriptWorkspaceView({ onBack }) {
   const [copied, setCopied] = useState(false);
   const [showStyleBlueprints, setShowStyleBlueprints] = useState(false);
 
-  // Live generation timer & steps
+  // Live generation timer
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [progressStep, setProgressStep] = useState(0);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -97,15 +96,8 @@ export default function ScriptWorkspaceView({ onBack }) {
       setElapsedSeconds((s) => s + 1);
     }, 1000);
 
-    const step1 = setTimeout(() => setProgressStep(1), 2500);
-    const step2 = setTimeout(() => setProgressStep(2), 7000);
-    const step3 = setTimeout(() => setProgressStep(3), 13000);
-
     return () => {
       clearInterval(timer);
-      clearTimeout(step1);
-      clearTimeout(step2);
-      clearTimeout(step3);
     };
   }, [isLoading]);
 
@@ -149,8 +141,17 @@ export default function ScriptWorkspaceView({ onBack }) {
       e.stopPropagation();
     }
 
+    // Prevent duplicate API submissions while already running
+    if (isLoading) return;
+
     if (!topic || !topic.trim()) {
-      setError('Please enter a match topic or click one of the benchmark presets above.');
+      setError({
+        message: 'Please enter a match topic or click one of the benchmark presets above.',
+        errorType: 'VALIDATION_ERROR',
+        statusCode: 400,
+        retryable: false,
+        actionHint: 'Select one of the benchmark presets or type your documentary topic.',
+      });
       return;
     }
 
@@ -158,7 +159,6 @@ export default function ScriptWorkspaceView({ onBack }) {
     setLoading(true);
     setError(null);
     setElapsedSeconds(0);
-    setProgressStep(0);
 
     try {
       const response = await generateScript({
@@ -174,12 +174,14 @@ export default function ScriptWorkspaceView({ onBack }) {
       }
     } catch (err) {
       console.error('Script generation error:', err);
-      setError(
-        err.response?.data?.error ||
-        err.response?.data?.message ||
-        err.message ||
-        'Script generation could not complete. Please check your connection and try again.'
-      );
+      // Immediately extract and set structured backend error object
+      setError({
+        message: err.message || 'Script generation could not complete.',
+        errorType: err.errorType || 'SERVER_ERROR',
+        statusCode: err.statusCode || 500,
+        retryable: err.retryable !== false,
+        actionHint: err.actionHint || 'Please check your connection and try again.',
+      });
     } finally {
       setLoading(false);
     }
@@ -277,14 +279,15 @@ ${script.sections?.outro || ''}
       <header className="sticky top-0 z-50 bg-theme-header backdrop-blur-xl border-b border-theme-subtle px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={ArrowLeft}
               onClick={onBack}
-              className="flex items-center gap-2 text-xs font-mono text-theme-muted hover:text-theme-primary bg-theme-elevated hover:bg-theme-hover border border-theme-subtle px-3.5 py-1.5 rounded-full transition-all cursor-pointer"
+              className="text-xs font-mono uppercase tracking-wider"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>RETURN TO HUB</span>
-            </button>
+              RETURN TO HUB
+            </Button>
             <div className="h-4 w-[1px] bg-theme-medium hidden sm:block" />
             <div className="flex items-center gap-2">
               <span className="font-cricket-title tracking-wider text-xl text-theme-primary uppercase">
@@ -370,13 +373,11 @@ ${script.sections?.outro || ''}
 
             {/* Error Message Alert */}
             {error && (
-              <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-300 text-xs flex items-start gap-2.5">
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-500" />
-                <div className="flex-1">
-                  <p className="font-semibold text-red-700 dark:text-red-200">Attention Required</p>
-                  <p className="leading-relaxed mt-0.5">{error}</p>
-                </div>
-              </div>
+              <ErrorAlertPanel
+                error={error}
+                onRetry={handleGenerate}
+                onDismiss={() => setError(null)}
+              />
             )}
 
             {/* Field 1: Topic */}
@@ -476,24 +477,18 @@ ${script.sections?.outro || ''}
             </div>
 
             {/* CTA Button */}
-            <button
+            <Button
               type="button"
+              variant="amber"
+              size="xl"
               onClick={handleGenerate}
               disabled={isLoading}
-              className="w-full py-4 rounded-2xl btn-amber-glow disabled:opacity-50 disabled:cursor-not-allowed font-cricket-title text-xl tracking-wider uppercase flex items-center justify-center gap-3 cursor-pointer"
+              isLoading={isLoading}
+              icon={!isLoading ? Sparkles : undefined}
+              className="w-full font-cricket-title text-xl tracking-wider uppercase shadow-lg shadow-amber-500/20"
             >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                  <span>SYNTHESIZING HINGLISH SCRIPT ({elapsedSeconds}s)...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-5 h-5" />
-                  <span>GENERATE HINGLISH SCRIPT</span>
-                </>
-              )}
-            </button>
+              {isLoading ? `SYNTHESIZING HINGLISH SCRIPT (${elapsedSeconds}s)...` : 'GENERATE HINGLISH SCRIPT'}
+            </Button>
           </form>
 
         </section>
@@ -501,205 +496,126 @@ ${script.sections?.outro || ''}
 
         {/* ── RIGHT COLUMN: TELEPROMPTER & SCRIPT VIEWER (7 cols) ── */}
         <section className="lg:col-span-7">
-
-          {/* ── EMPTY STATE (No script yet) ── */}
-          {!script && !isLoading && (
-            <div className="rounded-3xl border border-theme-subtle bg-theme-card p-8 md:p-12 relative overflow-hidden shadow-theme-card min-h-[580px] flex flex-col justify-between">
-              
-              {/* Background Feathered Artwork */}
-              <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
-                <img
-                  src="/images/cricket/smith-aura.jpg"
-                  alt="Steve Smith Intensity"
-                  className="w-full h-full object-cover object-[60%_20%] opacity-15 dark:opacity-20 contrast-125 saturate-75"
+          <AnimatePresence mode="wait">
+            
+            {/* ── 1. ACTIVE PREMIUM GENERATION STUDIO (During Backend Request) ── */}
+            {isLoading && (
+              <motion.div
+                key="script-generation-studio"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.25 }}
+              >
+                <ScriptGenerationStudioPanel
+                  topic={topic}
+                  elapsedSeconds={elapsedSeconds}
                 />
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      'radial-gradient(circle at center, transparent 20%, var(--bg-card) 85%)',
-                  }}
+              </motion.div>
+            )}
+
+            {/* ── 2. PROMINENT ERROR DIAGNOSTIC PANEL (When Generation Fails) ── */}
+            {!isLoading && error && !script && (
+              <motion.div
+                key="script-error-panel"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+                className="space-y-6"
+              >
+                <ErrorAlertPanel
+                  error={error}
+                  onRetry={handleGenerate}
+                  onDismiss={() => setError(null)}
                 />
-              </div>
 
-              <div className="relative z-10 max-w-lg">
-                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-6">
-                  <Volume2 className="w-6 h-6" />
-                </div>
-                <h3 className="text-3xl md:text-4xl font-cricket-title tracking-wide text-theme-primary uppercase leading-tight">
-                  HINGLISH VOICE-OVER STUDIO READY
-                </h3>
-                <p className="text-theme-secondary text-sm md:text-base leading-relaxed mt-3">
-                  This studio does not write generic expository essays. It writes with authentic
-                  cadence, dramatic breath pauses, and storytelling flow to produce
-                  a tight 3-part script ready for recording.
-                </p>
-
-                <div className="mt-8 space-y-3">
-                  <div className="flex items-center gap-3 text-xs text-theme-secondary">
-                    <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    <span>Part 1: The Hook & Psychological Stakes (~150 words)</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-xs text-theme-secondary">
-                    <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    <span>Part 2: The Ball-by-Ball Battle & Climax (~600 words)</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-xs text-theme-secondary">
-                    <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    <span>Part 3: Emotional Payoff & Legacy Resolution (~150 words)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative z-10 pt-8 mt-8 border-t border-theme-subtle flex items-center justify-between text-xs text-theme-muted font-mono">
-                <span>MAX WORD TARGET: ~850–1000 WORDS</span>
-                <span>ZERO DRIFT • GROUNDED FACTUALITY</span>
-              </div>
-            </div>
-          )}
-
-          {/* ── LAZY LOADING TELEPROMPTER STATE ── */}
-          {isLoading && (
-            <div className="rounded-3xl border border-amber-500/30 bg-theme-card p-6 md:p-8 relative overflow-hidden shadow-theme-card min-h-[580px] flex flex-col justify-between transition-all">
-              
-              {/* Studio Active Header */}
-              <div className="pb-5 border-b border-theme-subtle flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                <div className="rounded-3xl border border-theme-subtle bg-theme-card p-8 relative overflow-hidden shadow-theme-card">
+                  <div className="flex items-center gap-2.5 text-xs text-theme-muted font-mono mb-2">
                     <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                    <span>SYNTHESIZING HINGLISH SCRIPT • {elapsedSeconds}S</span>
+                    <span className="uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400">
+                      Studio Directorial Recovery Ready
+                    </span>
                   </div>
-                  <span className="text-xs text-theme-muted font-mono hidden sm:inline max-w-xs truncate">
-                    Topic: "{topic}"
-                  </span>
-                </div>
-
-                {/* Animated Studio Equalizer Waveform */}
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-theme-elevated border border-theme-subtle">
-                  <span className="text-[10px] font-mono text-theme-muted uppercase">Voice Engine</span>
-                  <div className="flex items-center gap-1 h-5">
-                    <span className="w-1 bg-amber-500 rounded-full wave-bar-1" />
-                    <span className="w-1 bg-emerald-500 rounded-full wave-bar-2" />
-                    <span className="w-1 bg-amber-400 rounded-full wave-bar-3" />
-                    <span className="w-1 bg-emerald-400 rounded-full wave-bar-4" />
-                    <span className="w-1 bg-amber-500 rounded-full wave-bar-5" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Dynamic Phase Progression Tracker */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-4">
-                <div className={`p-3 rounded-2xl border transition-all ${
-                  progressStep === 0
-                    ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-300 shadow-sm'
-                    : progressStep > 0
-                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                    : 'border-theme-subtle bg-theme-elevated text-theme-muted'
-                }`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    {progressStep > 0 ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    ) : (
-                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                    )}
-                    <span className="text-[11px] font-mono font-bold uppercase">1. Cadence Alignment</span>
-                  </div>
-                  <p className="text-[11px] text-theme-muted leading-tight">
-                    Calibrating authentic Hinglish storytelling tone & pacing
+                  <p className="text-sm text-theme-secondary leading-relaxed">
+                    The backend error has been analyzed above. You can adjust your documentary topic, add focus points, or click <strong>Retry Generation</strong> directly if it was a transient rate limit or network timeout.
                   </p>
                 </div>
+              </motion.div>
+            )}
 
-                <div className={`p-3 rounded-2xl border transition-all ${
-                  progressStep === 1
-                    ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-300 shadow-sm'
-                    : progressStep > 1
-                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                    : 'border-theme-subtle bg-theme-elevated text-theme-muted'
-                }`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    {progressStep > 1 ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    ) : (
-                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                    )}
-                    <span className="text-[11px] font-mono font-bold uppercase">2. Cadence & Pauses</span>
+            {/* ── 3. EMPTY STATE (No script yet & no active error) ── */}
+            {!script && !isLoading && !error && (
+              <motion.div
+                key="script-empty-state"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+                className="rounded-3xl border border-theme-subtle bg-theme-card p-8 md:p-12 relative overflow-hidden shadow-theme-card min-h-[580px] flex flex-col justify-between"
+              >
+                {/* Background Feathered Artwork */}
+                <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
+                  <img
+                    src="/images/cricket/smith-aura.jpg"
+                    alt="Steve Smith Intensity"
+                    className="w-full h-full object-cover object-[60%_20%] opacity-15 dark:opacity-20 contrast-125 saturate-75"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'radial-gradient(circle at center, transparent 20%, var(--bg-card) 85%)',
+                    }}
+                  />
+                </div>
+
+                <div className="relative z-10 max-w-lg">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-6">
+                    <Volume2 className="w-6 h-6" />
                   </div>
-                  <p className="text-[11px] text-theme-muted leading-tight">
-                    Calibrating staccato rhythm & dramatic [pause] breath cues
+                  <h3 className="text-3xl md:text-4xl font-cricket-title tracking-wide text-theme-primary uppercase leading-tight">
+                    HINGLISH VOICE-OVER STUDIO READY
+                  </h3>
+                  <p className="text-theme-secondary text-sm md:text-base leading-relaxed mt-3">
+                    This studio does not write generic expository essays. It writes with authentic
+                    cadence, dramatic breath pauses, and storytelling flow to produce
+                    a tight 3-part script ready for recording.
                   </p>
-                </div>
 
-                <div className={`p-3 rounded-2xl border transition-all ${
-                  progressStep >= 2
-                    ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-300 shadow-sm'
-                    : 'border-theme-subtle bg-theme-elevated text-theme-muted'
-                }`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                    <span className="text-[11px] font-mono font-bold uppercase">3. Script Synthesis</span>
-                  </div>
-                  <p className="text-[11px] text-theme-muted leading-tight">
-                    Assembling 3-part teleprompter layout under 1,000 words
-                  </p>
-                </div>
-              </div>
-
-              {/* Shimmering Lazy Loading Teleprompter Cards */}
-              <div className="space-y-3.5">
-                {/* Part 1 Skeleton */}
-                <div className="p-4 rounded-2xl bg-theme-elevated/80 border border-theme-subtle space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <div className="h-4 w-32 rounded-md bg-theme-card shimmer-bar" />
-                    <div className="h-3 w-16 rounded-md bg-theme-card shimmer-bar" />
-                  </div>
-                  <div className="h-3.5 w-11/12 rounded-md bg-theme-card shimmer-bar" />
-                  <div className="h-3.5 w-4/5 rounded-md bg-theme-card shimmer-bar" />
-                  <div className="h-3.5 w-2/3 rounded-md bg-theme-card shimmer-bar" />
-                </div>
-
-                {/* Part 2 Skeleton (Main Battle with simulated tag skeletons) */}
-                <div className="p-4 rounded-2xl bg-theme-elevated/80 border border-theme-subtle space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <div className="h-4 w-44 rounded-md bg-theme-card shimmer-bar" />
-                    <div className="h-3 w-20 rounded-md bg-theme-card shimmer-bar" />
-                  </div>
-                  <div className="h-3.5 w-full rounded-md bg-theme-card shimmer-bar" />
-                  <div className="flex items-center gap-2 py-0.5">
-                    <div className="h-3.5 w-3/4 rounded-md bg-theme-card shimmer-bar" />
-                    <div className="h-4 w-16 rounded-full bg-amber-500/20 shimmer-bar" />
-                  </div>
-                  <div className="h-3.5 w-5/6 rounded-md bg-theme-card shimmer-bar" />
-                  <div className="flex items-center gap-2 py-0.5">
-                    <div className="h-4 w-24 rounded-full bg-emerald-500/20 shimmer-bar" />
-                    <div className="h-3.5 w-1/2 rounded-md bg-theme-card shimmer-bar" />
+                  <div className="mt-8 space-y-3">
+                    <div className="flex items-center gap-3 text-xs text-theme-secondary">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span>Part 1: The Hook & Psychological Stakes (~150 words)</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-theme-secondary">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span>Part 2: The Ball-by-Ball Battle & Climax (~600 words)</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-theme-secondary">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span>Part 3: Emotional Payoff & Legacy Resolution (~150 words)</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Part 3 Skeleton */}
-                <div className="p-4 rounded-2xl bg-theme-elevated/80 border border-theme-subtle space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <div className="h-4 w-36 rounded-md bg-theme-card shimmer-bar" />
-                    <div className="h-3 w-16 rounded-md bg-theme-card shimmer-bar" />
-                  </div>
-                  <div className="h-3.5 w-10/12 rounded-md bg-theme-card shimmer-bar" />
-                  <div className="h-3.5 w-3/4 rounded-md bg-theme-card shimmer-bar" />
+                <div className="relative z-10 pt-8 mt-8 border-t border-theme-subtle flex items-center justify-between text-xs text-theme-muted font-mono">
+                  <span>MAX WORD TARGET: ~850–1000 WORDS</span>
+                  <span>ZERO DRIFT • GROUNDED FACTUALITY</span>
                 </div>
-              </div>
+              </motion.div>
+            )}
 
-              {/* Live Streaming Status Bar */}
-              <div className="pt-4 mt-4 border-t border-theme-subtle flex flex-wrap items-center justify-between text-xs text-theme-muted font-mono">
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Streaming via Fast AI Co-Creator</span>
-                </div>
-                <span>Word Discipline: ~850–1,000 Words</span>
-              </div>
-            </div>
-          )}
-
-          {/* ── GENERATED SCRIPT TELEPROMPTER VIEW ── */}
-          {script && !isLoading && (
-            <div className="rounded-3xl border border-theme-subtle bg-theme-card shadow-theme-card overflow-hidden flex flex-col">
+            {/* ── 4. GENERATED SCRIPT TELEPROMPTER VIEW ── */}
+            {script && !isLoading && (
+              <motion.div
+                key="script-teleprompter-view"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="rounded-3xl border border-theme-subtle bg-theme-card shadow-theme-card overflow-hidden flex flex-col"
+              >
               
               {/* Header Bar */}
               <div className="p-6 md:p-8 border-b border-theme-subtle bg-theme-elevated">
@@ -715,30 +631,31 @@ ${script.sections?.outro || ''}
 
                   {/* Action Buttons */}
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      icon={copied ? Check : Copy}
                       onClick={handleCopy}
-                      className="px-3.5 py-1.5 rounded-xl bg-theme-card hover:bg-theme-hover border border-theme-subtle text-xs font-mono font-semibold text-theme-primary flex items-center gap-1.5 transition-colors cursor-pointer"
+                      className="font-mono text-xs"
                     >
-                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copied ? 'COPIED!' : 'COPY'}</span>
-                    </button>
-                    <button
-                      type="button"
+                      {copied ? 'COPIED!' : 'COPY'}
+                    </Button>
+                    <Button
+                      variant="amber"
+                      size="sm"
+                      icon={Download}
                       onClick={handleDownload}
-                      className="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-xs font-mono font-semibold text-amber-600 dark:text-amber-300 flex items-center gap-1.5 transition-colors cursor-pointer"
+                      className="font-mono text-xs"
                     >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>DOWNLOAD .MD</span>
-                    </button>
-                    <button
-                      type="button"
+                      DOWNLOAD .MD
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="icon-sm"
+                      icon={RotateCcw}
                       onClick={reset}
-                      className="p-1.5 rounded-xl bg-theme-card hover:bg-theme-hover border border-theme-subtle text-theme-muted hover:text-theme-primary transition-colors cursor-pointer"
                       title="Clear & Start New Script"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </button>
+                    />
                   </div>
                 </div>
 
@@ -861,12 +778,37 @@ ${script.sections?.outro || ''}
                 </div>
               )}
 
-            </div>
+            </motion.div>
           )}
 
+          </AnimatePresence>
         </section>
 
       </main>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-theme-subtle py-6 px-6 text-center text-xs text-theme-muted mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 font-mono">
+          <span>CRICSCRIPT AI • ENGINE 02 • CADENCE-RAG SCRIPTWRITER</span>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => onNavigateLegal?.('privacy')}
+              className="hover:text-theme-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
+            >
+              Privacy Policy
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => onNavigateLegal?.('terms')}
+              className="hover:text-theme-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
+            >
+              Terms & Conditions
+            </button>
+          </div>
+        </div>
+      </footer>
 
     </div>
   );

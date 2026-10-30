@@ -1,0 +1,48 @@
+# ==============================================================================
+# Render Blueprint Specification — CricScript AI Backend
+# Reference: https://render.com/docs/blueprint-spec
+# ==============================================================================
+
+services:
+  - type: web
+    name: cricscript-ai-backend
+    runtime: node
+    plan: starter
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Google Gemini API Key (Required for script & research synthesis)
+      - key: GEMINI_API_KEY
+        sync: false
+
+      # Optional secondary Gemini API Key
+      - key: GEMINI_API_KEY_RESEARCH
+        sync: false
+
+      # Tavily Web Search API Key (Required for live multi-hop research)
+      - key: TAVILY_API_KEY
+        sync: false
+
+      # Pinecone Vector DB Key (Optional; falls back to local style exemplar repository)
+      - key: PINECONE_API_KEY
+        sync: false
+
+      - key: PINECONE_INDEX_NAME
+        value: cricscript-rag
+
+      # Front-end URL deployed on Vercel (for strict CORS enforcement)
+      # Example: https://cricpitch.vercel.app
+      - key: FRONTEND_URL
+        sync: false
+
+      # Optional comma-separated additional origins (e.g. custom domain)
+      - key: ALLOWED_ORIGINS
+        sync: false

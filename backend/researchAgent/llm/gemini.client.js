@@ -109,5 +109,9 @@ export const callGemini = async (systemPrompt, userMessage) => {
     }
   }
 
-  throw new Error(`All Gemini candidate models failed. Last error: ${lastError?.message}`);
+  const error = new Error(`Research synthesis failed: ${lastError?.message || 'Unknown model error'}`);
+  if (lastError?.status) error.status = lastError.status;
+  if (lastError?.statusCode) error.statusCode = lastError.statusCode;
+  if (lastError?.code) error.code = lastError.code;
+  throw error;
 };

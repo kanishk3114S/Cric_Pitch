@@ -1,23 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
-  <!-- Dark Stadium Badge Background -->
-  <rect width="64" height="64" rx="16" fill="#030712"/>
-  <rect x="1" y="1" width="62" height="62" rx="15" stroke="#10b981" stroke-width="2" stroke-opacity="0.5"/>
+  <!-- Dark Charcoal Foundation Badge -->
+  <rect width="64" height="64" rx="16" fill="#08090B"/>
+  <rect x="1" y="1" width="62" height="62" rx="15" stroke="#292F38" stroke-width="2"/>
 
-  <!-- Cricket Ball Core -->
-  <circle cx="32" cy="32" r="21" fill="url(#ballGradient)"/>
+  <!-- Cricket Ball Core in Crimson Brand Accent -->
+  <circle cx="32" cy="32" r="21" fill="url(#crimsonGradient)"/>
 
-  <!-- Seam Contour & White Stitching -->
-  <path d="M16 20 C24 25, 40 39, 48 44" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="2 2.5"/>
-  <path d="M14.5 21.5 C22.5 26.5, 38.5 40.5, 46.5 45.5" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.6"/>
+  <!-- Precision Seam Contour & White Stitching -->
+  <path d="M16 20 C24 25, 40 39, 48 44" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="2.2 2.6"/>
+  <path d="M14.5 21.5 C22.5 26.5, 38.5 40.5, 46.5 45.5" stroke="#F02E3A" stroke-width="1.2" stroke-opacity="0.8"/>
 
   <!-- High-contrast gloss highlight -->
-  <ellipse cx="25" cy="23" rx="5" ry="3" transform="rotate(-30 25 23)" fill="#ffffff" fill-opacity="0.35"/>
+  <ellipse cx="25" cy="23" rx="5.5" ry="3.2" transform="rotate(-30 25 23)" fill="#FFFFFF" fill-opacity="0.4"/>
 
   <defs>
-    <radialGradient id="ballGradient" cx="35%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#ef4444"/>
-      <stop offset="65%" stop-color="#b91c1c"/>
-      <stop offset="100%" stop-color="#580f0f"/>
+    <radialGradient id="crimsonGradient" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#F02E3A"/>
+      <stop offset="60%" stop-color="#D91F2B"/>
+      <stop offset="100%" stop-color="#7A0B13"/>
     </radialGradient>
   </defs>
 </svg>

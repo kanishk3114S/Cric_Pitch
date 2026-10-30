@@ -1,13 +1,19 @@
 // middleware/errorHandler.js
-// One place to catch ALL errors from any route — keeps controllers clean.
+// Centralized error handling middleware. Captures, logs, classifies, and formats all errors.
+
+import { classifyError } from './errorClassifier.js';
 
 export const errorHandler = (err, req, res, next) => {
-  console.error('❌ Error:', err.message);
+  console.error('❌ Server Error:', err?.message || err);
 
-  const statusCode = err.statusCode || 500;
+  const classified = classifyError(err);
 
-  res.status(statusCode).json({
+  res.status(classified.statusCode).json({
     success: false,
-    error: err.message || 'Something went wrong on the server.',
+    error: classified.message,
+    errorType: classified.errorType,
+    statusCode: classified.statusCode,
+    retryable: classified.retryable,
+    actionHint: classified.actionHint,
   });
 };
