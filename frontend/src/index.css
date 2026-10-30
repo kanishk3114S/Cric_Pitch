@@ -1,20 +1,154 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&family=Bebas+Neue&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
+/* ── Light Mode Root Variables (Clean, Luminous, High-Contrast Luxury) ── */
+:root, [data-theme="light"] {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+
+  /* Surfaces & Backgrounds */
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f1f5f9;
+  --bg-surface-sunken: #e2e8f0;
+  --bg-input: #ffffff;
+  --bg-hover: #f1f5f9;
+  --bg-active: #e2e8f0;
+  --bg-badge: rgba(15, 23, 42, 0.06);
+  --bg-overlay: rgba(248, 250, 252, 0.94);
+  --header-bg: rgba(255, 255, 255, 0.88);
+
+  /* Typography: Rich Deep Ink */
+  --text-primary: #090d16;
+  --text-secondary: #242f40;
+  --text-muted: #57657a;
+  --text-dim: #8896ab;
+  --text-inverse: #ffffff;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(15, 23, 42, 0.09);
+  --border-medium: rgba(15, 23, 42, 0.16);
+  --border-strong: rgba(15, 23, 42, 0.28);
+  --border-focus: #059669;
+
+  /* Accent: Cricket Emerald (Research Agent) */
+  --accent-emerald: #059669;
+  --accent-emerald-bg: rgba(5, 150, 105, 0.08);
+  --accent-emerald-border: rgba(5, 150, 105, 0.22);
+  --accent-emerald-text: #047857;
+
+  /* Accent: Pitch Amber (Script Agent) */
+  --accent-amber: #d97706;
+  --accent-amber-bg: rgba(217, 119, 6, 0.08);
+  --accent-amber-border: rgba(217, 119, 6, 0.22);
+  --accent-amber-text: #b45309;
+
+  /* Shadows: Crisp multi-layer diffuse luxury */
+  --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 20px 48px -12px rgba(5, 150, 105, 0.05);
+  --popover-shadow: 0 12px 32px -6px rgba(15, 23, 42, 0.14), 0 24px 64px -12px rgba(15, 23, 42, 0.18);
+
+  /* Scrollbars */
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+
+  /* Image Matte Overlays & Vignettes */
+  --matte-bg: #f8fafc;
+  --matte-gradient: linear-gradient(to right, #f8fafc 20%, rgba(248,250,252,0.92) 55%, rgba(248,250,252,0.2) 100%);
+  --radial-vignette: radial-gradient(ellipse at center, transparent 30%, rgba(248, 250, 252, 0.88) 92%);
+}
+
+/* ── Dark Mode Root Variables (Deep Obsidian, Velvet Black, Neon Emerald & Amber) ── */
+.dark, [data-theme="dark"] {
   color-scheme: dark;
+
+  /* Surfaces & Backgrounds */
+  --bg-app: #030712;
+  --bg-card: #080d19;
+  --bg-surface: #080d19;
+  --bg-surface-elevated: #0f172a;
+  --bg-surface-sunken: #040711;
+  --bg-input: #040711;
+  --bg-hover: #1e293b;
+  --bg-active: #334155;
+  --bg-badge: rgba(255, 255, 255, 0.08);
+  --bg-overlay: rgba(3, 7, 18, 0.94);
+  --header-bg: rgba(3, 7, 18, 0.88);
+
+  /* Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --text-inverse: #0f172a;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.09);
+  --border-medium: rgba(255, 255, 255, 0.18);
+  --border-strong: rgba(255, 255, 255, 0.32);
+  --border-focus: #10b981;
+
+  /* Accent: Cricket Emerald (Research Agent) */
+  --accent-emerald: #10b981;
+  --accent-emerald-bg: rgba(16, 185, 129, 0.15);
+  --accent-emerald-border: rgba(16, 185, 129, 0.32);
+  --accent-emerald-text: #34d399;
+
+  /* Accent: Pitch Amber (Script Agent) */
+  --accent-amber: #f59e0b;
+  --accent-amber-bg: rgba(245, 158, 11, 0.15);
+  --accent-amber-border: rgba(245, 158, 11, 0.32);
+  --accent-amber-text: #fbbf24;
+
+  /* Shadows: Cinematic Dark Glow */
+  --card-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset, 0 25px 60px rgba(0, 0, 0, 0.7);
+  --popover-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 30px 70px -15px rgba(0, 0, 0, 0.85);
+
+  /* Scrollbars */
+  --scrollbar-track: #030712;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.16);
+  --scrollbar-thumb-hover: rgba(16, 185, 129, 0.45);
+
+  /* Image Matte Overlays */
+  --matte-bg: #080d19;
+  --matte-gradient: linear-gradient(to right, #080d19 18%, rgba(8,13,25,0.85) 55%, rgba(8,13,25,0.2) 100%);
+  --radial-vignette: radial-gradient(ellipse at center, transparent 25%, #030712 80%);
 }
 
 body {
-  background-color: #030712;
-  color: #f8fafc;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* ── Cricket Documentary Fonts ── */
+/* ── Utility Classes for Semantic Theme Binding ── */
+.bg-theme-app { background-color: var(--bg-app); }
+.bg-theme-card { background-color: var(--bg-card); }
+.bg-theme-surface { background-color: var(--bg-surface); }
+.bg-theme-elevated { background-color: var(--bg-surface-elevated); }
+.bg-theme-sunken { background-color: var(--bg-surface-sunken); }
+.bg-theme-input { background-color: var(--bg-input); }
+.bg-theme-badge { background-color: var(--bg-badge); }
+.bg-theme-overlay { background-color: var(--bg-overlay); }
+.bg-theme-header { background-color: var(--header-bg); }
+
+.text-theme-primary { color: var(--text-primary); }
+.text-theme-secondary { color: var(--text-secondary); }
+.text-theme-muted { color: var(--text-muted); }
+.text-theme-dim { color: var(--text-dim); }
+
+.border-theme-subtle { border-color: var(--border-subtle); }
+.border-theme-medium { border-color: var(--border-medium); }
+.border-theme-strong { border-color: var(--border-strong); }
+
+.shadow-theme-card { box-shadow: var(--card-shadow); }
+.shadow-theme-popover { box-shadow: var(--popover-shadow); }
+
+/* ── Typography Utilities ── */
 .font-cricket-title {
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.05em;
@@ -26,32 +160,101 @@ body {
   letter-spacing: -0.03em;
 }
 
-/* ── Premium Turf & Glass Styling ── */
-.cricket-card {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+/* ── Ultra-Premium Button & Surface Classes ── */
+.btn-emerald-glow {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-emerald-glow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 26px rgba(16, 185, 129, 0.45);
 }
 
-.cricket-card-glow:hover {
-  border-color: rgba(16, 185, 129, 0.35);
-  box-shadow: 0 25px 60px rgba(16, 185, 129, 0.08);
+.btn-amber-glow {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #000000;
+  font-weight: 800;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.32);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-amber-glow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(245, 158, 11, 0.45);
 }
 
-/* Smooth custom scrollbars */
+/* ── Animated Shimmer for Skeleton Lazy Loading ── */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-bar {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 100%
+  );
+  animation: shimmer-sweep 1.8s infinite;
+}
+
+[data-theme="light"] .shimmer-bar::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(15, 23, 42, 0.08) 50%,
+    transparent 100%
+  );
+}
+
+/* ── Audio Waveform Visualizer Keyframes ── */
+@keyframes audio-wave {
+  0%, 100% { height: 6px; }
+  50% { height: 26px; }
+}
+.wave-bar-1 { animation: audio-wave 1.1s ease-in-out infinite 0.1s; }
+.wave-bar-2 { animation: audio-wave 1.1s ease-in-out infinite 0.35s; }
+.wave-bar-3 { animation: audio-wave 1.1s ease-in-out infinite 0.2s; }
+.wave-bar-4 { animation: audio-wave 1.1s ease-in-out infinite 0.5s; }
+.wave-bar-5 { animation: audio-wave 1.1s ease-in-out infinite 0.25s; }
+
+/* ── Ambient Glow Background Overlay ── */
+.bg-ambient-grid {
+  background-image: 
+    radial-gradient(ellipse at 50% -10%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 90%, rgba(245, 158, 11, 0.08) 0%, transparent 45%);
+}
+
+[data-theme="light"] .bg-ambient-grid {
+  background-image: 
+    radial-gradient(ellipse at 50% -10%, rgba(5, 150, 105, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(217, 119, 6, 0.05) 0%, transparent 45%);
+}
+
+/* ── Smooth Custom Scrollbars ── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #030712;
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--scrollbar-thumb);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.4);
+  background: var(--scrollbar-thumb-hover);
 }

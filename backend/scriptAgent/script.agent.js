@@ -37,9 +37,9 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
     styleExemplars
   });
 
-  // Step 3: Call Gemini
+  // Step 3: Call Gemini with ultra-low latency models
   const ai = getAiClient();
-  const candidateModels = ['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.8-flash'];
+  const candidateModels = ['gemini-3.8-flash', 'gemini-3.1-pro-preview'];
   let result = null;
   let lastError = null;
 

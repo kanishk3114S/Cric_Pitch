@@ -25,7 +25,7 @@ export default function HeroSection({ onSearchTopic, onLaunchStudio }) {
   const [inputVal, setInputVal] = useState('');
   const fadingOutRef = useRef(false);
 
-  // ── Vanilla JS Video Crossfade Loop (No CSS transitions) ──────────────────
+  // Vanilla JS Video Crossfade Loop
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -96,7 +96,7 @@ export default function HeroSection({ onSearchTopic, onLaunchStudio }) {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden flex flex-col bg-black">
+    <section className="relative min-h-screen overflow-hidden flex flex-col bg-theme-app text-theme-primary transition-colors">
       {/* Background Video with Vanilla JS Opacity Ref */}
       <video
         ref={videoRef}
@@ -105,12 +105,17 @@ export default function HeroSection({ onSearchTopic, onLaunchStudio }) {
         autoPlay
         playsInline
         preload="auto"
-        className="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none opacity-20 dark:opacity-40"
         style={{ opacity: 0 }}
       />
 
-      {/* Dark overlay for contrast */}
-      <div className="absolute inset-0 bg-black/45 pointer-events-none z-1" />
+      {/* Theme-Adaptive Overlay for Contrast */}
+      <div
+        className="absolute inset-0 pointer-events-none z-1"
+        style={{
+          background: 'var(--radial-vignette)',
+        }}
+      />
 
       {/* Navbar */}
       <Navbar onLaunchStudio={onLaunchStudio} />
@@ -119,32 +124,32 @@ export default function HeroSection({ onSearchTopic, onLaunchStudio }) {
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 text-center -translate-y-[10%] md:-translate-y-[15%]">
         
         {/* Massive Serif Heading */}
-        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-white tracking-tight font-serif select-none">
-          Know the pitch then <em className="italic text-white/70">all</em>.
+        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-theme-primary tracking-tight font-serif select-none">
+          Know the pitch then <em className="italic text-emerald-600 dark:text-emerald-400">all</em>.
         </h1>
 
-        {/* Liquid Glass Input Pill */}
+        {/* Input Pill */}
         <form onSubmit={handleSubmit} className="mt-8 max-w-xl w-full">
-          <div className="liquid-glass rounded-full pl-6 pr-2 py-2 flex items-center gap-3">
+          <div className="rounded-full pl-6 pr-2 py-2 flex items-center gap-3 bg-theme-card border border-theme-subtle shadow-theme-card">
             <input
               type="text"
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               placeholder="Enter a cricket topic (e.g. 2019 WC Final Overthrow)..."
-              className="w-full bg-transparent text-white placeholder:text-white/40 text-sm md:text-base focus:outline-none"
+              className="w-full bg-transparent text-theme-primary placeholder:text-theme-dim text-sm md:text-base focus:outline-none"
             />
             <button
               type="submit"
-              className="bg-white rounded-full p-3 text-black hover:scale-105 active:scale-95 transition-transform shrink-0 cursor-pointer"
+              className="btn-emerald-glow rounded-full p-3 text-white hover:scale-105 active:scale-95 transition-transform shrink-0 cursor-pointer shadow-md"
               title="Launch Research"
             >
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-5 h-5 font-bold" />
             </button>
           </div>
         </form>
 
         {/* Subtitle */}
-        <p className="mt-6 text-white/80 text-sm md:text-base max-w-lg leading-relaxed px-4">
+        <p className="mt-6 text-theme-secondary text-sm md:text-base max-w-lg leading-relaxed px-4">
           Documentary-grade investigative intelligence & personal cadence scriptwriting.
           Ground your storytelling in verified match stats, obscure laws, and raw quotes.
         </p>
@@ -153,7 +158,7 @@ export default function HeroSection({ onSearchTopic, onLaunchStudio }) {
         <div className="mt-6">
           <button
             onClick={onLaunchStudio}
-            className="liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium hover:bg-white/10 transition-colors cursor-pointer"
+            className="rounded-full px-8 py-3 bg-theme-elevated hover:bg-theme-hover border border-theme-subtle text-theme-primary text-sm font-semibold transition-colors cursor-pointer shadow-sm"
           >
             Open Research Studio
           </button>
@@ -167,7 +172,7 @@ export default function HeroSection({ onSearchTopic, onLaunchStudio }) {
           href="https://twitter.com"
           target="_blank"
           rel="noreferrer"
-          className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+          className="rounded-full p-4 bg-theme-elevated border border-theme-subtle text-theme-secondary hover:text-theme-primary hover:bg-theme-hover transition-all cursor-pointer shadow-sm"
         >
           <XTwitterIcon />
         </a>
@@ -175,7 +180,7 @@ export default function HeroSection({ onSearchTopic, onLaunchStudio }) {
           href="https://instagram.com"
           target="_blank"
           rel="noreferrer"
-          className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+          className="rounded-full p-4 bg-theme-elevated border border-theme-subtle text-theme-secondary hover:text-theme-primary hover:bg-theme-hover transition-all cursor-pointer shadow-sm"
         >
           <InstagramIcon />
         </a>
@@ -183,7 +188,7 @@ export default function HeroSection({ onSearchTopic, onLaunchStudio }) {
           href="https://espncricinfo.com"
           target="_blank"
           rel="noreferrer"
-          className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+          className="rounded-full p-4 bg-theme-elevated border border-theme-subtle text-theme-secondary hover:text-theme-primary hover:bg-theme-hover transition-all cursor-pointer shadow-sm"
         >
           <Globe className="w-5 h-5" />
         </a>

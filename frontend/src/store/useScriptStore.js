@@ -4,7 +4,7 @@ const useScriptStore = create((set) => ({
   // The generated script project (null until generated)
   script: null,
 
-  // Loading state while RAG & Gemini are working
+  // Loading state while writing voice & teleprompter copy are generating
   isLoading: false,
 
   // Error message if generation fails

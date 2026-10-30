@@ -5,17 +5,20 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "node --watch server.js",
+    "dev": "node --watch --watch-path=server.js --watch-path=controllers --watch-path=routes --watch-path=services --watch-path=scriptAgent --watch-path=researchAgent --watch-path=middleware --watch-path=utils server.js",
     "start": "node server.js"
   },
   "dependencies": {
     "@google/genai": "^1.0.0",
     "@pinecone-database/pinecone": "^9.1.0",
+    "adm-zip": "^0.6.1",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
+    "mammoth": "^1.13.0",
+    "multer": "^2.5.0",
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.15.1"
   }

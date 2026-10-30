@@ -1,172 +1,129 @@
-# 🏏 CricScript AI
+# 🏏 CricPitch (CricScript AI)
 
 <p align="center">
-  <img src="frontend/public/favicon.svg" alt="CricScript AI Logo" width="80" height="80" />
+  <img src="frontend/public/favicon.svg" alt="CricPitch Logo" width="80" height="80" />
 </p>
 
 <p align="center">
-  <strong>Autonomous Cricket Documentary Research & Cinematic Scriptwriting Studio</strong>
+  <strong>Autonomous Cricket Investigative Research & High-Retention Voiceover Studio</strong>
 </p>
 
 <p align="center">
-  <a href="#-architecture"><img src="https://img.shields.io/badge/Architecture-Autonomous%20Agentic%20RAG-10b981?style=for-the-badge" alt="Architecture" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/Model-Gemini%20Flash-38bdf8?style=for-the-badge" alt="Model" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/Search-Tavily%20AI-f59e0b?style=for-the-badge" alt="Search" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/Frontend-React%20%2B%20Vite%20%2B%20Tailwind-6366f1?style=for-the-badge" alt="Frontend" /></a>
-  <a href="#-license"><img src="https://img.shields.io/badge/State-100%25%20Stateless-emerald?style=for-the-badge" alt="Stateless" /></a>
+  <a href="#-dual-engine-architecture"><img src="https://img.shields.io/badge/Architecture-Dual--Engine%20Creator%20Pipeline-10b981?style=for-the-badge" alt="Architecture" /></a>
+  <a href="#-engine-01-investigative-research-agent"><img src="https://img.shields.io/badge/Engine%2001-Deep%20Archive%20Research-38bdf8?style=for-the-badge" alt="Engine 1" /></a>
+  <a href="#-engine-02-creator-voiceover-studio"><img src="https://img.shields.io/badge/Engine%2002-Hinglish%20Tone%20Cadence-f59e0b?style=for-the-badge" alt="Engine 2" /></a>
+  <a href="#-theme-system"><img src="https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Adaptive-emerald?style=for-the-badge" alt="Theme" /></a>
+  <a href="#-strict-script-privacy--security"><img src="https://img.shields.io/badge/Security-Strict%20Script%20Privacy-red?style=for-the-badge" alt="Security" /></a>
 </p>
 
 ---
 
-## 📽️ The Vision
+## 📽️ The Creative Vision
 
-Documentary cricket scripting requires granular, ground-truth facts:
-- The psychology behind a 19th over
-- Obscure MCC Laws cited by umpires
-- Pre-tournament media criticisms and player form
-- Verbatim press conference quotes and locker-room testimonies
+Creating high-retention cricket documentary videos requires two critical pillars that generic tools fail to deliver:
+1. **Unassailable Ground-Truth Facts:** Exact ball-by-ball chronologies, pitch dynamics, reverse-swing conditions, obscure MCC laws, locker-room quotes, and high-resolution match photography.
+2. **Authentic Narrative Voice:** The creator's signature pacing, staccato tension, dramatic `[pause]` acoustic cues, and conversational Hinglish storytelling that keeps viewers glued to the screen.
 
-**CricScript AI** turns hours of manual archive digging into a seconds-long autonomous research workflow. Built with a **stateless, pair-engine design**, it investigates historical cricket moments, compiles a verified dossier with archival stills and sources, and streams a print-ready, high-contrast PDF.
+**CricPitch** solves both problems with an autonomous, dual-engine creator studio:
+- **Engine 01 (Investigative Research Agent):** Digs through official match archives, scorecards, and press conferences under strict zero-hallucination fact grounding, compiling an executive brief with downloadable editorial PDF reports.
+- **Engine 02 (Voiceover Studio & Cadence Engine):** Calibrates to your personal storytelling cadence by referencing your authentic scripts, generating 3-part teleprompter voiceover copy (Intro • Main • Outro) strictly under 1,000 words.
 
 ---
 
-## 🏛️ System Architecture
+## 🏛️ Dual-Engine Architecture
 
 ```mermaid
 flowchart TD
-    subgraph UI ["Cinematic Studio (React + Vite + Tailwind)"]
-        Landing["Landing Page<br/>(Floodlight & Stadium FX)"]
+    subgraph UI ["Cinematic Creator Studio (React + Vite + Tailwind)"]
+        Landing["Landing Page<br/>(Light/Dark Adaptive Hero)"]
         Hub["Engine Hub<br/>(Dual Selection Canvas)"]
-        E1_UI["Engine 01 Canvas<br/>(Brief Console & Dossier)"]
-        E2_UI["Engine 02 Canvas<br/>(Cadence-RAG Scripting)"]
+        E1_UI["Engine 01 Console<br/>(Archive Investigation & PDF)"]
+        E2_UI["Engine 02 Studio<br/>(Teleprompter & Cadence Studio)"]
+        Theme["Theme Engine<br/>(Persistent Light & Dark System)"]
         
-        Landing -->|Explore Studio| Hub
-        Hub -->|Launch Research| E1_UI
-        Hub -->|Launch Scriptwriter| E2_UI
+        Landing -->|Launch Studio| Hub
+        Hub -->|Investigate Match| E1_UI
+        Hub -->|Write Voiceover| E2_UI
     end
 
-    subgraph Backend ["Stateless Express API Gateway"]
-        E1_Controller["Research Controller"]
-        PDF_Service["PDFKit Streaming Engine"]
+    subgraph Backend ["Stateless Express Production Gateway"]
+        E1_Ctrl["Research Controller"]
+        E2_Ctrl["Script Controller"]
+        PDF_Engine["PDFKit Editorial Exporter"]
     end
 
-    subgraph Agent ["Autonomous Research Agent"]
-        Plan["1. Search Planner<br/>(Multi-Hop Vectors)"]
-        Tools["2. Tool Execution Pool<br/>(Tavily Archives + Media)"]
-        Synthesizer["3. Gemini Synthesizer<br/>(Ground-Truth Fact Guard)"]
-        Dossier["4. Enriched Research Dossier<br/>(JSON + Curated Stills)"]
-        
-        Plan --> Tools
-        Tools --> Synthesizer
-        Synthesizer --> Dossier
+    subgraph Intelligence ["Autonomous AI Co-Creators"]
+        Tavily["Live Archive Intelligence<br/>(Scorecards & Quotes)"]
+        Vectors["Pinecone Document Index<br/>(Creator Cadence Vectors)"]
+        Gemini38["Gemini 3.8 Flash<br/>(Low-Latency Synthesis)"]
     end
 
-    E1_UI -->|POST /api/v1/research/generate| E1_Controller
-    E1_Controller --> Agent
-    Agent --> E1_Controller
-    E1_Controller -->|JSON Dossier| E1_UI
-    
-    E1_UI -->|POST /api/v1/research/export-pdf| PDF_Service
-    PDF_Service -->|Binary PDF Stream| E1_UI
+    E1_UI -->|POST /api/v1/research/generate| E1_Ctrl
+    E1_Ctrl --> Tavily
+    E1_Ctrl --> Gemini38
+    E1_Ctrl -->|Verified Dossier| E1_UI
+    E1_UI -->|POST /api/v1/research/export-pdf| PDF_Engine
+
+    E2_UI -->|POST /api/v1/scripts/generate| E2_Ctrl
+    E2_Ctrl --> Vectors
+    E2_Ctrl --> Gemini38
+    E2_Ctrl -->|Hinglish 3-Part Voiceover| E2_UI
 ```
 
 ---
 
-## ✨ Flagship Capabilities
+## ✨ Production Capabilities
 
-### 1. 🔍 Autonomous Multi-Hop Cricket Investigation
-The agent doesn't execute a single basic search query. It plans and executes targeted searches in parallel:
-- **General Match Overview**: Scorecards, context, and official match reports.
-- **Statistical Anomalies**: Deep numbers via Cricinfo & HowStat archives.
-- **Locker Room Statements**: Verbatim press-conference quotes & captain post-match interviews.
-- **Venue & Tactics**: Pitch conditions, reverse swing factors, and bowling plans.
-- **Director's Angles**: Dynamic searches prioritizing up to 5 user-provided focus points.
+### 🔍 Engine 01 — Deep Archive Investigation
+- **Multi-Hop Search Planning:** Automatically executes targeted queries across official scorecards, commentary archives, and press conferences.
+- **Strict Zero-Hallucination Fact Guarding:** Temperature locked at `0.2`. Every turning point, score, and quote is anchored directly to verified match data.
+- **Visual Match Archives:** Surfaces high-resolution documentary stills and original source links with one-click full-resolution previews.
+- **High-Contrast Editorial PDF Export:** Generates clean, publication-grade print dossiers with hyperlinked footnotes and chronological timeline cards.
 
-### 2. 📸 Curated Match Photography & Visual Archives
-- Toggle **Include Photos & Links** to pull high-res archival stills directly from news photography and match coverage.
-- Built-in photo cards with 1-click **View Full Resolution** and **Copy Direct Image URL** actions.
-- Automatic fallback protection preventing broken image placeholders.
+### 🎙️ Engine 02 — Personal Voiceover Studio
+- **Creator Script Vault:** Houses your authentic scripts, classified into narrative blocks (Hooks, Turning Points, Tactical Breakdowns, Climax).
+- **Acoustic Breath Markers:** Enforces staccato phrasing and `[pause]` acoustic cues tailored for natural voiceover delivery.
+- **Disciplined 3-Part Teleprompter Architecture:**
+  - **Part 1 (The Hook & Stakes):** Captures the viewer in the first 10 seconds (~180–220 words).
+  - **Part 2 (The Tactical Battle):** Psychological duel, momentum shifts, and ball-by-ball tension (~550–650 words).
+  - **Part 3 (Emotional Payoff & Legacy):** Final roar, historical fallout, and lingering philosophical reflection (~150–200 words).
+- **Strict Length Cap:** Disciplined under 1,000 words for optimal YouTube retention.
+- **Animated Lazy-Loading Visualizer:** Shimmering teleprompter skeletons with real-time acoustic waveform animations while generating.
 
-### 3. 🛡️ Strict Fact Grounding (Zero Hallucination)
-- Temperature locked at `0.2` with strict JSON schema adherence.
-- Gemini is forbidden from inventing stats, scores, or quotes. Every quote and turning point is anchored directly to retrieved search data.
-- Progressive JSON repair fallback preventing truncation errors during large research queries.
+### 🎨 Semantic Light & Dark Theme System
+- **100% Adaptive UI:** Zero hardcoded colors or locked dark-only utility classes.
+- **Light Mode:** Crisp, luminous pearl surfaces, high-contrast deep ink typography, and radiant emerald highlights.
+- **Dark Mode:** Deep midnight obsidian surfaces, subtle emerald/amber ambient glows, and velvet card elevations.
+- **Persistent Toggle:** Remembers your preference across sessions via `localStorage`.
 
-### 4. 📄 High-Contrast Editorial PDF Generator
-- Clean, crisp dark typography on an ultra-white canvas with Lord's/MCG turf-green (`#064E3B`) and leather-amber (`#B45309`) accents.
-- Dynamic multi-page pagination (`Page X of Y`).
-- Real clickable hyperlinks in the PDF for both news articles and high-res photo archives.
-- Direct memory-buffered stream (`PDFDocument`) — 0 temporary files saved to disk.
+---
 
-### 5. 🪙 Token Budget Conscious
-- Built-in word length slider (`100` to `1000` words) to conserve LLM tokens.
-- Media toggle allows pure text-only research runs for ultra-fast generation.
-- Search snippets trimmed before synthesis to maximize model context efficiency.
+## 🔒 Strict Script Privacy & Security
+
+Your writing voice is your intellectual property. CricPitch enforces strict security standards:
+- **Repository Isolation:** All private scripts, raw docs, extracted text, and processed chunks in `backend/data/` are strictly ignored via `.gitignore`.
+- **Zero Drive Modifications:** Cloud imports operate exclusively through read-only exports (`gdrive readonly export`). Antigravity and the backend never modify, delete, or overwrite your cloud files.
+- **Private Integrated Vectors:** Cadence exemplars are indexed in your private Pinecone namespace, with local fallback for 100% uptime.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Framework**: React 18 + Vite (Production build in < 1 second)
-- **Styling**: Tailwind CSS with custom Bebas Neue & Plus Jakarta Sans typography
-- **Motion & UX**: Framer Motion transitions with sticky consoles and live radar progress
-- **State**: Zustand (in-memory, ephemeral, 100% stateless)
-- **Icons**: Lucide React
+- **Framework:** React 18 + Vite (Production build in ~1.2s)
+- **Styling:** Tailwind CSS with semantic CSS variables and Bebas Neue, Space Grotesk, and Plus Jakarta Sans typography
+- **State Management:** Zustand (in-memory, ephemeral, zero auth clutter)
+- **Animations:** Framer Motion + custom CSS shimmer and audio waveform equalizers
+- **Icons:** Lucide React
 
 ### Backend
-- **Runtime**: Node.js (v22+) + Express.js
-- **Intelligence**: Google Gemini API via official `@google/genai` SDK (`gemini-3.1-flash-lite`, `gemini-3.5-flash`)
-- **Search Tooling**: Tavily Search API with image and description indexing
-- **PDF Engine**: PDFKit with custom tabular layouts and hyperlinked footnotes
-- **Security**: Helmet, CORS, and centralized error handling middleware
-
----
-
-## 📂 Project Structure
-
-```
-CricPitch/
-├── backend/
-│   ├── server.js                          # Express app entry & middleware setup
-│   ├── .env.example                       # Environment keys template
-│   ├── controllers/
-│   │   └── research.controller.js         # HTTP orchestration & PDF streaming
-│   ├── routes/
-│   │   └── research.routes.js             # Route endpoints
-│   ├── middleware/
-│   │   └── errorHandler.js                # Centralized error handler
-│   ├── utils/
-│   │   └── AppError.js                    # Operational error helper
-│   ├── services/
-│   │   └── pdf.service.js                 # Editorial PDF generation engine
-│   └── researchAgent/
-│       ├── agent.js                       # Autonomous research planner & orchestrator
-│       ├── tools/
-│       │   ├── webSearch.tool.js          # Tavily search integration (with image crawler)
-│       │   ├── cricketStats.tool.js       # Specialized cricket stats tool
-│       │   └── toolRegistry.js            # Extensible agent tool registry
-│       ├── prompts/
-│       │   └── researchSynthesizer.prompt.js # Grounding rules & JSON schema
-│       └── llm/
-│           └── gemini.client.js           # Multi-model fallback with JSON repair
-│
-└── frontend/
-    ├── index.html                         # Entry HTML with custom cricket SVG favicon
-    ├── src/
-    │   ├── main.jsx                       # React root
-    │   ├── App.jsx                        # State-machine page navigation
-    │   ├── index.css                      # Custom theme, scrollbars & liquid glass CSS
-    │   ├── store/
-    │   │   └── useResearchStore.js        # Ephemeral Zustand research store
-    │   ├── services/
-    │   │   └── api.js                     # Axios client for research & PDF blob download
-    │   └── views/
-    │       ├── LandingView.jsx            # Cinematic landing page with stadium lighting
-    │       ├── EngineHubView.jsx          # Interactive dual-engine studio hub
-    │       ├── ResearchWorkspaceView.jsx  # Engine 01 deep research console & canvas
-    │       └── ScriptWorkspaceView.jsx    # Engine 02 Cadence-RAG workspace (Milestone 3)
-```
+- **Runtime:** Node.js (v20+ / v22+) + Express.js
+- **Model Engine:** Google Gemini API via official `@google/genai` SDK (`gemini-3.8-flash`)
+- **Search Tooling:** Tavily Search API with image and description indexing
+- **Vector Retrieval:** Pinecone Vector Database (`@pinecone-database/pinecone`) with integrated inference
+- **Document Extractors:** `mammoth` (DOCX), `adm-zip` (bulk archives), `pdf-parse`
+- **PDF Engine:** PDFKit streaming engine
+- **Security:** Helmet, CORS, and centralized error handling middleware
 
 ---
 
@@ -174,8 +131,9 @@ CricPitch/
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/) v20+ or v22+
-- A free [Google Gemini API Key](https://aistudio.google.com/apikey)
-- A free [Tavily Search API Key](https://tavily.com) (1,000 free searches/month)
+- A [Google Gemini API Key](https://aistudio.google.com/apikey)
+- A [Tavily Search API Key](https://tavily.com)
+- *(Optional)* A [Pinecone API Key](https://www.pinecone.io/) for cloud vector retrieval (local fallback is included automatically)
 
 ---
 
@@ -188,23 +146,25 @@ cd CricPitch
 
 ---
 
-### Step 2: Configure Backend
+### Step 2: Configure & Start Backend
 
 ```bash
 cd backend
 npm install
 ```
 
-Create a `.env` file inside `backend/`:
+Create `.env` inside `backend/`:
 
 ```env
 PORT=5000
 FRONTEND_URL=http://localhost:5173
 GEMINI_API_KEY=your_gemini_api_key_here
 TAVILY_API_KEY=your_tavily_api_key_here
+PINECONE_API_KEY=your_pinecone_api_key_here
+PINECONE_INDEX_NAME=cricscript-rag
 ```
 
-Start the development server:
+Launch development server:
 
 ```bash
 npm run dev
@@ -214,9 +174,9 @@ The backend starts at `http://localhost:5000`.
 
 ---
 
-### Step 3: Configure Frontend
+### Step 3: Configure & Start Frontend
 
-Open a second terminal window:
+Open a new terminal window:
 
 ```bash
 cd frontend
@@ -224,75 +184,21 @@ npm install
 npm run dev
 ```
 
-The frontend studio launches at `http://localhost:5173`.
+The frontend launches at `http://localhost:5173`.
 
 ---
 
 ## 📡 API Reference
 
-### 1. Generate Research Dossier
-- **URL**: `/api/v1/research/generate`
-- **Method**: `POST`
-- **Payload**:
-  ```json
-  {
-    "topic": "Virat Kohli 82* vs Pakistan MCG 2022",
-    "preContext": [
-      "Two sixes off Haris Rauf in the 19th over",
-      "Pre-tournament form critics",
-      "90,000 MCG crowd noise"
-    ],
-    "researchLength": 500,
-    "includeMedia": true
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "success": true,
-    "data": {
-      "dossier": {
-        "topic": "Virat Kohli 82* vs Pakistan MCG 2022",
-        "generatedAt": "2026-10-25T14:30:00.000Z",
-        "collectedImages": [
-          {
-            "url": "https://example.com/kohli-mcg.jpg",
-            "title": "Virat Kohli celebration after winning shot at MCG"
-          }
-        ],
-        "synthesizedReport": {
-          "executiveSummary": "...",
-          "preMatchContext": [...],
-          "keyChronology": [...],
-          "tacticalBreakdown": [...],
-          "verifiedQuotes": [...],
-          "statHighlights": [...],
-          "sources": [...]
-        }
-      }
-    }
-  }
-  ```
+### 1. Research Engine
+- `POST /api/v1/research/generate` — Autonomous multi-hop match archive investigation.
+- `POST /api/v1/research/export-pdf` — Streams publication-grade editorial PDF report.
 
----
-
-### 2. Export Dossier as PDF
-- **URL**: `/api/v1/research/export-pdf`
-- **Method**: `POST`
-- **Payload**: `{ "dossier": { ... } }`
-- **Response**: Streamed `application/pdf` binary download.
-
----
-
-## 🗺️ Roadmap & Milestones
-
-- [x] **Milestone 1 — Core Foundation**: Express architecture, Google GenAI SDK, and Tavily multi-hop planning.
-- [x] **Milestone 2 — Deep Research Agent**: Fact grounding, media crawler, visual archives grid, and PDF export.
-- [ ] **Milestone 3 — Cadence-RAG Engine**: Upload reference scripts (PDF/TXT) to mimic your unique cadence, narrative pacing, and sentence rhythm.
-- [ ] **Milestone 4 — Timeline Editor**: Drag-and-drop scene breakdown with B-roll audio cue suggestions.
+### 2. Voiceover Studio & Cadence Engine
+- `POST /api/v1/scripts/generate` — Synthesizes 3-part Hinglish script under 1,000 words with dramatic acoustic `[pause]` cues.
 
 ---
 
 ## 📄 License
 
-MIT License. Crafted for cricket enthusiasts, analysts, and documentary filmmakers worldwide.
+MIT License. Crafted for cricket analysts, documentarians, and digital storytellers worldwide.

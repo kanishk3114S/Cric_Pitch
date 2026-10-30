@@ -9,7 +9,7 @@ export default function PhilosophySection() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="philosophy" className="bg-black py-28 md:py-40 px-6 overflow-hidden">
+    <section id="philosophy" className="bg-theme-app py-28 md:py-40 px-6 overflow-hidden transition-colors">
       <div ref={ref} className="max-w-6xl mx-auto">
         
         {/* Heading */}
@@ -17,10 +17,10 @@ export default function PhilosophySection() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-5xl md:text-7xl lg:text-8xl text-white tracking-tight mb-16 md:mb-24"
+          className="text-5xl md:text-7xl lg:text-8xl text-theme-primary tracking-tight mb-16 md:mb-24 font-display"
         >
           Investigation{' '}
-          <span className="font-serif italic text-white/40">x</span>{' '}
+          <span className="font-serif italic text-theme-muted">x</span>{' '}
           Cadence
         </motion.h2>
 
@@ -32,7 +32,7 @@ export default function PhilosophySection() {
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="rounded-3xl overflow-hidden aspect-[4/3] border border-white/10 shadow-2xl relative"
+            className="rounded-3xl overflow-hidden aspect-[4/3] border border-theme-subtle shadow-theme-card relative"
           >
             <video
               src={PHILOSOPHY_VIDEO_URL}
@@ -55,10 +55,10 @@ export default function PhilosophySection() {
           >
             {/* Block 1 */}
             <div>
-              <p className="text-white/40 text-xs tracking-widest uppercase font-semibold mb-4">
+              <p className="text-emerald-600 dark:text-emerald-400 text-xs tracking-widest uppercase font-semibold mb-4">
                 Ground-Truth Fact Synthesis
               </p>
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
+              <p className="text-theme-secondary text-base md:text-lg leading-relaxed">
                 Every meaningful cricket documentary begins at the intersection of unassailable statistical truth
                 and breathless acoustic cadence. We operate at that exact crossroads, turning dry scorecards into
                 palpable human drama.
@@ -66,14 +66,14 @@ export default function PhilosophySection() {
             </div>
 
             {/* Divider */}
-            <div className="w-full h-px bg-white/10" />
+            <div className="w-full h-px bg-theme-medium" />
 
             {/* Block 2 */}
             <div>
-              <p className="text-white/40 text-xs tracking-widest uppercase font-semibold mb-4">
+              <p className="text-emerald-600 dark:text-emerald-400 text-xs tracking-widest uppercase font-semibold mb-4">
                 Shape the Narrative
               </p>
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
+              <p className="text-theme-secondary text-base md:text-lg leading-relaxed">
                 We believe that legendary scripts emerge when tactical facts meet directorial precision.
                 Our research agent unearths the overlooked turning points — the pitch deterioration,
                 the bowler's pre-series fatigue, the obscure laws, and the authentic press conference admissions.

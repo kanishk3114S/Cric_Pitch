@@ -11,7 +11,7 @@ const api = axios.create({ baseURL: BASE_URL });
 // ── Research API calls ─────────────────────────────────────────────────────
 
 /**
- * Calls the Research Agent and returns a compiled dossier.
+ * Calls the Cricket Research Agent and returns a compiled dossier.
  *
  * @param {object} payload
  * @param {string}   payload.topic           - Research topic
@@ -21,7 +21,6 @@ const api = axios.create({ baseURL: BASE_URL });
  */
 export const generateResearch = (payload) =>
   api.post('/research/generate', payload);
-
 
 /**
  * Downloads the dossier as a PDF.
@@ -36,7 +35,7 @@ export const exportToPDF = (dossier) =>
 // ── Script Studio API calls ────────────────────────────────────────────────
 
 /**
- * Calls the Cadence-RAG Script Studio to generate a 3-part Hinglish voiceover script.
+ * Calls the Script Studio to generate a 3-part Hinglish voiceover script.
  *
  * @param {object} payload
  * @param {string} payload.topic - The documentary topic
@@ -45,3 +44,4 @@ export const exportToPDF = (dossier) =>
  */
 export const generateScript = (payload) =>
   api.post('/scripts/generate', payload);
+

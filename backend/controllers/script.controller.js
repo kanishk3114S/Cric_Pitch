@@ -17,7 +17,7 @@ export async function generateScriptController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      message: 'Hinglish Cadence-RAG script successfully generated',
+      message: 'Hinglish match script successfully generated',
       data: scriptResult
     });
   } catch (error) {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useResearchStore from '../store/useResearchStore';
 import { generateResearch, exportToPDF } from '../services/api';
+import { ThemeToggle } from '../context/ThemeContext';
 import {
   ArrowLeft,
   ArrowRight,
@@ -47,8 +48,8 @@ function ImageCard({ image, index }) {
   };
 
   return (
-    <div className="group relative rounded-xl overflow-hidden border border-white/10 bg-slate-900/90 flex flex-col transition-all hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/10">
-      <div className="relative aspect-video w-full bg-slate-950 flex items-center justify-center overflow-hidden">
+    <div className="group relative rounded-xl overflow-hidden border border-theme-subtle bg-theme-elevated flex flex-col transition-all hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/10">
+      <div className="relative aspect-video w-full bg-theme-sunken flex items-center justify-center overflow-hidden">
         {!hasError ? (
           <img
             src={image.url}
@@ -58,9 +59,9 @@ function ImageCard({ image, index }) {
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="p-4 text-center flex flex-col items-center justify-center text-slate-500 space-y-1">
-            <ImageIcon className="w-6 h-6 text-slate-600" />
-            <p className="text-[11px] font-medium text-slate-400">Archival Still Reference</p>
+          <div className="p-4 text-center flex flex-col items-center justify-center text-theme-muted space-y-1">
+            <ImageIcon className="w-6 h-6 text-theme-dim" />
+            <p className="text-[11px] font-medium text-theme-muted">Archival Still Reference</p>
           </div>
         )}
 
@@ -78,86 +79,90 @@ function ImageCard({ image, index }) {
           <button
             onClick={handleCopy}
             className="text-[11px] text-white bg-black/70 hover:bg-white/20 p-1.5 rounded-lg backdrop-blur-md transition-colors cursor-pointer"
-            title="Copy image direct link"
+            title="Copy Image URL"
           >
-            {copiedLink ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
 
-      <div className="p-3 flex-1 flex flex-col justify-between">
-        <p className="text-xs font-semibold text-slate-200 line-clamp-2 leading-snug group-hover:text-emerald-300 transition-colors">
-          {image.title || `Match Photo #${index + 1}`}
+      <div className="p-2.5 flex flex-col justify-between flex-1 space-y-1.5">
+        <p className="text-[11px] font-semibold text-theme-primary line-clamp-1 leading-snug">
+          {image.title || 'Match Photograph'}
         </p>
-        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-          <span>STILL #{index + 1}</span>
-          <span className="text-emerald-400/90 font-semibold">VERIFIED ARCHIVE</span>
+        <div className="flex items-center justify-between text-[10px] text-theme-muted">
+          <span className="font-mono bg-theme-app px-1.5 py-0.5 rounded border border-theme-subtle">
+            {getDomain(image.sourceUrl || image.url)}
+          </span>
+          <span className="font-mono font-medium text-emerald-600 dark:text-emerald-400">Archival Still #{index + 1}</span>
         </div>
       </div>
     </div>
   );
 }
 
-// Preset famous cricket turning points with authentic match imagery
+// 4 Rich Historical Match Presets for Instant 1-Click Investigation
 const PRESETS = [
   {
-    label: 'Headingley 2019: Stokes 135*',
-    topic: 'Ben Stokes 135* & Jack Leach Headingley Ashes 2019',
-    points: `Jack Leach cleaning his glasses between balls\n76-run last-wicket miraculous partnership\nNathan Lyon missed run-out chance and Australian DRS review\nAtmosphere at Leeds as Stokes reverse-swept Nathan Lyon`,
-    length: 500,
-    image: '/images/cricket/stokes-headingley.jpg',
+    label: "Headingley 2019: Stokes 135*",
+    topic: "Ben Stokes 135* at Headingley Ashes 2019",
+    angles: [
+      "England 67 all-out first innings collapse trauma",
+      "Jack Leach cleaning glasses during the 76-run last-wicket stand",
+      "Nathan Lyon missed run-out and Joel Wilson LBW controversy",
+      "Justin Langer kicking the water bottle in the Australian dressing room"
+    ],
+    image: "/images/cricket/stokes-headingley.jpg"
   },
   {
-    label: 'MCG 2022: Kohli 82* vs Pak',
-    topic: 'Virat Kohli 82* vs Pakistan MCG 2022 T20 World Cup',
-    points: `Two consecutive sixes against Haris Rauf in the 19th over\nMohammad Nawaz final over psychological pressure & no-ball\nKohli pre-tournament form and media criticism\n90,000 MCG stadium crowd noise factor`,
-    length: 550,
-    image: '/images/cricket/kohli-roar.jpg',
+    label: "Gabba 2021: Pant's Siege",
+    topic: "Rishabh Pant 89* at the Gabba 4th Test 2021",
+    angles: [
+      "Australia 32-year undefeated fortress record at Brisbane",
+      "Indian injury crisis (net bowlers bowling: Siraj, Natarajan, Washington)",
+      "Cheteshwar Pujara body blows against Cummins and Hazlewood short balls",
+      "Pant final hour boundaries off Lyon and winning stroke down the ground"
+    ],
+    image: "/images/cricket/kohli-roar.jpg"
   },
   {
-    label: 'Motera 2011: Yuvraj WC QF',
-    topic: 'Yuvraj Singh 57* vs Australia 2011 World Cup Quarter Final Motera',
-    points: `Ending Australia 12-year unbeaten World Cup streak\nYuvraj emotional celebration on knees screaming with joy\nPartnership with Suresh Raina in tense 261 chase\nBrett Lee bowling fast spells under extreme heat`,
-    length: 500,
-    image: '/images/cricket/yuvraj-six.jpg',
+    label: "Motera 2011: Yuvraj Dethrones Aus",
+    topic: "India vs Australia 2011 World Cup Quarter Final Ahmedabad",
+    angles: [
+      "Ponting fighting century under tournament scrutiny",
+      "Yuvraj Singh kneeling roar off Brett Lee winning boundary",
+      "Suresh Raina critical late-order partnership composure",
+      "Ending Australia 12-year 3-tournament World Cup winning streak"
+    ],
+    image: "/images/cricket/yuvraj-six.jpg"
   },
   {
-    label: 'Sharjah 1998: Sachin Desert Storm',
-    topic: 'Sachin Tendulkar 143 vs Australia Sharjah Desert Storm 1998',
-    points: `Sandstorm interruption altering target and qualification run-rate\nSachin brutal assault on Shane Warne around the wicket\nTony Greig iconic television commentary enthusiasm\nQualifying India for the Coca-Cola Cup final single-handedly`,
-    length: 500,
-    image: '/images/cricket/sachin-legend.jpg',
-  },
-  {
-    label: 'Edgbaston 2019: Smith Twin Tons',
-    topic: 'Steve Smith 144 & 142 Edgbaston Ashes 2019 Redemption',
-    points: `Hostile English crowd sand-paper jeers and boos\nRescuing Australia from 122/8 in first innings\nUnorthodox batting leaves and leaving outside off-stump\nExhausting Stuart Broad and James Anderson in swinging conditions`,
-    length: 500,
-    image: '/images/cricket/smith-aura.jpg',
-  },
+    label: "Sharjah 1998: Desert Storm",
+    topic: "Sachin Tendulkar 143 vs Australia Sharjah Desert Storm 1998",
+    angles: [
+      "Sandstorm disruption and revised target calculations to qualify for final",
+      "Assault against Shane Warne around the wicket into the midwicket stands",
+      "Tony Greig immortal commentary calls: 'They are dancing in the aisles!'",
+      "Single-handedly knocking New Zealand out on net run rate"
+    ],
+    image: "/images/cricket/sachin-legend.jpg"
+  }
 ];
 
 export default function ResearchWorkspaceView({ onBack }) {
-  const { dossier, setDossier, isLoading, setLoading, error, setError, reset } =
-    useResearchStore();
+  const { dossier, isLoading, error, setDossier, setLoading, setError, reset } = useResearchStore();
 
-  const [topic, setTopic] = useState(dossier?.topic || '');
+  const [topic, setTopic] = useState('');
   const [preContextText, setPreContextText] = useState('');
   const [researchLength, setResearchLength] = useState(500);
-  const [includeMedia, setIncludeMedia] = useState(false);
+  const [includeMedia, setIncludeMedia] = useState(true);
 
-  const handleNewTopic = () => {
-    reset();
-    setTopic('');
-    setPreContextText('');
-  };
-
-  // UX Feedback States
-  const [copied, setCopied] = useState(false);
-  const [loadingStep, setLoadingStep] = useState(0);
+  // Live progress metrics
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [copied, setCopied] = useState(false);
 
-  // Live Agent Progress Ticker
+  // Timer while agent is searching
   useEffect(() => {
     if (!isLoading) return;
 
@@ -165,56 +170,54 @@ export default function ResearchWorkspaceView({ onBack }) {
       setElapsedSeconds((s) => s + 1);
     }, 1000);
 
-    const stepTimer1 = setTimeout(() => setLoadingStep(1), 2500);
-    const stepTimer2 = setTimeout(() => setLoadingStep(2), 7000);
-    const stepTimer3 = setTimeout(() => setLoadingStep(3), 13000);
+    const step1 = setTimeout(() => setLoadingStep(1), 2500);
+    const step2 = setTimeout(() => setLoadingStep(2), 6500);
+    const step3 = setTimeout(() => setLoadingStep(3), 11000);
 
     return () => {
       clearInterval(timer);
-      clearTimeout(stepTimer1);
-      clearTimeout(stepTimer2);
-      clearTimeout(stepTimer3);
+      clearTimeout(step1);
+      clearTimeout(step2);
+      clearTimeout(step3);
     };
   }, [isLoading]);
-
-  const loadPreset = (preset) => {
-    setTopic(preset.topic);
-    setPreContextText(preset.points);
-    setResearchLength(preset.length);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!topic.trim()) return;
 
-    const preContext = preContextText
-      .split('\n')
-      .map((l) => l.trim())
-      .filter((l) => l.length > 0)
-      .slice(0, 5);
-
-    // ── Clear stale state immediately ────────────────────────────────────
-    // Without this, the OLD dossier stays visible while the agent is running.
-    // We wipe it here so the empty-state / loading panel shows right away.
     setDossier(null);
+    setLoading(true);
     setError(null);
     setElapsedSeconds(0);
     setLoadingStep(0);
-    setLoading(true);
+
+    const preContext = preContextText
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+      .slice(0, 5);
 
     try {
-      const { data } = await generateResearch({
+      const response = await generateResearch({
         topic: topic.trim(),
         preContext,
         researchLength,
         includeMedia,
       });
 
-      setDossier(data.data.dossier);
+      if (response.data.success) {
+        setDossier(response.data.data);
+      } else {
+        throw new Error(response.data.message || 'Failed to compile research');
+      }
     } catch (err) {
+      console.error('Research Agent Error:', err);
       setError(
         err.response?.data?.error ||
-          'Research compilation failed. Check backend console and API keys.'
+        err.response?.data?.message ||
+        err.message ||
+        'Research execution could not complete. Please check your connection and try again.'
       );
     } finally {
       setLoading(false);
@@ -229,82 +232,84 @@ export default function ResearchWorkspaceView({ onBack }) {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `CricScript-${dossier.topic
-        ?.substring(0, 30)
-        .replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+      link.download = `${(dossier.topic || 'Cricket-Research').replace(/[^a-z0-9]/gi, '-').toLowerCase()}-dossier.pdf`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-    } catch {
-      alert('PDF generation failed. Please try again.');
+    } catch (err) {
+      console.error('PDF Download Error:', err);
+      alert('Could not export PDF. Please try again in a moment.');
     }
   };
 
   const handleCopyMarkdown = () => {
     if (!dossier) return;
-    const report = dossier.synthesizedReport || {};
-    
-    let md = `# ${dossier.topic}\n\n`;
-    md += `*Generated: ${new Date(dossier.generatedAt).toLocaleString()}*\n\n`;
-    if (report.executiveSummary) md += `## Executive Summary\n${report.executiveSummary}\n\n`;
-    if (report.keyChronology?.length) {
-      md += `## Key Chronology\n`;
-      report.keyChronology.forEach(c => {
-        md += `- **${c.timestampOrDate}**: ${c.eventDescription} *(Why it mattered: ${c.significance})*\n`;
-      });
-      md += '\n';
-    }
-    if (report.verifiedQuotes?.length) {
-      md += `## Verified Quotes\n`;
-      report.verifiedQuotes.forEach(q => {
-        md += `> "${q.quote}"\n> — **${q.speaker}** (${q.context})\n\n`;
-      });
-    }
-    if (dossier.collectedImages?.length) {
-      md += `## Curated Visual Archives\n`;
-      dossier.collectedImages.forEach((img, i) => {
-        md += `${i + 1}. [${img.title || 'Archival Match Photograph'}](${img.url})\n`;
-      });
-      md += '\n';
-    }
-    if (report.sources?.length) {
-      md += `## Verified Sources & Articles\n`;
-      report.sources.forEach((src, i) => {
-        md += `${i + 1}. [${src.title}](${src.url})\n`;
-      });
-    }
+    const report = dossier.synthesizedReport;
+    const text = `# ${dossier.topic} — Grounded Cricket Research Dossier
+Compiled on ${new Date(dossier.generatedAt).toLocaleDateString()}
 
-    navigator.clipboard.writeText(md).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    });
+## 1. Executive Summary
+${report?.executiveSummary || ''}
+
+## 2. Pre-Match Context
+${(report?.preMatchContext || []).map((c) => `- **${c.angle}**: ${c.detail}`).join('\n')}
+
+## 3. Key Chronology & Turning Points
+${(report?.keyChronology || []).map((k) => `- **${k.timestampOrDate}**: ${k.eventDescription} (Significance: ${k.significance})`).join('\n')}
+
+## 4. Tactical Breakdown
+${(report?.tacticalBreakdown || []).map((t) => `### ${t.subheading}\n${t.analysis}\n*Supporting Data: ${t.supportingData || 'N/A'}*`).join('\n\n')}
+
+## 5. Verified Quotes
+${(report?.verifiedQuotes || []).map((q) => `> "${q.quote}"\n> — **${q.speaker}** (${q.context})`).join('\n\n')}
+
+## 6. Statistical Highlights
+${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.historicalContext})`).join('\n')}
+`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const loadPreset = (preset) => {
+    setTopic(preset.topic);
+    setPreContextText(preset.angles.join('\n'));
+    setError(null);
+  };
+
+  const handleNewTopic = () => {
+    reset();
+    setTopic('');
+    setPreContextText('');
   };
 
   const report = dossier?.synthesizedReport;
 
   const agentSteps = [
-    { title: 'Formulating Search Vectors', desc: 'Planning scorecard, pitch, and quotes queries' },
+    { title: 'Structuring Research Angles', desc: 'Planning scorecard, pitch, and quotes queries' },
     { title: 'Scanning Cricket Archives', desc: 'Executing multi-hop search across Cricinfo & HowStat' },
     { title: 'Analyzing Tactics & Quotes', desc: 'Filtering verified post-match press statements' },
     { title: 'Grounding Facts via Gemini', desc: 'Synthesizing structured dossier with zero hallucination' },
   ];
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white flex flex-col">
+    <div className="min-h-screen bg-theme-app text-theme-primary flex flex-col transition-colors">
       
       {/* ── Top Bar ── */}
-      <header className="sticky top-0 z-30 bg-[#030712]/90 backdrop-blur-md border-b border-white/5 px-6 py-4">
+      <header className="sticky top-0 z-30 bg-theme-header backdrop-blur-md border-b border-theme-subtle px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10"
+              className="flex items-center gap-2 text-xs font-semibold text-theme-muted hover:text-theme-primary transition-colors cursor-pointer px-3.5 py-1.5 rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-medium"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>HUB</span>
             </button>
-            <div className="h-4 w-px bg-white/10" />
-            <span className="text-sm font-extrabold tracking-wide text-white uppercase flex items-center gap-2">
-              <span className="text-emerald-400">ENGINE 01</span> / DEEP RESEARCH WORKSPACE
+            <div className="h-4 w-px bg-theme-medium" />
+            <span className="text-sm font-extrabold tracking-wide text-theme-primary uppercase flex items-center gap-2">
+              <span className="text-emerald-600 dark:text-emerald-400">ENGINE 01</span> / DEEP RESEARCH WORKSPACE
             </span>
           </div>
 
@@ -312,17 +317,18 @@ export default function ResearchWorkspaceView({ onBack }) {
             {dossier && (
               <button
                 onClick={handleNewTopic}
-                className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                className="text-xs text-theme-muted hover:text-theme-primary flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-theme-elevated border border-theme-subtle transition-colors cursor-pointer"
                 title="Start a new research query"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>New Topic</span>
               </button>
             )}
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Agents Active</span>
             </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -335,8 +341,8 @@ export default function ResearchWorkspaceView({ onBack }) {
           
           {/* Quick Preset Inspiration Bar */}
           <div className="space-y-2">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              <Zap className="w-3.5 h-3.5 text-amber-400" /> Instant Match Inspiration
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-theme-muted uppercase tracking-wider">
+              <Zap className="w-3.5 h-3.5 text-amber-500" /> Instant Match Inspiration
             </div>
             <div className="grid grid-cols-2 gap-2">
               {PRESETS.map((p, i) => (
@@ -344,29 +350,27 @@ export default function ResearchWorkspaceView({ onBack }) {
                   key={i}
                   type="button"
                   onClick={() => loadPreset(p)}
-                  className={`relative overflow-hidden text-left p-2.5 rounded-xl bg-[#090d16] hover:bg-slate-900 border border-white/10 hover:border-emerald-500/40 text-[11px] font-medium text-slate-200 hover:text-white transition-all cursor-pointer group shadow-md ${
+                  className={`relative overflow-hidden text-left p-2.5 rounded-xl bg-theme-card hover:bg-theme-elevated border border-theme-subtle hover:border-emerald-500/40 text-[11px] font-medium text-theme-secondary hover:text-theme-primary transition-all cursor-pointer group shadow-theme-card ${
                     i === PRESETS.length - 1 ? 'col-span-2' : ''
                   }`}
                   title={p.topic}
                 >
-                  {/* Subtle Background Match Slice with Matte Mask */}
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
                     <img
                       src={p.image}
                       alt={p.label}
-                      className="w-full h-full object-cover object-[50%_15%] opacity-35 group-hover:opacity-65 group-hover:scale-105 transition-all duration-500 brightness-125 contrast-115 saturate-95"
+                      className="w-full h-full object-cover object-[50%_15%] opacity-20 dark:opacity-35 group-hover:opacity-40 transition-all duration-500 contrast-115"
                     />
                     <div
                       className="absolute inset-0"
                       style={{
-                        background:
-                          'linear-gradient(to right, rgba(9,13,22,0.92) 20%, rgba(9,13,22,0.65) 100%)',
+                        background: 'linear-gradient(to right, var(--bg-card) 20%, transparent 100%)',
                       }}
                     />
                   </div>
                   <div className="relative z-10 flex items-center gap-1.5 truncate">
-                    <span className="text-amber-400 font-bold shrink-0">⚡</span>
-                    <span className="truncate font-semibold text-white/90 group-hover:text-white">
+                    <span className="text-amber-500 font-bold shrink-0">⚡</span>
+                    <span className="truncate font-semibold text-theme-primary">
                       {p.label}
                     </span>
                   </div>
@@ -375,19 +379,19 @@ export default function ResearchWorkspaceView({ onBack }) {
             </div>
           </div>
 
-          <div className="cricket-card rounded-2xl p-6 border border-white/10 space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-white/5">
-              <h2 className="text-sm font-extrabold tracking-wider uppercase text-emerald-400 flex items-center gap-2">
+          <div className="cricket-card rounded-2xl p-6 border border-theme-subtle space-y-5 bg-theme-card shadow-theme-card">
+            <div className="flex items-center justify-between pb-3 border-b border-theme-subtle">
+              <h2 className="text-sm font-extrabold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4" /> Directorial Brief
               </h2>
-              <span className="text-[11px] text-slate-400 font-mono">Ground-Truth Fact</span>
+              <span className="text-[11px] text-theme-muted font-mono">Ground-Truth Fact</span>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               
               {/* Topic Input */}
               <div>
-                <label className="block text-slate-300 text-xs font-bold uppercase tracking-wider mb-1.5">
+                <label className="block text-theme-secondary text-xs font-bold uppercase tracking-wider mb-1.5">
                   Cricket Topic / Match / Over
                 </label>
                 <input
@@ -395,7 +399,7 @@ export default function ResearchWorkspaceView({ onBack }) {
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="e.g. 2019 World Cup Final Stokes Overthrow"
-                  className="w-full bg-slate-900/90 text-white border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none placeholder-slate-500 transition-colors"
+                  className="w-full bg-theme-input text-theme-primary border border-theme-subtle focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none placeholder-theme-dim transition-colors"
                   required
                 />
               </div>
@@ -403,27 +407,27 @@ export default function ResearchWorkspaceView({ onBack }) {
               {/* Pre-Context Angles */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-slate-300 text-xs font-bold uppercase tracking-wider">
+                  <label className="text-theme-secondary text-xs font-bold uppercase tracking-wider">
                     Key Angles to Investigate
                   </label>
-                  <span className="text-[11px] text-slate-500">1 per line, max 5</span>
+                  <span className="text-[11px] text-theme-muted">1 per line, max 5</span>
                 </div>
                 <textarea
                   value={preContextText}
                   onChange={(e) => setPreContextText(e.target.value)}
                   rows={4}
                   placeholder={`Pitch deterioration and reverse swing\nPlayer pre-tournament form\nControversial umpire decisions\nPress conference quotes`}
-                  className="w-full bg-slate-900/90 text-white border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none placeholder-slate-500 resize-none transition-colors"
+                  className="w-full bg-theme-input text-theme-primary border border-theme-subtle focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none placeholder-theme-dim resize-none transition-colors"
                 />
               </div>
 
               {/* Research Word Limit Slider */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <Sliders className="w-3.5 h-3.5 text-emerald-400" /> Max Word Limit
+                  <span className="text-theme-secondary font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <Sliders className="w-3.5 h-3.5 text-emerald-500" /> Max Word Limit
                   </span>
-                  <span className="text-emerald-400 font-mono font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  <span className="text-emerald-600 dark:text-emerald-400 font-mono font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                     {researchLength} words
                   </span>
                 </div>
@@ -434,9 +438,9 @@ export default function ResearchWorkspaceView({ onBack }) {
                   step="50"
                   value={researchLength}
                   onChange={(e) => setResearchLength(Number(e.target.value))}
-                  className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-theme-elevated rounded-lg"
                 />
-                <div className="flex justify-between text-[10px] text-slate-500">
+                <div className="flex justify-between text-[10px] text-theme-muted font-mono">
                   <span>100 (Tight)</span>
                   <span>500 (Standard)</span>
                   <span>1000 (Exhaustive)</span>
@@ -447,27 +451,27 @@ export default function ResearchWorkspaceView({ onBack }) {
               <div className={`flex items-center justify-between border rounded-xl px-3.5 py-2.5 transition-colors ${
                 includeMedia
                   ? 'bg-emerald-500/10 border-emerald-500/30'
-                  : 'bg-slate-900/60 border-slate-800'
+                  : 'bg-theme-elevated border-theme-subtle'
               }`}>
                 <div className="flex items-center gap-2.5">
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                    includeMedia ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'
+                    includeMedia ? 'bg-emerald-500/20 text-emerald-500' : 'bg-theme-app text-theme-muted'
                   }`}>
                     <Camera className="w-4 h-4" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-xs font-bold text-slate-200">Include Photos & Links</p>
+                      <p className="text-xs font-bold text-theme-primary">Include Photos & Links</p>
                       <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded uppercase ${
-                        includeMedia ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-500'
+                        includeMedia ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300' : 'bg-theme-app text-theme-muted'
                       }`}>
                         {includeMedia ? 'ON' : 'OFF'}
                       </span>
                     </div>
-                    <p className="text-[10px] text-slate-500">
+                    <p className="text-[10px] text-theme-muted">
                       {includeMedia
                         ? 'Extracts match stills, photo archives & source links'
-                        : 'Saves tokens with pure text dossier'}
+                        : 'Fast, lightweight text-only dossier'}
                     </p>
                   </div>
                 </div>
@@ -475,7 +479,7 @@ export default function ResearchWorkspaceView({ onBack }) {
                   type="button"
                   onClick={() => setIncludeMedia(!includeMedia)}
                   className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                    includeMedia ? 'bg-emerald-500' : 'bg-slate-700'
+                    includeMedia ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-slate-700'
                   }`}
                   aria-label="Toggle include photos and links"
                 >
@@ -487,21 +491,21 @@ export default function ResearchWorkspaceView({ onBack }) {
                 </button>
               </div>
 
-              {/* Run Agent Button (Solid Authoritative Cricket Turf Emerald) */}
+              {/* Run Agent Button */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-4 rounded-xl bg-[#10b981] hover:bg-[#059669] disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-black font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+                className="w-full py-4 rounded-xl btn-emerald-glow disabled:opacity-50 disabled:cursor-not-allowed font-extrabold text-xs tracking-wider uppercase flex items-center justify-center gap-2 cursor-pointer shadow-lg"
               >
                 {isLoading ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    <span>Agent Digging Archives ({elapsedSeconds}s)...</span>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Investigating Match Archives ({elapsedSeconds}s)...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 text-black" />
-                    <span>RUN RESEARCH AGENT 🏏</span>
+                    <Sparkles className="w-4 h-4 text-white" />
+                    <span>RUN RESEARCH INVESTIGATION 🏏</span>
                   </>
                 )}
               </button>
@@ -521,42 +525,39 @@ export default function ResearchWorkspaceView({ onBack }) {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
-                className="relative rounded-2xl p-8 border border-emerald-500/40 space-y-6 bg-[#090d16] overflow-hidden shadow-2xl"
+                className="relative rounded-2xl p-8 border border-emerald-500/40 space-y-6 bg-theme-card overflow-hidden shadow-theme-card"
               >
-                {/* Background Stadium Image Feathered via Radial Mask */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                   <img
                     src="/images/cricket/stadium-mcg.jpg"
                     alt="Radar Backdrop"
-                    className="w-full h-full object-cover object-center opacity-15 contrast-125"
+                    className="w-full h-full object-cover object-center opacity-10 dark:opacity-15 contrast-125"
+                  />
+                  <div
+                    className="absolute inset-0"
                     style={{
-                      maskImage:
-                        'radial-gradient(ellipse at center, rgba(0,0,0,0.9) 20%, transparent 75%)',
-                      WebkitMaskImage:
-                        'radial-gradient(ellipse at center, rgba(0,0,0,0.9) 20%, transparent 75%)',
+                      background: 'radial-gradient(ellipse at center, transparent 30%, var(--bg-card) 85%)',
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/70" />
                 </div>
 
-                {/* Ambient top structural line */}
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-500/40" />
 
-                <div className="relative z-10 flex items-center justify-between pb-4 border-b border-white/10">
+                <div className="relative z-10 flex items-center justify-between pb-4 border-b border-theme-subtle">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                      <Activity className="w-5 h-5 text-emerald-400 animate-spin" />
+                      <Activity className="w-5 h-5 text-emerald-500 animate-spin" />
                     </div>
                     <div>
-                      <h3 className="text-base font-extrabold uppercase tracking-wide text-white">
+                      <h3 className="text-base font-extrabold uppercase tracking-wide text-theme-primary">
                         Autonomous Multi-Hop Investigation
                       </h3>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-theme-muted">
                         Synthesizing scorecards, pitch reports, and press conferences
                       </p>
                     </div>
                   </div>
-                  <span className="font-mono text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                  <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
                     {elapsedSeconds}s Elapsed
                   </span>
                 </div>
@@ -573,19 +574,19 @@ export default function ResearchWorkspaceView({ onBack }) {
                         animate={{ opacity: isCurrent ? 1 : isDone ? 0.9 : 0.4 }}
                         className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
                           isCurrent
-                            ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
+                            ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600 dark:text-emerald-300'
                             : isDone
-                            ? 'bg-slate-900/60 border-white/10 text-slate-300'
-                            : 'bg-transparent border-transparent text-slate-500'
+                            ? 'bg-theme-elevated border-theme-subtle text-theme-secondary'
+                            : 'bg-transparent border-transparent text-theme-muted'
                         }`}
                       >
                         <div
                           className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
                             isDone
-                              ? 'bg-[#10b981] text-black'
+                              ? 'bg-emerald-500 text-black'
                               : isCurrent
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-400 animate-pulse'
-                              : 'bg-slate-800 text-slate-600'
+                              ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500 animate-pulse'
+                              : 'bg-theme-elevated text-theme-muted'
                           }`}
                         >
                           {isDone ? '✓' : idx + 1}
@@ -595,7 +596,7 @@ export default function ResearchWorkspaceView({ onBack }) {
                           <p className="text-[11px] opacity-70 mt-1 truncate">{step.desc}</p>
                         </div>
                         {isCurrent && (
-                          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+                          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
                         )}
                       </motion.div>
                     );
@@ -607,7 +608,7 @@ export default function ResearchWorkspaceView({ onBack }) {
 
           {/* Error State */}
           {error && !isLoading && (
-            <div className="bg-rose-950/40 border border-rose-500/40 rounded-2xl p-6 text-rose-300 text-xs shadow-xl">
+            <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-6 text-rose-600 dark:text-rose-300 text-xs shadow-md">
               <p className="font-bold uppercase tracking-wider text-sm mb-1">Execution Error</p>
               <p>{error}</p>
             </div>
@@ -615,41 +616,39 @@ export default function ResearchWorkspaceView({ onBack }) {
 
           {/* Empty State: Curated Legendary Case Studies Launchpad */}
           {!dossier && !isLoading && !error && (
-            <div className="relative rounded-2xl p-6 md:p-8 border border-white/10 bg-[#090d16] overflow-hidden shadow-2xl space-y-6">
-              {/* Subtle atmospheric stadium background with radial feathering */}
+            <div className="relative rounded-2xl p-6 md:p-8 border border-theme-subtle bg-theme-card overflow-hidden shadow-theme-card space-y-6">
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
                   src="/images/cricket/stadium-mcg.jpg"
                   alt="Stadium Atmosphere"
-                  className="w-full h-full object-cover object-center opacity-15 contrast-125 saturate-75"
+                  className="w-full h-full object-cover object-center opacity-10 dark:opacity-15 contrast-125 saturate-75"
+                />
+                <div
+                  className="absolute inset-0"
                   style={{
-                    maskImage:
-                      'radial-gradient(ellipse at center, rgba(0,0,0,0.85) 15%, transparent 70%)',
-                    WebkitMaskImage:
-                      'radial-gradient(ellipse at center, rgba(0,0,0,0.85) 15%, transparent 70%)',
+                    background: 'radial-gradient(ellipse at center, transparent 20%, var(--bg-card) 85%)',
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-[#090d16]/80" />
               </div>
 
               {/* Canvas Header */}
-              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-white/10">
+              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-theme-subtle">
                 <div>
-                  <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400 uppercase tracking-wider font-semibold mb-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-semibold mb-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
                     Autonomous Research Canvas Ready
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-cricket-title tracking-wide text-white uppercase">
+                  <h3 className="text-2xl md:text-3xl font-cricket-title tracking-wide text-theme-primary uppercase">
                     FEATURED ARCHIVES FOR INVESTIGATION
                   </h3>
-                  <p className="text-slate-400 text-xs mt-1">
+                  <p className="text-theme-muted text-xs mt-1">
                     Click any legendary match card below to populate the brief, or type your own topic on the left.
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[11px] font-mono text-slate-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
-                    Multi-Hop Vector Search
+                  <span className="text-[11px] font-mono text-theme-muted bg-theme-elevated border border-theme-subtle px-3 py-1.5 rounded-lg">
+                    Autonomous Cross-Source Verification
                   </span>
                 </div>
               </div>
@@ -660,20 +659,20 @@ export default function ResearchWorkspaceView({ onBack }) {
                 {/* Card 1: Sachin Tendulkar No. 10 */}
                 <div
                   onClick={() => loadPreset(PRESETS[3])}
-                  className="group relative h-80 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#030712] p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-xl"
+                  className="group relative h-80 rounded-2xl overflow-hidden border border-theme-subtle hover:border-emerald-500/50 bg-theme-card p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-theme-card"
                 >
                   <img
                     src="/images/cricket/sachin-legend.jpg"
                     alt="Sachin Tendulkar Desert Storm"
-                    className="absolute inset-0 w-full h-full object-cover object-center opacity-45 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+                    className="absolute inset-0 w-full h-full object-cover object-center opacity-45 dark:opacity-45 group-hover:opacity-70 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                   
                   <div className="relative z-10 flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded">
                       Sharjah 1998
                     </span>
-                    <span className="text-xs text-white/60 group-hover:text-emerald-400 transition-colors">
+                    <span className="text-xs text-white/70 group-hover:text-emerald-400 transition-colors">
                       ⚡ 1-Click
                     </span>
                   </div>
@@ -682,12 +681,12 @@ export default function ResearchWorkspaceView({ onBack }) {
                     <h4 className="text-2xl font-cricket-title tracking-wide text-white uppercase group-hover:text-emerald-300 transition-colors">
                       Sachin 143 Desert Storm
                     </h4>
-                    <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-snug">
+                    <p className="text-[11px] text-slate-200 line-clamp-2 mt-1 leading-snug">
                       Assault on Shane Warne altered run-rate qualification against Australia.
                     </p>
                     <button
                       type="button"
-                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-[#10b981] hover:text-black border border-white/15 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-black border border-white/20 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
                     >
                       <span>Load Investigation</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -698,20 +697,20 @@ export default function ResearchWorkspaceView({ onBack }) {
                 {/* Card 2: Ben Stokes 135* Headingley */}
                 <div
                   onClick={() => loadPreset(PRESETS[0])}
-                  className="group relative h-80 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#030712] p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-xl"
+                  className="group relative h-80 rounded-2xl overflow-hidden border border-theme-subtle hover:border-emerald-500/50 bg-theme-card p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-theme-card"
                 >
                   <img
                     src="/images/cricket/stokes-headingley.jpg"
                     alt="Ben Stokes Headingley Miracle"
-                    className="absolute inset-0 w-full h-full object-cover object-top opacity-45 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+                    className="absolute inset-0 w-full h-full object-cover object-top opacity-45 dark:opacity-45 group-hover:opacity-70 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                   
                   <div className="relative z-10 flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded">
                       Headingley 2019
                     </span>
-                    <span className="text-xs text-white/60 group-hover:text-emerald-400 transition-colors">
+                    <span className="text-xs text-white/70 group-hover:text-emerald-400 transition-colors">
                       ⚡ 1-Click
                     </span>
                   </div>
@@ -720,12 +719,12 @@ export default function ResearchWorkspaceView({ onBack }) {
                     <h4 className="text-2xl font-cricket-title tracking-wide text-white uppercase group-hover:text-emerald-300 transition-colors">
                       Stokes 135* Ashes Miracle
                     </h4>
-                    <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-snug">
+                    <p className="text-[11px] text-slate-200 line-clamp-2 mt-1 leading-snug">
                       76-run last-wicket miraculous stand with Jack Leach cleaning glasses.
                     </p>
                     <button
                       type="button"
-                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-[#10b981] hover:text-black border border-white/15 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-black border border-white/20 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
                     >
                       <span>Load Investigation</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -736,20 +735,20 @@ export default function ResearchWorkspaceView({ onBack }) {
                 {/* Card 3: Yuvraj Singh 2011 QF Roar */}
                 <div
                   onClick={() => loadPreset(PRESETS[2])}
-                  className="group relative h-80 rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/50 bg-[#030712] p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-xl"
+                  className="group relative h-80 rounded-2xl overflow-hidden border border-theme-subtle hover:border-emerald-500/50 bg-theme-card p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 shadow-theme-card"
                 >
                   <img
                     src="/images/cricket/yuvraj-six.jpg"
                     alt="Yuvraj Singh World Cup Quarter Final Roar"
-                    className="absolute inset-0 w-full h-full object-cover object-[50%_35%] opacity-45 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
+                    className="absolute inset-0 w-full h-full object-cover object-[50%_35%] opacity-45 dark:opacity-45 group-hover:opacity-70 group-hover:scale-105 transition-all duration-500 contrast-125 saturate-90"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                   
                   <div className="relative z-10 flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded">
                       Motera 2011 QF
                     </span>
-                    <span className="text-xs text-white/60 group-hover:text-emerald-400 transition-colors">
+                    <span className="text-xs text-white/70 group-hover:text-emerald-400 transition-colors">
                       ⚡ 1-Click
                     </span>
                   </div>
@@ -758,12 +757,12 @@ export default function ResearchWorkspaceView({ onBack }) {
                     <h4 className="text-2xl font-cricket-title tracking-wide text-white uppercase group-hover:text-emerald-300 transition-colors">
                       Yuvraj 57* Australia QF
                     </h4>
-                    <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-snug">
+                    <p className="text-[11px] text-slate-200 line-clamp-2 mt-1 leading-snug">
                       Ending Australia 12-year unbeaten World Cup streak in a tense 261 chase.
                     </p>
                     <button
                       type="button"
-                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-[#10b981] hover:text-black border border-white/15 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                      className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-black border border-white/20 text-white text-[11px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
                     >
                       <span>Load Investigation</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -774,9 +773,9 @@ export default function ResearchWorkspaceView({ onBack }) {
               </div>
 
               {/* Helpful footer hint */}
-              <div className="relative z-10 flex items-center justify-between pt-3 text-xs text-slate-400 font-mono">
+              <div className="relative z-10 flex items-center justify-between pt-3 text-xs text-theme-muted font-mono">
                 <span>Or enter any custom cricketer, test match, or series brief on the left.</span>
-                <span className="text-emerald-400">Strict Fact Grounding 🛡️</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Strict Fact Grounding 🛡️</span>
               </div>
             </div>
           )}
@@ -792,42 +791,39 @@ export default function ResearchWorkspaceView({ onBack }) {
             >
               
               {/* Dossier Header Banner with Horizontal Stadium Crop */}
-              <div className="relative rounded-2xl p-6 md:p-8 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-[#090d16] overflow-hidden shadow-2xl">
-                {/* Horizontal atmospheric crop with directional matte mask */}
+              <div className="relative rounded-2xl p-6 md:p-8 border border-theme-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-theme-card overflow-hidden shadow-theme-card">
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                   <img
                     src="/images/cricket/stadium-mcg.jpg"
                     alt="Stadium Match Lighting"
-                    className="w-full h-full object-cover object-[50%_25%] opacity-25 contrast-125 saturate-75"
+                    className="w-full h-full object-cover object-[50%_25%] opacity-15 dark:opacity-25 contrast-125 saturate-75"
                   />
                   <div
                     className="absolute inset-0"
                     style={{
-                      background:
-                        'linear-gradient(to right, #090d16 40%, rgba(9,13,22,0.8) 70%, rgba(9,13,22,0.3) 100%)',
+                      background: 'linear-gradient(to right, var(--bg-card) 40%, transparent 100%)',
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-transparent" />
                 </div>
 
                 <div className="relative z-10">
-                  <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400 uppercase tracking-wider font-semibold mb-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-semibold mb-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
                     Verified Research Dossier
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-cricket-title tracking-wide text-white uppercase">
+                  <h2 className="text-2xl md:text-3xl font-cricket-title tracking-wide text-theme-primary uppercase">
                     {dossier.topic}
                   </h2>
-                  <p className="text-slate-400 text-xs mt-1.5 flex flex-wrap items-center gap-3 font-mono">
+                  <p className="text-theme-muted text-xs mt-1.5 flex flex-wrap items-center gap-3 font-mono">
                     <span>{new Date(dossier.generatedAt).toLocaleDateString()}</span>
                     <span>•</span>
                     <span>~{dossier.estimatedWordCount || 500} words</span>
                     <span>•</span>
-                    <span className="text-emerald-400 font-semibold">Strictly Grounded</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Strictly Grounded</span>
                     {dossier.collectedImages?.length > 0 && (
                       <>
                         <span>•</span>
-                        <span className="text-amber-400 font-semibold flex items-center gap-1">
+                        <span className="text-amber-500 font-semibold flex items-center gap-1">
                           <Camera className="w-3 h-3" /> {dossier.collectedImages.length} Photos Included
                         </span>
                       </>
@@ -838,16 +834,16 @@ export default function ResearchWorkspaceView({ onBack }) {
                 <div className="relative z-10 flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
                   <button
                     onClick={handleCopyMarkdown}
-                    className="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="px-3.5 py-2.5 rounded-xl bg-theme-elevated hover:bg-theme-hover border border-theme-subtle text-theme-secondary hover:text-theme-primary text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
                     title="Copy formatted markdown to clipboard"
                   >
-                    {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                    {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                     <span>{copied ? 'Copied!' : 'Copy'}</span>
                   </button>
 
                   <button
                     onClick={handleDownloadPDF}
-                    className="px-5 py-2.5 rounded-xl bg-[#10b981] hover:bg-[#059669] text-black font-extrabold text-xs tracking-wider uppercase transition-all flex items-center gap-2 shadow-xl shadow-emerald-500/20 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+                    className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-black font-extrabold text-xs tracking-wider uppercase transition-all flex items-center gap-2 shadow-xl shadow-emerald-500/20 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
                   >
                     <Download className="w-4 h-4 text-black" />
                     <span>Download PDF</span>
@@ -857,11 +853,11 @@ export default function ResearchWorkspaceView({ onBack }) {
 
               {/* 1. Executive Summary */}
               {report?.executiveSummary && (
-                <div className="cricket-card rounded-2xl p-6 border border-white/10 space-y-3">
-                  <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                <div className="cricket-card rounded-2xl p-6 border border-theme-subtle space-y-3 bg-theme-card">
+                  <h3 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4" /> 1. Executive Summary
                   </h3>
-                  <p className="text-slate-200 text-sm leading-relaxed">
+                  <p className="text-theme-secondary text-sm leading-relaxed">
                     {report.executiveSummary}
                   </p>
                 </div>
@@ -869,17 +865,17 @@ export default function ResearchWorkspaceView({ onBack }) {
 
               {/* 2. Pre-Match Context */}
               {report?.preMatchContext?.length > 0 && (
-                <div className="cricket-card rounded-2xl p-6 border border-white/10 space-y-4">
-                  <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
+                <div className="cricket-card rounded-2xl p-6 border border-theme-subtle space-y-4 bg-theme-card">
+                  <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest flex items-center gap-2">
                     <Flame className="w-4 h-4" /> 2. Pre-Match Context & Historical Stakes
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {report.preMatchContext.map((item, idx) => (
-                      <div key={idx} className="bg-slate-900/80 rounded-xl p-4 border border-white/5">
-                        <p className="text-amber-400 text-[11px] font-bold uppercase tracking-wider mb-1">
+                      <div key={idx} className="bg-theme-elevated rounded-xl p-4 border border-theme-subtle">
+                        <p className="text-amber-500 text-[11px] font-bold uppercase tracking-wider mb-1">
                           ▸ {item.angle}
                         </p>
-                        <p className="text-slate-300 text-xs leading-relaxed">{item.detail}</p>
+                        <p className="text-theme-secondary text-xs leading-relaxed">{item.detail}</p>
                       </div>
                     ))}
                   </div>
@@ -888,25 +884,23 @@ export default function ResearchWorkspaceView({ onBack }) {
 
               {/* 3. Chronology Timeline */}
               {report?.keyChronology?.length > 0 && (
-                <div className="cricket-card rounded-2xl p-6 border border-white/10 space-y-5">
-                  <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                <div className="cricket-card rounded-2xl p-6 border border-theme-subtle space-y-5 bg-theme-card">
+                  <h3 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-2">
                     <Clock className="w-4 h-4" /> 3. Key Chronology & Turning Points
                   </h3>
                   <div className="relative pl-6 space-y-5">
-                    {/* Vertical Green Line */}
                     <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-gradient-to-b from-emerald-500 via-emerald-500/30 to-transparent" />
 
                     {report.keyChronology.map((item, idx) => (
                       <div key={idx} className="relative group">
-                        {/* Dot */}
-                        <div className="absolute -left-[19px] top-1.5 w-3 h-3 rounded-full bg-emerald-400 ring-4 ring-slate-950 group-hover:scale-125 transition-transform" />
-                        <span className="text-amber-400 font-mono text-xs font-bold uppercase">
+                        <div className="absolute -left-[19px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-theme-app group-hover:scale-125 transition-transform" />
+                        <span className="text-amber-500 font-mono text-xs font-bold uppercase">
                           {item.timestampOrDate}
                         </span>
-                        <p className="text-white text-sm font-semibold mt-0.5 group-hover:text-emerald-300 transition-colors">
+                        <p className="text-theme-primary text-sm font-semibold mt-0.5 group-hover:text-emerald-500 dark:group-hover:text-emerald-300 transition-colors">
                           {item.eventDescription}
                         </p>
-                        <p className="text-slate-400 text-xs mt-1 italic leading-relaxed">
+                        <p className="text-theme-muted text-xs mt-1 italic leading-relaxed">
                           ↳ Why it mattered: {item.significance}
                         </p>
                       </div>
@@ -917,18 +911,18 @@ export default function ResearchWorkspaceView({ onBack }) {
 
               {/* 4. Tactical Breakdown */}
               {report?.tacticalBreakdown?.length > 0 && (
-                <div className="cricket-card rounded-2xl p-6 border border-white/10 space-y-4">
-                  <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
+                <div className="cricket-card rounded-2xl p-6 border border-theme-subtle space-y-4 bg-theme-card">
+                  <h3 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                     4. Tactical & Analytical Breakdown
                   </h3>
                   <div className="space-y-3">
                     {report.tacticalBreakdown.map((item, idx) => (
-                      <div key={idx} className="bg-slate-900/70 rounded-xl p-4 border border-white/5 space-y-1.5">
-                        <h4 className="text-white text-sm font-bold">{item.subheading}</h4>
-                        <p className="text-slate-300 text-xs leading-relaxed">{item.analysis}</p>
+                      <div key={idx} className="bg-theme-elevated rounded-xl p-4 border border-theme-subtle space-y-1.5">
+                        <h4 className="text-theme-primary text-sm font-bold">{item.subheading}</h4>
+                        <p className="text-theme-secondary text-xs leading-relaxed">{item.analysis}</p>
                         {item.supportingData && (
                           <div className="pt-2">
-                            <span className="inline-block bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] font-mono px-2 py-0.5 rounded">
+                            <span className="inline-block bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-300 text-[11px] font-mono px-2 py-0.5 rounded">
                               📊 {item.supportingData}
                             </span>
                           </div>
@@ -941,17 +935,17 @@ export default function ResearchWorkspaceView({ onBack }) {
 
               {/* 5. Verified Quotes */}
               {report?.verifiedQuotes?.length > 0 && (
-                <div className="cricket-card rounded-2xl p-6 border border-white/10 space-y-4">
-                  <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
+                <div className="cricket-card rounded-2xl p-6 border border-theme-subtle space-y-4 bg-theme-card">
+                  <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest flex items-center gap-2">
                     <Quote className="w-4 h-4" /> 5. Verified Quotes & Post-Match Statements
                   </h3>
                   <div className="space-y-3">
                     {report.verifiedQuotes.map((q, idx) => (
-                      <blockquote key={idx} className="border-l-3 border-amber-500 pl-4 py-1 bg-slate-900/40 rounded-r-xl">
-                        <p className="text-slate-100 text-sm italic">"{q.quote}"</p>
+                      <blockquote key={idx} className="border-l-3 border-amber-500 pl-4 py-2 bg-theme-elevated rounded-r-xl">
+                        <p className="text-theme-primary text-sm italic">"{q.quote}"</p>
                         <footer className="mt-2 text-xs">
-                          <span className="text-amber-400 font-bold">— {q.speaker}</span>
-                          <span className="text-slate-500 text-[11px] ml-2">({q.context})</span>
+                          <span className="text-amber-500 font-bold">— {q.speaker}</span>
+                          <span className="text-theme-muted text-[11px] ml-2">({q.context})</span>
                         </footer>
                       </blockquote>
                     ))}
@@ -961,27 +955,27 @@ export default function ResearchWorkspaceView({ onBack }) {
 
               {/* 6. Statistical Highlights */}
               {report?.statHighlights?.length > 0 && (
-                <div className="cricket-card rounded-2xl p-6 border border-white/10 space-y-4">
-                  <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                <div className="cricket-card rounded-2xl p-6 border border-theme-subtle space-y-4 bg-theme-card">
+                  <h3 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-2">
                     <BarChart2 className="w-4 h-4" /> 6. Statistical Anomalies
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
                       <thead>
-                        <tr className="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px]">
+                        <tr className="border-b border-theme-subtle text-theme-muted uppercase tracking-wider text-[10px]">
                           <th className="py-2.5 pr-4 font-bold">Metric</th>
-                          <th className="py-2.5 pr-4 font-bold text-emerald-400">Value</th>
+                          <th className="py-2.5 pr-4 font-bold text-emerald-600 dark:text-emerald-400">Value</th>
                           <th className="py-2.5 font-bold">Historical Context</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5">
+                      <tbody className="divide-y divide-theme-subtle">
                         {report.statHighlights.map((s, idx) => (
-                          <tr key={idx} className="hover:bg-white/[0.02]">
-                            <td className="py-3 pr-4 text-slate-200 font-medium">{s.metric}</td>
-                            <td className="py-3 pr-4 font-mono font-bold text-emerald-400 text-sm">
+                          <tr key={idx} className="hover:bg-theme-elevated/50">
+                            <td className="py-3 pr-4 text-theme-primary font-medium">{s.metric}</td>
+                            <td className="py-3 pr-4 font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">
                               {s.value}
                             </td>
-                            <td className="py-3 text-slate-400">{s.historicalContext}</td>
+                            <td className="py-3 text-theme-muted">{s.historicalContext}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -992,21 +986,21 @@ export default function ResearchWorkspaceView({ onBack }) {
 
               {/* 7. Curated Visual Archives & Match Photography (When Media Enabled) */}
               {dossier.collectedImages && dossier.collectedImages.length > 0 && (
-                <div className="cricket-card rounded-2xl p-6 border border-emerald-500/20 space-y-4 bg-gradient-to-b from-slate-900/90 to-slate-950">
-                  <div className="flex items-center justify-between pb-3 border-b border-white/5">
+                <div className="cricket-card rounded-2xl p-6 border border-emerald-500/20 space-y-4 bg-theme-card">
+                  <div className="flex items-center justify-between pb-3 border-b border-theme-subtle">
                     <div className="flex items-center gap-2">
-                      <Camera className="w-4 h-4 text-emerald-400" />
-                      <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
+                      <Camera className="w-4 h-4 text-emerald-500" />
+                      <h3 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                         7. Archival Photography & Visual Moments
                       </h3>
                     </div>
-                    <span className="text-[11px] font-mono text-emerald-300 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-300 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       {dossier.collectedImages.length} High-Res Stills
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                  <p className="text-xs text-theme-muted leading-relaxed">
                     High-impact archival stills pulled directly from verified match coverage and official broadcast reports.
                   </p>
 
@@ -1020,15 +1014,15 @@ export default function ResearchWorkspaceView({ onBack }) {
 
               {/* 8. Verified Sources & News Articles */}
               {report?.sources?.length > 0 && (
-                <div className="cricket-card rounded-2xl p-6 border border-white/10 space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-white/5">
+                <div className="cricket-card rounded-2xl p-6 border border-theme-subtle space-y-4 bg-theme-card">
+                  <div className="flex items-center justify-between pb-3 border-b border-theme-subtle">
                     <div className="flex items-center gap-2">
-                      <Link2 className="w-4 h-4 text-emerald-400" />
-                      <h3 className="text-xs font-bold text-slate-300 uppercase tracking-widest">
+                      <Link2 className="w-4 h-4 text-emerald-500" />
+                      <h3 className="text-xs font-bold text-theme-primary uppercase tracking-widest">
                         {dossier.collectedImages?.length > 0 ? '8. Verified Sources & Articles' : '7. Verified Sources & Articles'}
                       </h3>
                     </div>
-                    <span className="text-[10px] font-mono text-slate-400">
+                    <span className="text-[10px] font-mono text-theme-muted">
                       {report.sources.length} Ground-Truth Links
                     </span>
                   </div>
@@ -1042,23 +1036,23 @@ export default function ResearchWorkspaceView({ onBack }) {
                           href={src.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="bg-slate-900/70 hover:bg-slate-900 p-3.5 rounded-xl border border-white/5 hover:border-emerald-500/30 flex items-start justify-between gap-3 transition-all group"
+                          className="bg-theme-elevated hover:bg-theme-hover p-3.5 rounded-xl border border-theme-subtle hover:border-emerald-500/30 flex items-start justify-between gap-3 transition-all group"
                         >
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                                 {domain}
                               </span>
                             </div>
-                            <p className="text-xs font-semibold text-slate-200 line-clamp-2 group-hover:text-emerald-300 transition-colors">
+                            <p className="text-xs font-semibold text-theme-primary line-clamp-2 group-hover:text-emerald-500 dark:group-hover:text-emerald-300 transition-colors">
                               {src.title}
                             </p>
-                            <p className="text-[10px] text-slate-500 font-mono truncate mt-1">
+                            <p className="text-[10px] text-theme-muted font-mono truncate mt-1">
                               {src.url}
                             </p>
                           </div>
-                          <div className="w-7 h-7 rounded-lg bg-white/5 group-hover:bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 transition-colors">
-                            <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-300" />
+                          <div className="w-7 h-7 rounded-lg bg-theme-app group-hover:bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                            <ExternalLink className="w-3.5 h-3.5 text-theme-muted group-hover:text-emerald-500" />
                           </div>
                         </a>
                       );

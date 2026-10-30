@@ -12,10 +12,7 @@ export default function ServicesSection({ onSelectEngine }) {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="engines" className="relative bg-black py-28 md:py-40 px-6 overflow-hidden">
-      {/* Subtle radial gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.02)_0%,_transparent_60%)] pointer-events-none" />
-
+    <section id="engines" className="relative bg-theme-app py-28 md:py-40 px-6 overflow-hidden transition-colors">
       <div ref={ref} className="max-w-6xl mx-auto relative z-10">
         
         {/* Header Row */}
@@ -25,10 +22,10 @@ export default function ServicesSection({ onSelectEngine }) {
           transition={{ duration: 0.7 }}
           className="flex items-end justify-between mb-12 md:mb-16"
         >
-          <h2 className="text-3xl md:text-5xl text-white tracking-tight">
+          <h2 className="text-3xl md:text-5xl text-theme-primary tracking-tight font-display">
             What We Do
           </h2>
-          <span className="text-white/40 text-sm hidden md:inline-block uppercase tracking-widest font-semibold">
+          <span className="text-theme-muted text-sm hidden md:inline-block uppercase tracking-widest font-semibold">
             Our Two Dedicated Engines
           </span>
         </motion.div>
@@ -42,7 +39,7 @@ export default function ServicesSection({ onSelectEngine }) {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1 }}
             onClick={() => onSelectEngine?.('research')}
-            className="liquid-glass rounded-3xl overflow-hidden group cursor-pointer border border-white/10"
+            className="rounded-3xl overflow-hidden group cursor-pointer border border-theme-subtle bg-theme-card shadow-theme-card"
           >
             {/* Video Area */}
             <div className="aspect-video relative overflow-hidden">
@@ -61,17 +58,17 @@ export default function ServicesSection({ onSelectEngine }) {
             {/* Card Body */}
             <div className="p-6 md:p-8">
               <div className="flex items-center justify-between mb-4">
-                <span className="uppercase tracking-widest text-white/40 text-xs font-semibold">
+                <span className="uppercase tracking-widest text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
                   ENGINE 1 • ACTIVE NOW
                 </span>
-                <div className="liquid-glass rounded-full p-2 group-hover:bg-white/10 transition-colors">
-                  <ArrowUpRight className="w-4 h-4 text-white/70 group-hover:text-white" />
+                <div className="rounded-full p-2 bg-theme-elevated group-hover:bg-theme-hover transition-colors">
+                  <ArrowUpRight className="w-4 h-4 text-theme-primary" />
                 </div>
               </div>
-              <h3 className="text-white text-xl md:text-2xl mb-3 tracking-tight font-medium">
+              <h3 className="text-theme-primary text-xl md:text-2xl mb-3 tracking-tight font-medium">
                 Deep Cricket Research Agent
               </h3>
-              <p className="text-white/50 text-sm leading-relaxed">
+              <p className="text-theme-muted text-sm leading-relaxed">
                 We dig deep into official match scorecards, pitch reports, and press conference transcripts to surface
                 verified match facts, turning points, and tactical anomalies under strict zero-hallucination grounding.
               </p>
@@ -83,8 +80,8 @@ export default function ServicesSection({ onSelectEngine }) {
             initial={{ opacity: 0, y: 50 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.25 }}
-            onClick={() => onSelectEngine?.('cadence')}
-            className="liquid-glass rounded-3xl overflow-hidden group cursor-pointer border border-white/10"
+            onClick={() => onSelectEngine?.('script')}
+            className="rounded-3xl overflow-hidden group cursor-pointer border border-theme-subtle bg-theme-card shadow-theme-card"
           >
             {/* Video Area */}
             <div className="aspect-video relative overflow-hidden">
@@ -103,19 +100,19 @@ export default function ServicesSection({ onSelectEngine }) {
             {/* Card Body */}
             <div className="p-6 md:p-8">
               <div className="flex items-center justify-between mb-4">
-                <span className="uppercase tracking-widest text-white/40 text-xs font-semibold">
-                  ENGINE 2 • COMING UP
+                <span className="uppercase tracking-widest text-amber-500 text-xs font-semibold">
+                  ENGINE 2 • ACTIVE NOW
                 </span>
-                <div className="liquid-glass rounded-full p-2 group-hover:bg-white/10 transition-colors">
-                  <ArrowUpRight className="w-4 h-4 text-white/70 group-hover:text-white" />
+                <div className="rounded-full p-2 bg-theme-elevated group-hover:bg-theme-hover transition-colors">
+                  <ArrowUpRight className="w-4 h-4 text-theme-primary" />
                 </div>
               </div>
-              <h3 className="text-white text-xl md:text-2xl mb-3 tracking-tight font-medium">
-                Personal Cadence-RAG Studio
+              <h3 className="text-theme-primary text-xl md:text-2xl mb-3 tracking-tight font-medium">
+                Personal Voiceover Studio
               </h3>
-              <p className="text-white/50 text-sm leading-relaxed">
-                Indexes cadence chunks from your own 100+ reference scripts into a Pinecone style vault to synthesize
-                breathless teleprompter scripts with dramatic [pause] acoustic tags and FLUX.1 camera cues.
+              <p className="text-theme-muted text-sm leading-relaxed">
+                Writes with high-retention video-essay cadence, breathless dramatic pauses, and authentic Hinglish storytelling
+                to synthesize complete 3-part teleprompter scripts with dramatic [pause] cues and camera direction.
               </p>
             </div>
           </motion.div>

@@ -1,50 +1,51 @@
 import { Sparkles, Activity } from 'lucide-react';
+import { ThemeToggle } from '../../context/ThemeContext';
 
 export default function Navbar({ onLaunchStudio }) {
   return (
-    <nav className="relative z-20 px-6 py-6 w-full">
-      <div className="liquid-glass rounded-full max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+    <nav className="relative z-30 px-6 py-6 w-full">
+      <div className="rounded-full max-w-5xl mx-auto px-6 py-3 flex items-center justify-between bg-theme-card/80 dark:bg-black/60 backdrop-blur-xl border border-theme-subtle shadow-theme-card transition-colors">
         
         {/* Left branding */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-            <Activity className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+            <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <span className="text-white font-semibold text-lg tracking-tight">CricScript</span>
+          <span className="font-bold text-lg tracking-tight text-theme-primary">
+            Cric<span className="text-emerald-600 dark:text-emerald-400">Pitch</span>
+          </span>
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-8 ml-8">
-            <a href="#research-studio" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
-              Research Agent
+            <a href="#about" className="text-theme-secondary hover:text-theme-primary text-sm font-medium transition-colors">
+              Directorial Standard
             </a>
-            <a href="#featured" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
-              Cadence RAG
+            <a href="#featured" className="text-theme-secondary hover:text-theme-primary text-sm font-medium transition-colors">
+              Story Studio
             </a>
-            <a href="#philosophy" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
-              Philosophy
+            <a href="#philosophy" className="text-theme-secondary hover:text-theme-primary text-sm font-medium transition-colors">
+              Narrative Craft
             </a>
-            <a href="#engines" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
-              Engines
+            <a href="#engines" className="text-theme-secondary hover:text-theme-primary text-sm font-medium transition-colors">
+              Production Engines
             </a>
           </div>
         </div>
 
-        {/* Right CTA */}
-        <div className="flex items-center gap-4">
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noreferrer"
-            className="hidden sm:inline-block text-white/70 hover:text-white text-sm font-medium transition-colors"
-          >
-            v2.0 Stateless
-          </a>
+        {/* Right CTA & Theme Toggle */}
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline-block text-xs font-mono font-medium px-2.5 py-1 rounded-full bg-theme-elevated text-theme-muted border border-theme-subtle">
+            v2.0 Autonomous
+          </span>
+          
+          <ThemeToggle />
+
           <button
             onClick={onLaunchStudio}
-            className="liquid-glass rounded-full px-6 py-2 text-white text-sm font-medium hover:bg-white/10 transition-all flex items-center gap-2 cursor-pointer"
+            className="btn-emerald-glow rounded-full px-5 py-2 text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shadow-md"
           >
-            <Sparkles className="w-3.5 h-3.5 text-white/80" />
-            Launch Studio
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Launch Studio</span>
           </button>
         </div>
 

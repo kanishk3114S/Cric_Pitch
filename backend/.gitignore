@@ -1,5 +1,20 @@
 node_modules/
 .env
+.env.*
+!.env.example
 dist/
 *.log
-.env
+
+# Private Creator Scripts & Extracted Tone Vault Data
+data/
+data/**
+data/extracted-text/
+data/processed-chunks/
+data/raw-scripts/
+data/manifest.json
+data/processed-chunks/all-chunks.json
+data/temp_*
+data/temp_gdrive_sync/
+*.pdf
+*.docx
+*.txt

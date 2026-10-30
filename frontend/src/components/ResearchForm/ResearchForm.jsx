@@ -1,6 +1,4 @@
 // src/components/ResearchForm/ResearchForm.jsx
-// Upgraded to ultra-luxurious Liquid Glass cricket studio aesthetic.
-
 import { useState, useEffect } from 'react';
 import useResearchStore from '../../store/useResearchStore';
 import { generateResearch } from '../../services/api';
@@ -43,27 +41,27 @@ export default function ResearchForm({ externalTopic = '' }) {
 
       setDossier(data.data.dossier);
     } catch (err) {
-      setError(err.response?.data?.error || 'Research failed. Check your API keys and try again.');
+      setError(err.response?.data?.error || 'Research failed to complete. Please check your network connection and try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="liquid-glass rounded-3xl p-6 md:p-8 border border-white/10 space-y-6">
+    <div className="rounded-3xl p-6 md:p-8 border border-theme-subtle bg-theme-card shadow-theme-card space-y-6 transition-colors">
       
       {/* Title */}
-      <div className="flex items-center justify-between pb-4 border-b border-white/10">
+      <div className="flex items-center justify-between pb-4 border-b border-theme-subtle">
         <div>
-          <span className="text-white/40 text-xs tracking-widest uppercase font-semibold">
+          <span className="text-emerald-600 dark:text-emerald-400 text-xs tracking-widest uppercase font-semibold">
             Cockpit • Engine 1
           </span>
-          <h2 className="text-2xl font-serif text-white tracking-tight mt-1">
+          <h2 className="text-2xl font-serif text-theme-primary tracking-tight mt-1">
             Research Directorial Brief
           </h2>
         </div>
-        <div className="liquid-glass rounded-full px-3 py-1 text-xs text-white/70 flex items-center gap-1.5 border border-white/10">
-          <Flame className="w-3.5 h-3.5 text-amber-400" />
+        <div className="rounded-full px-3 py-1 text-xs text-theme-secondary flex items-center gap-1.5 border border-theme-subtle bg-theme-elevated">
+          <Flame className="w-3.5 h-3.5 text-amber-500" />
           Stateless
         </div>
       </div>
@@ -72,7 +70,7 @@ export default function ResearchForm({ externalTopic = '' }) {
         
         {/* Topic Input */}
         <div>
-          <label className="block text-white/80 text-xs font-semibold uppercase tracking-wider mb-2">
+          <label className="block text-theme-secondary text-xs font-semibold uppercase tracking-wider mb-2">
             Match or Turning Point
           </label>
           <input
@@ -80,7 +78,7 @@ export default function ResearchForm({ externalTopic = '' }) {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="e.g. 2019 World Cup Final: Stokes Overthrow Incident"
-            className="w-full bg-white/[0.04] text-white border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 placeholder:text-white/30 transition-colors"
+            className="w-full bg-theme-input text-theme-primary border border-theme-subtle rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 placeholder:text-theme-dim transition-colors"
             required
           />
         </div>
@@ -88,28 +86,28 @@ export default function ResearchForm({ externalTopic = '' }) {
         {/* Focus Points (Pre-Context) */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-white/80 text-xs font-semibold uppercase tracking-wider">
+            <label className="text-theme-secondary text-xs font-semibold uppercase tracking-wider">
               Directorial Angles & Focus Points
             </label>
-            <span className="text-white/40 text-xs">1 per line, max 5</span>
+            <span className="text-theme-muted text-xs">1 per line, max 5</span>
           </div>
           <textarea
             value={preContextText}
             onChange={(e) => setPreContextText(e.target.value)}
             rows={4}
             placeholder={`Stokes dive physics and bat deflection\nSimon Taufel MCC Law 19.8 controversy\nPitch conditions at Lord's that cloudy afternoon\nMartin Guptill body language from deep mid-wicket`}
-            className="w-full bg-white/[0.04] text-white border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 placeholder:text-white/30 resize-none transition-colors"
+            className="w-full bg-theme-input text-theme-primary border border-theme-subtle rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 placeholder:text-theme-dim resize-none transition-colors"
           />
         </div>
 
         {/* Word Count Slider */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-white/80 font-semibold uppercase tracking-wider flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-white/60" />
+            <span className="text-theme-secondary font-semibold uppercase tracking-wider flex items-center gap-1.5">
+              <Sliders className="w-3.5 h-3.5 text-emerald-500" />
               Depth Target
             </span>
-            <span className="text-white font-mono bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">
+            <span className="text-emerald-600 dark:text-emerald-400 font-mono bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
               {researchLength} words
             </span>
           </div>
@@ -120,9 +118,9 @@ export default function ResearchForm({ externalTopic = '' }) {
             step="50"
             value={researchLength}
             onChange={(e) => setResearchLength(Number(e.target.value))}
-            className="w-full accent-white cursor-pointer h-1.5 bg-white/10 rounded-lg"
+            className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-theme-elevated rounded-lg"
           />
-          <div className="flex justify-between text-[11px] text-white/40">
+          <div className="flex justify-between text-[11px] text-theme-muted">
             <span>100 (Tight)</span>
             <span>500 (Standard)</span>
             <span>1000 (Exhaustive)</span>
@@ -130,16 +128,16 @@ export default function ResearchForm({ externalTopic = '' }) {
         </div>
 
         {/* Include Media Toggle */}
-        <div className="flex items-center justify-between bg-white/[0.03] border border-white/5 rounded-2xl px-4 py-3">
+        <div className="flex items-center justify-between bg-theme-elevated border border-theme-subtle rounded-2xl px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-              <ImageIcon className="w-4 h-4 text-white/70" />
+            <div className="w-8 h-8 rounded-full bg-theme-app flex items-center justify-center border border-theme-subtle">
+              <ImageIcon className="w-4 h-4 text-emerald-500" />
             </div>
             <div>
-              <p className="text-white text-xs font-semibold uppercase tracking-wide">
+              <p className="text-theme-primary text-xs font-semibold uppercase tracking-wide">
                 Include Press Photos & Links
               </p>
-              <p className="text-white/40 text-[11px]">
+              <p className="text-theme-muted text-[11px]">
                 Fetches verified media thumbnails with articles
               </p>
             </div>
@@ -147,13 +145,13 @@ export default function ResearchForm({ externalTopic = '' }) {
           <button
             type="button"
             onClick={() => setIncludeMedia(!includeMedia)}
-            className={`w-12 h-6 rounded-full transition-colors duration-200 relative cursor-pointer border border-white/10 ${
-              includeMedia ? 'bg-white' : 'bg-white/10'
+            className={`w-12 h-6 rounded-full transition-colors duration-200 relative cursor-pointer border border-theme-subtle ${
+              includeMedia ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-slate-700'
             }`}
           >
             <span
               className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full shadow transition-transform duration-200 ${
-                includeMedia ? 'translate-x-6 bg-black' : 'translate-x-0 bg-white/60'
+                includeMedia ? 'translate-x-6 bg-black' : 'translate-x-0 bg-white'
               }`}
             />
           </button>
@@ -163,17 +161,17 @@ export default function ResearchForm({ externalTopic = '' }) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-white hover:bg-white/90 disabled:bg-white/20 disabled:cursor-not-allowed text-black font-semibold py-3.5 rounded-2xl text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-lg cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+          className="w-full btn-emerald-glow disabled:opacity-50 disabled:cursor-not-allowed font-semibold py-3.5 rounded-2xl text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-lg cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
         >
           {isLoading ? (
             <>
-              <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>Synthesizing Match Data...</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-4 h-4 text-black" />
-              <span>Launch Research Agent</span>
+              <Sparkles className="w-4 h-4 text-white" />
+              <span>Launch Research Investigation</span>
             </>
           )}
         </button>
