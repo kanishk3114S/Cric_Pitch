@@ -4,6 +4,7 @@
 
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -147,7 +148,8 @@ app.use('/api/v1/research', researchRoutes);
 app.use('/api/v1/scripts', scriptRoutes);
 
 // ── 8. Unknown API Route 404 Handler ───────────────────────────────────────
-app.use('/api/v1/*', (req, res) => {
+// Catches all unmatched /api/* requests and returns structured JSON
+app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
     error: `API route not found: ${req.method} ${req.originalUrl}`,
@@ -158,7 +160,38 @@ app.use('/api/v1/*', (req, res) => {
   });
 });
 
-// ── 9. Global Error Handler ────────────────────────────────────────────────
+// ── 9. Static Frontend Serving & Client-Side SPA Routing ───────────────────
+// Enables unified full-stack single-service deployment on Render (Zero CORS, single domain)
+const frontendDistPath = path.resolve(__dirname, '..', 'frontend', 'dist');
+
+if (fs.existsSync(frontendDistPath)) {
+  console.log(`📦 Unified deployment active: serving compiled frontend from ${frontendDistPath}`);
+
+  // Serve static assets with caching headers
+  app.use(express.static(frontendDistPath, {
+    maxAge: '7d',
+    index: 'index.html',
+  }));
+
+  // Client-side SPA routing: all non-API GET requests serve index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  });
+} else {
+  // Graceful fallback for root / when running in standalone API mode without compiled frontend
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      service: 'cricscript-ai-backend',
+      message: 'CricScript AI backend is active. API mounted at /api/v1.',
+      healthCheck: '/api/v1/health',
+      readyCheck: '/api/v1/ready',
+      version: '1.0.0',
+    });
+  });
+}
+
+// ── 10. Global Error Handler ───────────────────────────────────────────────
 app.use(errorHandler);
 
 // ── 10. Server Startup & Graceful Shutdown ─────────────────────────────────

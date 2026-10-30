@@ -4,12 +4,13 @@
 
 import axios from 'axios';
 
-// Resolves backend API URL: In production on Vercel, uses VITE_API_BASE_URL (Render backend URL);
-// in local development, falls back to http://localhost:5000.
+// Resolves backend API URL:
+// 1. If VITE_API_BASE_URL is provided (e.g. cross-domain deployment), use that.
+// 2. Otherwise defaults to relative '/api/v1' (unified single-service deployment on Render or Vite proxy).
 const rawApiBase = import.meta.env.VITE_API_BASE_URL;
 const BASE_URL = rawApiBase
   ? `${rawApiBase.replace(/\/$/, '')}/api/v1`
-  : 'http://localhost:5000/api/v1';
+  : '/api/v1';
 
 const api = axios.create({
   baseURL: BASE_URL,

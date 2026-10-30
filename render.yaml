@@ -1,17 +1,16 @@
 # ==============================================================================
-# Render Blueprint Specification — CricScript AI Backend
-# Reference: https://render.com/docs/blueprint-spec
+# Render Blueprint Specification — CricScript AI Unified Full-Stack Studio
+# Single-Service Deployment: Express API + Vite Frontend SPA (Zero-CORS Architecture)
 # ==============================================================================
 
 services:
   - type: web
-    name: cricscript-ai-backend
+    name: cricscript-ai-studio
     runtime: node
     plan: starter
     region: oregon
-    rootDir: backend
-    buildCommand: npm install --omit=dev
-    startCommand: node server.js
+    buildCommand: npm --prefix frontend install && npm --prefix frontend run build && npm --prefix backend install --omit=dev
+    startCommand: node backend/server.js
     healthCheckPath: /api/v1/health
     autoDeploy: true
 
@@ -37,12 +36,3 @@ services:
 
       - key: PINECONE_INDEX_NAME
         value: cricscript-rag
-
-      # Front-end URL deployed on Vercel (for strict CORS enforcement)
-      # Example: https://cricpitch.vercel.app
-      - key: FRONTEND_URL
-        sync: false
-
-      # Optional comma-separated additional origins (e.g. custom domain)
-      - key: ALLOWED_ORIGINS
-        sync: false
