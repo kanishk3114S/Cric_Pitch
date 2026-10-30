@@ -1,9 +1,44 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark" data-theme="dark" style="background-color: #08090b; color: #f5f5f5;">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- Instant Anti-FOUC Paint Guard: Eliminates all white/black flash before CSS/JS loads -->
+    <style>
+      html, body {
+        background-color: #08090b;
+        color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+      html.light, html.light body {
+        background-color: #f4f5f7;
+        color: #12151a;
+      }
+    </style>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('cricscript-theme');
+          var d = document.documentElement;
+          if (t === 'light') {
+            d.classList.remove('dark');
+            d.classList.add('light');
+            d.setAttribute('data-theme', 'light');
+            d.style.backgroundColor = '#f4f5f7';
+            d.style.color = '#12151a';
+          } else {
+            d.classList.add('dark');
+            d.classList.remove('light');
+            d.setAttribute('data-theme', 'dark');
+            d.style.backgroundColor = '#08090b';
+            d.style.color = '#f5f5f5';
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     <!-- Primary Metadata -->
     <title>CricScript AI — Cinematic Cricket Research & Scriptwriting Studio</title>
     <meta name="title" content="CricScript AI — Cinematic Cricket Research & Scriptwriting Studio" />
@@ -47,11 +82,14 @@
     <meta name="twitter:image" content="https://cricpitch.vercel.app/images/og-image.jpg" />
     <meta name="twitter:image:alt" content="CricScript AI Stadium Control Room Preview" />
 
+    <!-- Preload Critical Stadium Backdrop for Instant Paint -->
+    <link rel="preload" as="image" href="/images/cricket/stadium-mcg-4k.webp" type="image/webp" />
+
     <!-- Preconnect Fonts for High LCP Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
-  <body class="bg-theme-app text-theme-primary antialiased selection:bg-[#D91F2B]/20 selection:text-white">
+  <body class="bg-theme-app text-theme-primary antialiased selection:bg-[#D91F2B]/20 selection:text-white" style="background-color: #08090b; color: #f5f5f5;">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

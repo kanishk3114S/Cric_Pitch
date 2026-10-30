@@ -1,8 +1,73 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&family=Bebas+Neue&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
-/* ── Light Mode Root Variables (Crisp Luxury Architectural Sports Aesthetic) ── */
-:root, [data-theme="light"] {
+/* ── Dark Theme Defaults (Cinematic Dark Charcoal, Crimson Red Accent, White Type) ── */
+:root, .dark, [data-theme="dark"] {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+
+  /* Surfaces & Backgrounds — Exact Reference Inspiration */
+  --bg-app: #08090b;
+  --bg-secondary: #101216;
+  --bg-card: #15191f;
+  --bg-surface: #15191f;
+  --bg-surface-elevated: #1b2028;
+  --bg-surface-sunken: #0c0e12;
+  --bg-input: #0c0e12;
+  --bg-hover: #242a35;
+  --bg-active: #2d3542;
+  --bg-badge: rgba(255, 255, 255, 0.07);
+  --bg-overlay: rgba(8, 9, 11, 0.94);
+  --header-bg: rgba(8, 9, 11, 0.88);
+
+  /* Typography */
+  --text-primary: #f5f5f5;
+  --text-secondary: #a1a6b0;
+  --text-muted: #737b88;
+  --text-dim: #525866;
+  --text-inverse: #08090b;
+
+  /* Borders & Dividers */
+  --border-subtle: #1e232b;
+  --border-medium: #292f38;
+  --border-strong: #3d4653;
+  --border-focus: #d91f2b;
+
+  /* Brand Accent: Crimson Red */
+  --accent-primary: #d91f2b;
+  --accent-hover: #f02e3a;
+  --accent-active: #b81520;
+  --accent-subtle: rgba(217, 31, 43, 0.14);
+  --accent-border: rgba(217, 31, 43, 0.32);
+
+  /* Functional Accents */
+  --accent-emerald: #10b981;
+  --accent-emerald-bg: rgba(16, 185, 129, 0.12);
+  --accent-emerald-border: rgba(16, 185, 129, 0.28);
+  --accent-emerald-text: #34d399;
+
+  --accent-amber: #f59e0b;
+  --accent-amber-bg: rgba(245, 158, 11, 0.12);
+  --accent-amber-border: rgba(245, 158, 11, 0.28);
+  --accent-amber-text: #fbbf24;
+
+  /* Shadows: Cinematic Soft Edge Definition */
+  --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --popover-shadow: 0 16px 44px -4px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+
+  /* Scrollbars */
+  --scrollbar-track: #08090b;
+  --scrollbar-thumb: #292f38;
+  --scrollbar-thumb-hover: #3d4653;
+
+  /* Image Matte Overlays & Vignettes */
+  --matte-bg: #15191f;
+  --matte-gradient: linear-gradient(to right, #15191f 20%, rgba(21,25,31,0.88) 55%, rgba(21,25,31,0.2) 100%);
+  --radial-vignette: radial-gradient(ellipse at center, transparent 35%, #08090b 88%);
+}
+
+/* ── Light Mode Explicit Overrides (Crisp Luxury Architectural Sports Aesthetic) ── */
+.light, [data-theme="light"] {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   color-scheme: light;
 
@@ -66,77 +131,12 @@
   --radial-vignette: radial-gradient(ellipse at center, transparent 35%, rgba(244, 245, 247, 0.94) 90%);
 }
 
-/* ── Dark Mode Root Variables (Cinematic Dark Charcoal, Crimson Red Accent, White Type) ── */
-.dark, [data-theme="dark"] {
-  color-scheme: dark;
-
-  /* Surfaces & Backgrounds — Exact Reference Inspiration */
-  --bg-app: #08090b;
-  --bg-secondary: #101216;
-  --bg-card: #15191f;
-  --bg-surface: #15191f;
-  --bg-surface-elevated: #1b2028;
-  --bg-surface-sunken: #0c0e12;
-  --bg-input: #0c0e12;
-  --bg-hover: #242a35;
-  --bg-active: #2d3542;
-  --bg-badge: rgba(255, 255, 255, 0.07);
-  --bg-overlay: rgba(8, 9, 11, 0.94);
-  --header-bg: rgba(8, 9, 11, 0.88);
-
-  /* Typography */
-  --text-primary: #f5f5f5;
-  --text-secondary: #a1a6b0;
-  --text-muted: #737b88;
-  --text-dim: #525866;
-  --text-inverse: #08090b;
-
-  /* Borders & Dividers */
-  --border-subtle: #1e232b;
-  --border-medium: #292f38;
-  --border-strong: #3d4653;
-  --border-focus: #d91f2b;
-
-  /* Brand Accent: Crimson Red */
-  --accent-primary: #d91f2b;
-  --accent-hover: #f02e3a;
-  --accent-active: #b81520;
-  --accent-subtle: rgba(217, 31, 43, 0.14);
-  --accent-border: rgba(217, 31, 43, 0.32);
-
-  /* Functional Accents */
-  --accent-emerald: #10b981;
-  --accent-emerald-bg: rgba(16, 185, 129, 0.12);
-  --accent-emerald-border: rgba(16, 185, 129, 0.28);
-  --accent-emerald-text: #34d399;
-
-  --accent-amber: #f59e0b;
-  --accent-amber-bg: rgba(245, 158, 11, 0.12);
-  --accent-amber-border: rgba(245, 158, 11, 0.28);
-  --accent-amber-text: #fbbf24;
-
-  /* Shadows: Cinematic Soft Edge Definition */
-  --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  --popover-shadow: 0 16px 44px -4px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
-
-  /* Scrollbars */
-  --scrollbar-track: #08090b;
-  --scrollbar-thumb: #292f38;
-  --scrollbar-thumb-hover: #3d4653;
-
-  /* Image Matte Overlays & Vignettes */
-  --matte-bg: #15191f;
-  --matte-gradient: linear-gradient(to right, #15191f 20%, rgba(21,25,31,0.88) 55%, rgba(21,25,31,0.2) 100%);
-  --radial-vignette: radial-gradient(ellipse at center, transparent 35%, #08090b 88%);
-}
-
-body {
+html, body {
   background-color: var(--bg-app);
   color: var(--text-primary);
   overflow-x: hidden;
   margin: 0;
   padding: 0;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* ── Utility Classes for Semantic Theme Binding ── */

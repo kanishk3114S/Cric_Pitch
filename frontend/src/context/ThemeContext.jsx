@@ -21,9 +21,13 @@ export function ThemeProvider({ children }) {
     if (theme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');
+      root.style.backgroundColor = '#08090b';
+      root.style.color = '#f5f5f5';
     } else {
       root.classList.add('light');
       root.classList.remove('dark');
+      root.style.backgroundColor = '#f4f5f7';
+      root.style.color = '#12151a';
     }
     localStorage.setItem('cricscript-theme', theme);
   }, [theme]);

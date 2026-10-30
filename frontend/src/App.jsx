@@ -59,7 +59,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-theme-app text-theme-primary selection:bg-[#D91F2B]/20 selection:text-white transition-colors">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           {currentView === 'landing' && (
             <motion.div
               key="landing"
