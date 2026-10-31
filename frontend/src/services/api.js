@@ -85,7 +85,7 @@ export function normalizeApiError(error) {
 
   // Network / Connection Refused
   if (error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
-    const norm = new Error('Cannot connect to CricPitch backend server (http://localhost:5000).');
+    const norm = new Error('Cannot connect to CricPitch backend server. Ensure the server is running.');
     norm.name = 'NetworkError';
     norm.statusCode = 503;
     norm.errorType = 'SERVER_ERROR';

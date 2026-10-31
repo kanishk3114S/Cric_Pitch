@@ -37,14 +37,13 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
     styleExemplars
   });
 
-  // Step 3: Call Gemini with verified ultra-low latency candidate models
+  // Models verified against live Google API responses (2024-11 onwards).
+  // gemini-2.5-flash-lite/flash are deprecated for new keys — Google's 404 messages
+  // direct to these successors: gemini-3.5-flash-lite and gemini-3.8-flash.
   const ai = getAiClient();
   const candidateModels = [
-    'gemini-flash-lite-latest',
-    'gemini-3.1-flash-lite',
     'gemini-3.5-flash-lite',
-    'gemini-3.5-flash',
-    'gemini-flash-latest'
+    'gemini-3.8-flash',
   ];
   let result = null;
   let lastError = null;
@@ -76,18 +75,75 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
         rawText = response.text();
       }
 
-      const cleanJson = rawText
+      // ── Clean and Extract JSON ─────────────────────────────────────────────
+      let cleanJson = rawText
         .replace(/^```json\s*/i, '')
         .replace(/^```\s*/i, '')
         .replace(/```\s*$/i, '')
         .trim();
 
-      const parsed = JSON.parse(cleanJson);
+      // Extract JSON if model wrapped in commentary
+      const firstBrace = cleanJson.indexOf('{');
+      const lastBrace = cleanJson.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        cleanJson = cleanJson.substring(firstBrace, lastBrace + 1);
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(cleanJson);
+      } catch (parseErr) {
+        console.warn(`[ScriptAgent] Direct JSON parse failed on ${model}: ${parseErr.message}. Attempting repair...`);
+
+        // Progressive repair strategies for truncated JSON
+        const repairAttempts = [
+          // 1. Close open string & sections object & root object
+          () => {
+            const lastGoodQuote = cleanJson.lastIndexOf('"');
+            if (lastGoodQuote < 0) return null;
+            const base = cleanJson.substring(0, lastGoodQuote + 1);
+            for (const tail of ['}}', '"}}', '"}', '}']) {
+              try { return JSON.parse(base + tail); } catch { /* try next */ }
+            }
+            return null;
+          },
+          // 2. Cut to last closing brace
+          () => {
+            const lastB = cleanJson.lastIndexOf('}');
+            if (lastB < 0) return null;
+            try { return JSON.parse(cleanJson.substring(0, lastB + 1)); } catch { return null; }
+          }
+        ];
+
+        for (const attempt of repairAttempts) {
+          const repaired = attempt();
+          if (repaired) {
+            console.warn(`[ScriptAgent] ✅ JSON repair succeeded on ${model}.`);
+            parsed = repaired;
+            break;
+          }
+        }
+
+        if (!parsed) {
+          throw new Error(`JSON truncated and unrecoverable on ${model}. ${parseErr.message}`);
+        }
+      }
+
+      // Safe extraction of section texts (supports object or root level naming)
+      const introText = typeof (parsed.sections?.intro || parsed.intro) === 'string'
+        ? (parsed.sections?.intro || parsed.intro)
+        : '';
+      const mainText = typeof (parsed.sections?.main || parsed.main) === 'string'
+        ? (parsed.sections?.main || parsed.main)
+        : '';
+      const outroText = typeof (parsed.sections?.outro || parsed.outro) === 'string'
+        ? (parsed.sections?.outro || parsed.outro)
+        : '';
 
       // Calculate actual total word count across the 3 sections
-      const introWords = (parsed.sections?.intro || '').split(/\s+/).filter(Boolean).length;
-      const mainWords = (parsed.sections?.main || '').split(/\s+/).filter(Boolean).length;
-      const outroWords = (parsed.sections?.outro || '').split(/\s+/).filter(Boolean).length;
+      const introWords = introText.split(/\s+/).filter(Boolean).length;
+      const mainWords = mainText.split(/\s+/).filter(Boolean).length;
+      const outroWords = outroText.split(/\s+/).filter(Boolean).length;
       const actualTotalWords = introWords + mainWords + outroWords;
 
       result = {
@@ -95,15 +151,15 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
         wordCount: actualTotalWords,
         estimatedDurationMinutes: `${Math.ceil(actualTotalWords / 130)} min`,
         sections: {
-          intro: parsed.sections?.intro || '',
-          main: parsed.sections?.main || '',
-          outro: parsed.sections?.outro || ''
+          intro: introText,
+          main: mainText,
+          outro: outroText
         },
         matchedStyleChunks: styleExemplars.map(ex => ({
           id: ex.id,
           title: ex.title,
           score: ex.score,
-          sample: ex.text.slice(0, 150) + '...'
+          sample: (ex.text || '').slice(0, 150) + '...'
         }))
       };
 

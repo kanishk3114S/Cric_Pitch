@@ -22,13 +22,12 @@ const getAiClient = () => {
  */
 export const callGemini = async (systemPrompt, userMessage) => {
   const ai = getAiClient();
-  // Fast, reliable models on current Google API (ordered by verified latency & availability)
+  // Models verified against live Google API responses (2024-11 onwards).
+  // gemini-2.5-flash-lite/flash are deprecated for new keys — Google's 404 messages
+  // direct to these successors: gemini-3.5-flash-lite and gemini-3.8-flash.
   const candidateModels = [
-    'gemini-flash-lite-latest',
-    'gemini-3.1-flash-lite',
     'gemini-3.5-flash-lite',
-    'gemini-3.5-flash',
-    'gemini-flash-latest'
+    'gemini-3.8-flash',
   ];
 
   let lastError = null;
