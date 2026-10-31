@@ -152,7 +152,13 @@ const PRESETS = [
 ];
 
 export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
-  const { dossier, isLoading, error, setDossier, setLoading, setError, reset } = useResearchStore();
+  const dossier = useResearchStore((state) => state.dossier);
+  const isLoading = useResearchStore((state) => state.isLoading);
+  const error = useResearchStore((state) => state.error);
+  const setDossier = useResearchStore((state) => state.setDossier);
+  const setLoading = useResearchStore((state) => state.setLoading);
+  const setError = useResearchStore((state) => state.setError);
+  const reset = useResearchStore((state) => state.reset);
 
   const [topic, setTopic] = useState('');
   const [preContextText, setPreContextText] = useState('');
@@ -164,9 +170,13 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
   const [loadingStep, setLoadingStep] = useState(0);
   const [copied, setCopied] = useState(false);
 
+  // Local submission state ensures immediate synchronous re-render on click
+  const [isLocalSubmitting, setIsLocalSubmitting] = useState(false);
+  const effectiveLoading = isLoading || isLocalSubmitting;
+
   // Timer while agent is searching
   useEffect(() => {
-    if (!isLoading) return;
+    if (!effectiveLoading) return;
 
     const timer = setInterval(() => {
       setElapsedSeconds((s) => s + 1);
@@ -182,15 +192,16 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
       clearTimeout(step2);
       clearTimeout(step3);
     };
-  }, [isLoading]);
+  }, [effectiveLoading]);
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
 
     // Prevent duplicate submissions while already running
-    if (isLoading) return;
+    if (effectiveLoading) return;
     if (!topic.trim()) return;
 
+    setIsLocalSubmitting(true);
     setDossier(null);
     setLoading(true);
     setError(null);
@@ -212,7 +223,7 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
       });
 
       if (response.data.success) {
-        setDossier(response.data.data);
+        setDossier(response.data.data?.dossier || response.data.data);
       } else {
         throw new Error(response.data.message || 'Failed to compile research');
       }
@@ -227,6 +238,7 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
         actionHint: err.actionHint || 'Please check your connection and try again.',
       });
     } finally {
+      setIsLocalSubmitting(false);
       setLoading(false);
     }
   };
@@ -507,12 +519,12 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
                 type="submit"
                 variant="emerald"
                 size="xl"
-                disabled={isLoading}
-                isLoading={isLoading}
-                icon={!isLoading ? Sparkles : undefined}
+                disabled={effectiveLoading}
+                isLoading={effectiveLoading}
+                icon={!effectiveLoading ? Sparkles : undefined}
                 className="w-full uppercase font-extrabold text-xs tracking-wider shadow-lg shadow-emerald-600/20"
               >
-                {isLoading ? `Investigating Match Archives (${elapsedSeconds}s)...` : 'RUN RESEARCH INVESTIGATION 🏏'}
+                {effectiveLoading ? `Investigating Match Archives (${elapsedSeconds}s)...` : 'RUN RESEARCH INVESTIGATION 🏏'}
               </Button>
 
             </form>
@@ -525,7 +537,7 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
           
           {/* ── LIVE AGENT PROGRESS RADAR (DURING LOADING) ── */}
           <AnimatePresence>
-            {isLoading && (
+            {effectiveLoading && (
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -615,7 +627,7 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
           </AnimatePresence>
 
           {/* Contextual & Actionable Error State */}
-          {error && !isLoading && (
+          {error && !effectiveLoading && (
             <ErrorAlertPanel
               error={error}
               onRetry={handleSubmit}
@@ -624,7 +636,7 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
           )}
 
           {/* Empty State: Curated Legendary Case Studies Launchpad */}
-          {!dossier && !isLoading && !error && (
+          {!dossier && !effectiveLoading && !error && (
             <div className="relative rounded-2xl p-6 md:p-8 border border-theme-subtle bg-theme-card overflow-hidden shadow-theme-card space-y-6">
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <picture className="w-full h-full">
@@ -793,7 +805,7 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
           )}
 
           {/* ── Active Dossier Display ── */}
-          {dossier && !isLoading && (
+          {dossier && !effectiveLoading && (
             <motion.div
               key={dossier.generatedAt}
               initial={{ opacity: 0, y: 15 }}

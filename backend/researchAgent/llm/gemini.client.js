@@ -22,8 +22,14 @@ const getAiClient = () => {
  */
 export const callGemini = async (systemPrompt, userMessage) => {
   const ai = getAiClient();
-  // Fast, reliable models on current Google API
-  const candidateModels = ['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.8-flash'];
+  // Fast, reliable models on current Google API (ordered by verified latency & availability)
+  const candidateModels = [
+    'gemini-flash-lite-latest',
+    'gemini-3.1-flash-lite',
+    'gemini-3.5-flash-lite',
+    'gemini-3.5-flash',
+    'gemini-flash-latest'
+  ];
 
   let lastError = null;
 

@@ -64,15 +64,13 @@ const PRESETS = [
 ];
 
 export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
-  const {
-    script,
-    isLoading,
-    error,
-    setScript,
-    setLoading,
-    setError,
-    reset
-  } = useScriptStore();
+  const script = useScriptStore((state) => state.script);
+  const isLoading = useScriptStore((state) => state.isLoading);
+  const error = useScriptStore((state) => state.error);
+  const setScript = useScriptStore((state) => state.setScript);
+  const setLoading = useScriptStore((state) => state.setLoading);
+  const setError = useScriptStore((state) => state.setError);
+  const reset = useScriptStore((state) => state.reset);
 
   const researchDossier = useResearchStore((state) => state.dossier);
 
@@ -86,11 +84,15 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
   const [copied, setCopied] = useState(false);
   const [showStyleBlueprints, setShowStyleBlueprints] = useState(false);
 
+  // Local submission state ensures immediate synchronous re-render on click
+  const [isLocalSubmitting, setIsLocalSubmitting] = useState(false);
+  const effectiveLoading = isLoading || isLocalSubmitting;
+
   // Live generation timer
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   useEffect(() => {
-    if (!isLoading) return;
+    if (!effectiveLoading) return;
 
     const timer = setInterval(() => {
       setElapsedSeconds((s) => s + 1);
@@ -99,7 +101,7 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
     return () => {
       clearInterval(timer);
     };
-  }, [isLoading]);
+  }, [effectiveLoading]);
 
   // Apply a historical preset
   const handleSelectPreset = (preset) => {
@@ -142,7 +144,7 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
     }
 
     // Prevent duplicate API submissions while already running
-    if (isLoading) return;
+    if (effectiveLoading) return;
 
     if (!topic || !topic.trim()) {
       setError({
@@ -155,6 +157,7 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
       return;
     }
 
+    setIsLocalSubmitting(true);
     setScript(null);
     setLoading(true);
     setError(null);
@@ -183,6 +186,7 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
         actionHint: err.actionHint || 'Please check your connection and try again.',
       });
     } finally {
+      setIsLocalSubmitting(false);
       setLoading(false);
     }
   };
@@ -482,12 +486,12 @@ ${script.sections?.outro || ''}
               variant="amber"
               size="xl"
               onClick={handleGenerate}
-              disabled={isLoading}
-              isLoading={isLoading}
-              icon={!isLoading ? Sparkles : undefined}
+              disabled={effectiveLoading}
+              isLoading={effectiveLoading}
+              icon={!effectiveLoading ? Sparkles : undefined}
               className="w-full font-cricket-title text-xl tracking-wider uppercase shadow-lg shadow-amber-500/20"
             >
-              {isLoading ? `SYNTHESIZING HINGLISH SCRIPT (${elapsedSeconds}s)...` : 'GENERATE HINGLISH SCRIPT'}
+              {effectiveLoading ? `SYNTHESIZING HINGLISH SCRIPT (${elapsedSeconds}s)...` : 'GENERATE HINGLISH SCRIPT'}
             </Button>
           </form>
 
@@ -496,16 +500,16 @@ ${script.sections?.outro || ''}
 
         {/* ── RIGHT COLUMN: TELEPROMPTER & SCRIPT VIEWER (7 cols) ── */}
         <section className="lg:col-span-7">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             
             {/* ── 1. ACTIVE PREMIUM GENERATION STUDIO (During Backend Request) ── */}
-            {isLoading && (
+            {effectiveLoading && (
               <motion.div
                 key="script-generation-studio"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.2 }}
               >
                 <ScriptGenerationStudioPanel
                   topic={topic}
@@ -515,13 +519,13 @@ ${script.sections?.outro || ''}
             )}
 
             {/* ── 2. PROMINENT ERROR DIAGNOSTIC PANEL (When Generation Fails) ── */}
-            {!isLoading && error && !script && (
+            {!effectiveLoading && error && !script && (
               <motion.div
                 key="script-error-panel"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.2 }}
                 className="space-y-6"
               >
                 <ErrorAlertPanel
@@ -545,13 +549,13 @@ ${script.sections?.outro || ''}
             )}
 
             {/* ── 3. EMPTY STATE (No script yet & no active error) ── */}
-            {!script && !isLoading && !error && (
+            {!script && !effectiveLoading && !error && (
               <motion.div
                 key="script-empty-state"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.2 }}
                 className="rounded-3xl border border-theme-subtle bg-theme-card p-8 md:p-12 relative overflow-hidden shadow-theme-card min-h-[580px] flex flex-col justify-between"
               >
                 {/* Background Feathered Artwork */}
@@ -607,7 +611,7 @@ ${script.sections?.outro || ''}
             )}
 
             {/* ── 4. GENERATED SCRIPT TELEPROMPTER VIEW ── */}
-            {script && !isLoading && (
+            {script && !effectiveLoading && (
               <motion.div
                 key="script-teleprompter-view"
                 initial={{ opacity: 0, scale: 0.98 }}

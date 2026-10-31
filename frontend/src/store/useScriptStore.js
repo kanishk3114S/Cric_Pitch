@@ -11,7 +11,7 @@ const useScriptStore = create((set) => ({
   error: null,
 
   // Actions
-  setScript: (script) => set({ script, error: null, isLoading: false }),
+  setScript: (script) => set((state) => ({ script, error: null, isLoading: script ? false : state.isLoading })),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error, isLoading: false }),
   reset: () => set({ script: null, isLoading: false, error: null }),

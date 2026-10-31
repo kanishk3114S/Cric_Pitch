@@ -20,7 +20,7 @@ const useResearchStore = create((set) => ({
   // ── Actions ─────────────────────────────────────────────────────────────
 
   // Save the dossier when the agent returns it
-  setDossier: (dossier) => set({ dossier, error: null }),
+  setDossier: (dossier) => set((state) => ({ dossier, error: null, isLoading: dossier ? false : state.isLoading })),
 
   // Track loading state
   setLoading: (isLoading) => set({ isLoading }),

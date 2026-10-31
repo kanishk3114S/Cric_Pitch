@@ -166,7 +166,8 @@ const buildSearchPlan = (topic, preContext, includeImages) => {
 
   // Job 5 (dynamic): If user gave focus points, run a targeted search for each
   // We limit to first 2 preContext items to keep token usage in check
-  preContext.slice(0, 2).forEach((focusPoint, i) => {
+  const safePreContext = Array.isArray(preContext) ? preContext : [];
+  safePreContext.slice(0, 2).forEach((focusPoint, i) => {
     jobs.push({
       tool: 'webSearch',
       query: `User focus: ${focusPoint}`,
