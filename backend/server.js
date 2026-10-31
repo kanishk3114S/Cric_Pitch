@@ -10,17 +10,14 @@ import dotenv from 'dotenv';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Step 2: Force-load backend/.env and root .env with override: true so stale shell variables cannot hijack keys
 dotenv.config({ path: path.resolve(__dirname, '../.env'), override: true });
 dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
 
-// Step 2: Key-sanitizer utility
 export function getSanitizedKey(envName) {
   const raw = process.env[envName] || '';
   return raw.replace(/^["']|["']$/g, '').replace(/[\r\n]+/g, '').trim();
 }
 
-// Synchronize and clean keys: sync GEMINI_API_KEY and GOOGLE_API_KEY
 const sanitizedGeminiKey = getSanitizedKey('GEMINI_API_KEY') || getSanitizedKey('GEMINI_API_KEY_RESEARCH');
 if (sanitizedGeminiKey) {
   process.env.GEMINI_API_KEY = sanitizedGeminiKey;
@@ -144,7 +141,6 @@ const corsOptionsDelegate = (req, callback) => {
 
 app.use(cors(corsOptionsDelegate));
 
-// Step 3: Backend hit request logger above all routes
 app.use((req, res, next) => {
   console.log(`🔥 [BACKEND HIT] ${new Date().toISOString()} | ${req.method} ${req.originalUrl}`);
   next();

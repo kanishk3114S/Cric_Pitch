@@ -13,7 +13,6 @@ import { getSanitizedKey } from '../../utils/env.js';
  * @returns {object} - Parsed JSON object from the model's response
  */
 export const callGemini = async (systemPrompt, userMessage) => {
-  // Step 2: Lazy SDK initialization inside the function call with sanitized key
   const apiKey = getSanitizedKey('GEMINI_API_KEY') || getSanitizedKey('GEMINI_API_KEY_RESEARCH');
   if (!apiKey) {
     const authErr = new Error('Gemini API key missing. Please set GEMINI_API_KEY in backend/.env');
@@ -24,9 +23,6 @@ export const callGemini = async (systemPrompt, userMessage) => {
 
   const ai = new GoogleGenAI({ apiKey });
 
-  // Step 3: Resilient fallback chain across verified Gemini models
-  // Models are tried in sequence; 404 (model deprecated/not found), 429 (quota/rate limit),
-  // and 503 (service unavailable) automatically trigger failover to the next working candidate.
   const candidateModels = [
     'gemini-flash-lite-latest',
     'gemini-3.5-flash-lite',

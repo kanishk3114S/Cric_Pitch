@@ -226,7 +226,6 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
         includeMedia,
       });
 
-      // Step 5: Keep workflow screen visible for minimum 800ms so fast responses don't flicker
       const elapsed = Date.now() - startTime;
       if (elapsed < 800) {
         await new Promise((r) => setTimeout(r, 800 - elapsed));
@@ -829,7 +828,6 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
               transition={{ duration: 0.4 }}
               className="space-y-6"
             >
-              {/* Step 5: Green Success Toast / Banner */}
               {showSuccessBanner && (
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}

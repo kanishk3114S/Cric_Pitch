@@ -12,7 +12,6 @@ import { getSanitizedKey } from '../utils/env.js';
 export async function generateHinglishScript({ topic, keyPoints = [], researchDossier = null }) {
   console.log(`\n[ScriptAgent] Starting RAG Generation for: "${topic}"`);
 
-  // Step 2: Lazy SDK initialization inside the function call with sanitized key
   const apiKey = getSanitizedKey('GEMINI_API_KEY') || getSanitizedKey('GEMINI_API_KEY_RESEARCH');
   if (!apiKey) {
     const authErr = new Error('Gemini API key missing. Please set GEMINI_API_KEY in backend/.env');
@@ -23,7 +22,6 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
 
   const ai = new GoogleGenAI({ apiKey });
 
-  // Step 1: Formulate search query for Pinecone
   const retrievalQuery = [
     topic,
     Array.isArray(keyPoints) ? keyPoints.join(' ') : ''
@@ -33,7 +31,6 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
   const styleExemplars = await retrieveStyleExemplars(retrievalQuery, 4);
   console.log(`[ScriptAgent] Retrieved ${styleExemplars.length} style exemplars from Pinecone`);
 
-  // Step 2: Build Generation Prompt
   const { systemInstruction, userPrompt } = buildScriptPrompt({
     topic,
     keyPoints,
@@ -41,7 +38,6 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
     styleExemplars
   });
 
-  // Step 3: Resilient fallback chain across verified Gemini models
   const candidateModels = [
     'gemini-flash-lite-latest',
     'gemini-3.5-flash-lite',

@@ -174,7 +174,6 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
         researchDossier: researchDossier || null
       });
 
-      // Step 5: Keep workflow screen visible for minimum 800ms so fast responses don't flicker
       const elapsed = Date.now() - startTime;
       if (elapsed < 800) {
         await new Promise((r) => setTimeout(r, 800 - elapsed));
@@ -636,7 +635,6 @@ ${script.sections?.outro || ''}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className="space-y-6 flex flex-col"
               >
-                {/* Step 5: Green Success Toast / Banner */}
                 {showSuccessBanner && (
                   <motion.div
                     initial={{ opacity: 0, y: -8 }}
