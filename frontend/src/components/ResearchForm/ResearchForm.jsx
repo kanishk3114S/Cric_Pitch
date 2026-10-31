@@ -1,5 +1,5 @@
 // src/components/ResearchForm/ResearchForm.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useResearchStore from '../../store/useResearchStore';
 import { generateResearch } from '../../services/api';
 import { Sparkles, Sliders, Image as ImageIcon, Flame } from 'lucide-react';
@@ -7,17 +7,16 @@ import { Sparkles, Sliders, Image as ImageIcon, Flame } from 'lucide-react';
 export default function ResearchForm({ externalTopic = '' }) {
   const { setDossier, setLoading, setError, isLoading } = useResearchStore();
 
-  const [topic, setTopic] = useState('');
+  const [topic, setTopic] = useState(externalTopic);
+  const [prevExternalTopic, setPrevExternalTopic] = useState(externalTopic);
+  if (externalTopic !== prevExternalTopic) {
+    setPrevExternalTopic(externalTopic);
+    setTopic(externalTopic);
+  }
+
   const [preContextText, setPreContextText] = useState('');
   const [researchLength, setResearchLength] = useState(500);
   const [includeMedia, setIncludeMedia] = useState(false);
-
-  // Sync if topic passed from Hero
-  useEffect(() => {
-    if (externalTopic) {
-      setTopic(externalTopic);
-    }
-  }, [externalTopic]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

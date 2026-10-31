@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { ThemeContext, useTheme } from './useTheme';
 
-export { useTheme };
-
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
