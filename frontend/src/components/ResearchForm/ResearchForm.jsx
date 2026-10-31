@@ -41,7 +41,7 @@ export default function ResearchForm({ externalTopic = '' }) {
 
       setDossier(data.data.dossier);
     } catch (err) {
-      setError(err.response?.data?.error || 'Research failed to complete. Please check your network connection and try again.');
+      setError(err.message || err.response?.data?.error || 'Research failed to complete. Please check your network connection and try again.');
     } finally {
       setLoading(false);
     }

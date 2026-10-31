@@ -9,8 +9,29 @@ import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, '.env') });
-dotenv.config(); // fallback to current working directory if different
+
+// Step 2: Force-load backend/.env and root .env with override: true so stale shell variables cannot hijack keys
+dotenv.config({ path: path.resolve(__dirname, '../.env'), override: true });
+dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
+
+// Step 2: Key-sanitizer utility
+export function getSanitizedKey(envName) {
+  const raw = process.env[envName] || '';
+  return raw.replace(/^["']|["']$/g, '').replace(/[\r\n]+/g, '').trim();
+}
+
+// Synchronize and clean keys: sync GEMINI_API_KEY and GOOGLE_API_KEY
+const sanitizedGeminiKey = getSanitizedKey('GEMINI_API_KEY') || getSanitizedKey('GEMINI_API_KEY_RESEARCH');
+if (sanitizedGeminiKey) {
+  process.env.GEMINI_API_KEY = sanitizedGeminiKey;
+  process.env.GEMINI_API_KEY_RESEARCH = sanitizedGeminiKey;
+  process.env.GOOGLE_API_KEY = sanitizedGeminiKey;
+}
+
+const sanitizedTavilyKey = getSanitizedKey('TAVILY_API_KEY');
+if (sanitizedTavilyKey) {
+  process.env.TAVILY_API_KEY = sanitizedTavilyKey;
+}
 
 import express from 'express';
 import helmet from 'helmet';
@@ -123,6 +144,12 @@ const corsOptionsDelegate = (req, callback) => {
 
 app.use(cors(corsOptionsDelegate));
 
+// Step 3: Backend hit request logger above all routes
+app.use((req, res, next) => {
+  console.log(`🔥 [BACKEND HIT] ${new Date().toISOString()} | ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // ── 3. Observability & Request ID Tracing ──────────────────────────────────
 app.use(requestLogger);
 
@@ -175,8 +202,8 @@ app.use('/api/v1/research', researchRoutes);
 app.use('/api/v1/scripts', scriptRoutes);
 
 // ── 8. Unknown API Route 404 Handler ───────────────────────────────────────
-// Catches all unmatched /api/* requests and returns structured JSON
-app.use('/api/*', (req, res) => {
+// Catches all unmatched /api and /api/* requests and returns structured JSON (never index.html)
+app.all(['/api', '/api/*'], (req, res) => {
   res.status(404).json({
     success: false,
     error: `API route not found: ${req.method} ${req.originalUrl}`,
@@ -228,6 +255,8 @@ app.use(errorHandler);
 // ── 10. Server Startup & Graceful Shutdown ─────────────────────────────────
 const server = app.listen(PORT, HOST, () => {
   console.log(`✅ CricScript backend running on http://${HOST}:${PORT}`);
+  console.log(`GEMINI_API_KEY loaded: ${sanitizedGeminiKey ? 'YES' : 'NO'} (starts with: ${sanitizedGeminiKey ? sanitizedGeminiKey.slice(0, 6) : 'N/A'}..., length: ${sanitizedGeminiKey ? sanitizedGeminiKey.length : 0})`);
+  console.log(`TAVILY_API_KEY loaded: ${sanitizedTavilyKey ? 'YES' : 'NO'} (starts with: ${sanitizedTavilyKey ? sanitizedTavilyKey.slice(0, 6) : 'N/A'}..., length: ${sanitizedTavilyKey ? sanitizedTavilyKey.length : 0})`);
   console.log(`🔒 Security posture: Helmet active, strict CORS, tiered rate limiting, stateless mode`);
 });
 

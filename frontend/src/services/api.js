@@ -5,10 +5,11 @@
 import axios from 'axios';
 
 // Resolves backend API URL:
-// 1. If VITE_API_BASE_URL is provided (e.g. cross-domain deployment), use that.
-// 2. Otherwise defaults to relative '/api/v1' (unified single-service deployment on Render or Vite proxy).
-const rawApiBase = import.meta.env.VITE_API_BASE_URL;
-const BASE_URL = rawApiBase
+// Single unified deployment on Render/local: Always uses relative '/api/v1' so requests
+// hit the exact same host/origin serving the bundle.
+const rawApiBase = (import.meta.env.VITE_API_BASE_URL || '').trim();
+const isExternalHttps = import.meta.env.PROD && rawApiBase.startsWith('https://');
+const BASE_URL = isExternalHttps
   ? `${rawApiBase.replace(/\/$/, '')}/api/v1`
   : '/api/v1';
 

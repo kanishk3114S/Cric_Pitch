@@ -169,6 +169,7 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [loadingStep, setLoadingStep] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
 
   // Local submission state ensures immediate synchronous re-render on click
   const [isLocalSubmitting, setIsLocalSubmitting] = useState(false);
@@ -182,9 +183,9 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
       setElapsedSeconds((s) => s + 1);
     }, 1000);
 
-    const step1 = setTimeout(() => setLoadingStep(1), 2500);
-    const step2 = setTimeout(() => setLoadingStep(2), 6500);
-    const step3 = setTimeout(() => setLoadingStep(3), 11000);
+    const step1 = setTimeout(() => setLoadingStep(1), 2000);
+    const step2 = setTimeout(() => setLoadingStep(2), 5000);
+    const step3 = setTimeout(() => setLoadingStep(3), 9000);
 
     return () => {
       clearInterval(timer);
@@ -205,6 +206,7 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
     setDossier(null);
     setLoading(true);
     setError(null);
+    setShowSuccessBanner(false);
     setElapsedSeconds(0);
     setLoadingStep(0);
 
@@ -214,6 +216,8 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
       .filter((line) => line.length > 0)
       .slice(0, 5);
 
+    const startTime = Date.now();
+
     try {
       const response = await generateResearch({
         topic: topic.trim(),
@@ -222,13 +226,25 @@ export default function ResearchWorkspaceView({ onBack, onNavigateLegal }) {
         includeMedia,
       });
 
+      // Step 5: Keep workflow screen visible for minimum 800ms so fast responses don't flicker
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 800) {
+        await new Promise((r) => setTimeout(r, 800 - elapsed));
+      }
+
       if (response.data.success) {
         setDossier(response.data.data?.dossier || response.data.data);
+        setShowSuccessBanner(true);
       } else {
         throw new Error(response.data.message || 'Failed to compile research');
       }
     } catch (err) {
       console.error('Research Agent Error:', err);
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 800) {
+        await new Promise((r) => setTimeout(r, 800 - elapsed));
+      }
+
       // Immediately pass structured backend error object
       setError({
         message: err.message || 'Research execution could not complete.',
@@ -306,10 +322,10 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
   const report = dossier?.synthesizedReport;
 
   const agentSteps = [
-    { title: 'Structuring Research Angles', desc: 'Planning scorecard, pitch, and quotes queries' },
-    { title: 'Scanning Cricket Archives', desc: 'Executing multi-hop search across Cricinfo & HowStat' },
-    { title: 'Analyzing Tactics & Quotes', desc: 'Filtering verified post-match press statements' },
-    { title: 'Grounding Facts via Gemini', desc: 'Synthesizing structured dossier with zero hallucination' },
+    { title: 'Step 1: Connecting to Research Engine...', desc: 'Initializing multi-hop research orchestrator' },
+    { title: 'Step 2: Gathering Verified Cricket Context & Sources...', desc: 'Scanning Cricinfo archives, scorecards & records' },
+    { title: 'Step 3: Synthesizing Dossier with Gemini AI...', desc: 'Grounding tactical breakdowns, quotes & chronology' },
+    { title: 'Step 4: Formatting Output & Zero-Hallucination Verification...', desc: 'Structuring factual schema and final dossier artifact' },
   ];
 
   return (
@@ -813,7 +829,36 @@ ${(report?.statHighlights || []).map((s) => `- **${s.metric}**: ${s.value} (${s.
               transition={{ duration: 0.4 }}
               className="space-y-6"
             >
-              
+              {/* Step 5: Green Success Toast / Banner */}
+              {showSuccessBanner && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 shadow-lg shadow-emerald-500/10 flex items-center justify-between gap-3 text-emerald-700 dark:text-emerald-300"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
+                      <Check className="w-4 h-4 text-emerald-500" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider">
+                        Research Dossier Compiled Successfully (HTTP 200)
+                      </h4>
+                      <p className="text-[11px] opacity-90">
+                        Multi-hop search completed and factual intelligence grounded with Gemini AI.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowSuccessBanner(false)}
+                    className="p-1 rounded-lg hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition-colors cursor-pointer text-xs font-bold"
+                  >
+                    DISMISS
+                  </button>
+                </motion.div>
+              )}
+
               {/* Dossier Header Banner with Horizontal Stadium Crop */}
               <div className="relative rounded-2xl p-6 md:p-8 border border-theme-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-theme-card overflow-hidden shadow-theme-card">
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">

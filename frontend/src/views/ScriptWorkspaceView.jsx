@@ -83,6 +83,7 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
   const [activeTab, setActiveTab] = useState('full'); // 'full' | 'intro' | 'main' | 'outro'
   const [copied, setCopied] = useState(false);
   const [showStyleBlueprints, setShowStyleBlueprints] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
 
   // Local submission state ensures immediate synchronous re-render on click
   const [isLocalSubmitting, setIsLocalSubmitting] = useState(false);
@@ -161,7 +162,10 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
     setScript(null);
     setLoading(true);
     setError(null);
+    setShowSuccessBanner(false);
     setElapsedSeconds(0);
+
+    const startTime = Date.now();
 
     try {
       const response = await generateScript({
@@ -170,13 +174,25 @@ export default function ScriptWorkspaceView({ onBack, onNavigateLegal }) {
         researchDossier: researchDossier || null
       });
 
+      // Step 5: Keep workflow screen visible for minimum 800ms so fast responses don't flicker
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 800) {
+        await new Promise((r) => setTimeout(r, 800 - elapsed));
+      }
+
       if (response.data?.success && response.data?.data) {
         setScript(response.data.data);
+        setShowSuccessBanner(true);
       } else {
         throw new Error(response.data?.message || 'Failed to generate script');
       }
     } catch (err) {
       console.error('Script generation error:', err);
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 800) {
+        await new Promise((r) => setTimeout(r, 800 - elapsed));
+      }
+
       // Immediately extract and set structured backend error object
       setError({
         message: err.message || 'Script generation could not complete.',
@@ -618,8 +634,39 @@ ${script.sections?.outro || ''}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="rounded-3xl border border-theme-subtle bg-theme-card shadow-theme-card overflow-hidden flex flex-col"
+                className="space-y-6 flex flex-col"
               >
+                {/* Step 5: Green Success Toast / Banner */}
+                {showSuccessBanner && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 shadow-lg shadow-emerald-500/10 flex items-center justify-between gap-3 text-emerald-700 dark:text-emerald-300"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
+                        <Check className="w-4 h-4 text-emerald-500" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold uppercase tracking-wider">
+                          Hinglish Match Script Synthesized Successfully (HTTP 200)
+                        </h4>
+                        <p className="text-[11px] opacity-90">
+                          Complete 3-part teleprompter voiceover script generated with acoustic [pause] cues.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowSuccessBanner(false)}
+                      className="p-1 rounded-lg hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition-colors cursor-pointer text-xs font-bold"
+                    >
+                      DISMISS
+                    </button>
+                  </motion.div>
+                )}
+
+                <div className="rounded-3xl border border-theme-subtle bg-theme-card shadow-theme-card overflow-hidden flex flex-col">
               
               {/* Header Bar */}
               <div className="p-6 md:p-8 border-b border-theme-subtle bg-theme-elevated">
@@ -782,6 +829,7 @@ ${script.sections?.outro || ''}
                 </div>
               )}
 
+                </div>
             </motion.div>
           )}
 

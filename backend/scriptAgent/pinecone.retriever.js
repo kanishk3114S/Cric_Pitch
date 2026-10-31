@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { Pinecone } from '@pinecone-database/pinecone';
+import { getSanitizedKey } from '../utils/env.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,8 +12,8 @@ let pineconeIndexInstance = null;
 
 function getPineconeIndex() {
   if (!pineconeIndexInstance) {
-    const apiKey = process.env.PINECONE_API_KEY;
-    const indexName = process.env.PINECONE_INDEX_NAME || 'cricscript-rag';
+    const apiKey = getSanitizedKey('PINECONE_API_KEY');
+    const indexName = getSanitizedKey('PINECONE_INDEX_NAME') || 'cricscript-rag';
 
     if (!apiKey) {
       console.warn('[ScriptRetriever] PINECONE_API_KEY not configured. Will use local style archive fallback.');

@@ -1,14 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { retrieveStyleExemplars } from './pinecone.retriever.js';
 import { buildScriptPrompt } from './prompts/scriptGeneration.prompt.js';
-
-const getAiClient = () => {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY_RESEARCH;
-  if (!apiKey) {
-    throw new Error('Gemini API key missing. Please set GEMINI_API_KEY or GEMINI_API_KEY_RESEARCH in backend/.env');
-  }
-  return new GoogleGenAI({ apiKey });
-};
+import { getSanitizedKey } from '../utils/env.js';
 
 /**
  * Executes the full Cadence-RAG Script Generation Pipeline:
@@ -18,6 +11,17 @@ const getAiClient = () => {
  */
 export async function generateHinglishScript({ topic, keyPoints = [], researchDossier = null }) {
   console.log(`\n[ScriptAgent] Starting RAG Generation for: "${topic}"`);
+
+  // Step 2: Lazy SDK initialization inside the function call with sanitized key
+  const apiKey = getSanitizedKey('GEMINI_API_KEY') || getSanitizedKey('GEMINI_API_KEY_RESEARCH');
+  if (!apiKey) {
+    const authErr = new Error('Gemini API key missing. Please set GEMINI_API_KEY in backend/.env');
+    authErr.statusCode = 401;
+    authErr.status = 401;
+    throw authErr;
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
 
   // Step 1: Formulate search query for Pinecone
   const retrievalQuery = [
@@ -37,14 +41,18 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
     styleExemplars
   });
 
-  // Models verified against live Google API responses (2024-11 onwards).
-  // gemini-2.5-flash-lite/flash are deprecated for new keys — Google's 404 messages
-  // direct to these successors: gemini-3.5-flash-lite and gemini-3.8-flash.
-  const ai = getAiClient();
+  // Step 3: Resilient fallback chain across verified Gemini models
   const candidateModels = [
+    'gemini-flash-lite-latest',
     'gemini-3.5-flash-lite',
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-1.5-pro',
     'gemini-3.8-flash',
+    'gemini-flash-latest',
   ];
+
   let result = null;
   let lastError = null;
 
@@ -63,10 +71,14 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
         }
       });
 
-      // 35s per-model failover timeout
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`Model ${model} response timed out after 35 seconds`)), 35000)
-      );
+      // 40s per-model failover timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          const tErr = new Error(`Model ${model} response timed out after 40 seconds`);
+          tErr.statusCode = 504;
+          reject(tErr);
+        }, 40000);
+      });
 
       const response = await Promise.race([generatePromise, timeoutPromise]);
 
@@ -76,7 +88,7 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
       }
 
       // ── Clean and Extract JSON ─────────────────────────────────────────────
-      let cleanJson = rawText
+      let cleanJson = (rawText || '')
         .replace(/^```json\s*/i, '')
         .replace(/^```\s*/i, '')
         .replace(/```\s*$/i, '')
@@ -163,11 +175,54 @@ export async function generateHinglishScript({ topic, keyPoints = [], researchDo
         }))
       };
 
-      console.log(`[ScriptAgent] Script generated successfully! (${actualTotalWords} words, ~${result.estimatedDurationMinutes})`);
+      console.log(`[ScriptAgent] Script generated successfully using ${model}! (${actualTotalWords} words, ~${result.estimatedDurationMinutes})`);
       break;
     } catch (err) {
-      console.warn(`[ScriptAgent] Failed with model ${model}:`, err.message);
       lastError = err;
+
+      let statusCode = Number(err?.status || err?.statusCode || err?.response?.status || 0);
+      const errMsg = String(err?.message || '');
+
+      if (!statusCode) {
+        const match = errMsg.match(/"code"\s*:\s*(\d+)/);
+        if (match) statusCode = Number(match[1]);
+      }
+
+      // If authentication failure (401/403), stop immediately
+      if (
+        statusCode === 401 ||
+        statusCode === 403 ||
+        errMsg.toLowerCase().includes('api key not valid') ||
+        errMsg.toLowerCase().includes('api_key_invalid') ||
+        errMsg.toLowerCase().includes('unauthorized') ||
+        errMsg.toLowerCase().includes('permission_denied')
+      ) {
+        console.error(`❌ [ScriptAgent] Authentication failure on ${model} (HTTP ${statusCode || 401}):`, errMsg);
+        const authError = new Error(errMsg || 'API key not valid. Please pass a valid API key.');
+        authError.statusCode = statusCode || 401;
+        authError.status = statusCode || 401;
+        throw authError;
+      }
+
+      const isFallbackEligible =
+        statusCode === 404 ||
+        statusCode === 429 ||
+        statusCode === 503 ||
+        statusCode === 504 ||
+        errMsg.includes('404') ||
+        errMsg.includes('429') ||
+        errMsg.includes('503') ||
+        errMsg.includes('NOT_FOUND') ||
+        errMsg.includes('RESOURCE_EXHAUSTED') ||
+        errMsg.includes('no longer available') ||
+        errMsg.includes('timed out');
+
+      if (isFallbackEligible) {
+        console.warn(`[ScriptAgent] Model ${model} failed with HTTP ${statusCode || 'fallback-eligible'}: ${errMsg.slice(0, 140)}. Falling back to next candidate...`);
+        continue;
+      }
+
+      console.warn(`[ScriptAgent] Failed with model ${model}:`, errMsg);
     }
   }
 

@@ -4,6 +4,7 @@
 // snippets instead of raw messy HTML.
 
 import axios from 'axios';
+import { getSanitizedKey } from '../../utils/env.js';
 
 const TAVILY_URL = 'https://api.tavily.com/search';
 
@@ -16,7 +17,7 @@ const TAVILY_URL = 'https://api.tavily.com/search';
  * @returns {object} { results: [...], images: [...] }
  */
 export const webSearchTool = async (query, includeImages = false, maxResults = 5) => {
-  const apiKey = process.env.TAVILY_API_KEY;
+  const apiKey = getSanitizedKey('TAVILY_API_KEY');
 
   if (!apiKey) {
     console.warn(`  ⚠️ [webSearch] TAVILY_API_KEY is not set in environment.`);
